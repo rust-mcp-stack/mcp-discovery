@@ -1,0 +1,8 @@
+{{#if resource_templates}}
+{{{capability_title "🧩 Resource Templates " (len resource_templates) true}}}
+
+{{#each resource_templates}} 
+{{plus_one @index}}. {{{this.name}}} : {{{this.uriTemplate}}}  {{#if this.mimeType}}({{{this.mimeType}}}){{/if}}
+   {{{this.description}}}
+{{/each}}
+{{/if}}

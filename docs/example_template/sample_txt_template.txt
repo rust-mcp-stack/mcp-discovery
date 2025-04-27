@@ -1,0 +1,8 @@
+Server Information:
+
+Server Name: {{name}}
+Server Version: {{version}}
+
+Summary:
+
+{{> txt-summary }}

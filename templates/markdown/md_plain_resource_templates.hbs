@@ -1,0 +1,14 @@
+{{#if resource_templates}}
+## 🧩 Resource Templates ({{len resource_templates}})
+
+{{#each resource_templates}}
+
+- **{{{this.name}}}**
+  {{#if this.description}}
+  - {{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>") "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}
+    {{/if}}
+    {{#if this.uri}}
+  - URI: <a>{{this.uriTemplate}}</a> {{#if this.mimeType}}<i>({{{this.mimeType}}})</i>{{/if}}
+    {{/if}}
+    {{/each}}
+{{/if}}

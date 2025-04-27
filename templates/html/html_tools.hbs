@@ -1,0 +1,35 @@
+{{#if capabilities.tools}}
+
+<h2>🛠️ Tools ({{len tools}})</h2>
+<table style="text-align: left;">
+    <thead>
+        <tr>
+            <th style="width: auto;"></th>
+            <th style="width: auto;">Tool Name</th>
+            <th style="width: auto;">Description</th>
+            <th style="width: auto;">Inputs</th>
+        </tr>
+    </thead>
+    <tbody style="vertical-align: top;">
+        {{#each tools}}
+        <tr>
+            <td>{{plus_one @index}}.</td>
+            <td>
+                <code><b>{{{this.name}}}</b></code>
+            </td>
+            <td>{{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>")
+                "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}</td>
+            <td>
+                <ul>
+                    {{#each this.params}}
+                    <li style="white-space: nowrap;"> <code>{{{this.param_name}}}</code> : {{{tool_param_type
+                        this.param_type}}}<br /></li>
+                    {{/each}}
+                </ul>
+            </td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+
+{{/if}}

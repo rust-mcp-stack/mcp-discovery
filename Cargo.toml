@@ -1,0 +1,41 @@
+[package]
+name = "mcp-discovery"
+version = "0.1.0"
+edition = "2021"
+repository = "https://github.com/rust-mcp-stack/mcp-discovery"
+authors = ["Ali Hashemi"]
+description = "A command-line tool written in Rust for discovering and documenting MCP Server capabilities."
+homepage = "https://github.com/rust-mcp-stack/mcp-discovery"
+
+[package.metadata.wix]
+upgrade-guid = "F8C005B2-0006-40E0-93CF-01A2DA37CAB7"
+path-guid = "FE1B50BA-4553-470C-8819-8575C25AE238"
+license = false
+eula = false
+
+
+[dependencies]
+rust-mcp-sdk = "0.2"
+rust-mcp-schema = "0.4"
+
+clap = { version = "4.5.37", features = ["derive"] }
+serde = "1.0"
+serde_json = "1.0"
+tokio = "1.4"
+colored = "3.0"
+strip-ansi-escapes = "0.2"
+unicode-width = "0.2"
+async-trait = "0.1"
+thiserror = { version = "2.0" }
+handlebars = "6.3"
+html-escape = "0.2"
+regex = "1.1"
+path-clean = "1.0.1"
+
+[dev-dependencies]
+tempfile = "3"
+
+# The profile that 'dist' will build with
+[profile.dist]
+inherits = "release"
+lto = "thin"

@@ -1,0 +1,29 @@
+{{#if resource_templates}}
+<h2>🧩 Resource Templates ({{len resource_templates}})</h2>
+
+<table style="text-align: left;">
+    <thead>
+        <tr>
+            <th style="width: auto;"></th>
+            <th style="width: auto;">Name</th>
+            <th style="width: auto;">Uri Template</th>
+            <th style="width: auto;">Description</th>
+        </tr>
+    </thead>
+    <tbody style="vertical-align: top;">
+        {{#each resource_templates}}
+        <tr>
+            <td>{{plus_one @index}}.</td>
+            <td>
+                <code><b>{{this.name}}</b></code>
+            </td>
+            <td>
+                <a>{{this.uriTemplate}} {{#if this.mimeType}}({{{this.mimeType}}}){{/if}}</a>
+            </td>
+            <td>{{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>")
+                "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}</td>
+        </tr>
+        {{/each}}
+    </tbody>
+</table>
+{{/if}}

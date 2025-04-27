@@ -1,0 +1,8 @@
+{{#if capabilities.prompts}}
+{{{capability_title "📝 Prompts " (len prompts) true}}}
+
+{{#each prompts}} 
+{{plus_one @index}}. {{{this.name}}} : {{{this.description}}}
+
+{{/each}}
+{{/if}}

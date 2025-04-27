@@ -1,0 +1,231 @@
+{
+    "name": "example-servers/everything",
+    "version": "1.0.0",
+    "capabilities": {
+        "tools": true,
+        "prompts": true,
+        "resources": true,
+        "logging": true,
+        "experimental": false
+    },
+    "tools": [
+        {
+            "name": "add",
+            "description": "Adds two numbers",
+            "params": [
+                {
+                    "param_name": "a",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "First number",
+                    "required": true
+                },
+                {
+                    "param_name": "b",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "Second number",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "annotatedMessage",
+            "description": "Demonstrates how annotations can be used to provide metadata about content",
+            "params": [
+                {
+                    "param_name": "includeImage",
+                    "param_type": {
+                        "Primitive": "boolean"
+                    },
+                    "param_description": "Whether to include an example image",
+                    "required": true
+                },
+                {
+                    "param_name": "messageType",
+                    "param_type": {
+                        "Primitive": "string"
+                    },
+                    "param_description": "Type of message to demonstrate different annotation patterns",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "echo",
+            "description": "Echoes back the input",
+            "params": [
+                {
+                    "param_name": "message",
+                    "param_type": {
+                        "Primitive": "string"
+                    },
+                    "param_description": "Message to echo",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "getResourceReference",
+            "description": "Returns a resource reference that can be used by MCP clients",
+            "params": [
+                {
+                    "param_name": "resourceId",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "ID of the resource to reference (1-100)",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "getTinyImage",
+            "description": "Returns the MCP_TINY_IMAGE",
+            "params": []
+        },
+        {
+            "name": "longRunningOperation",
+            "description": "Demonstrates a long running operation with progress updates",
+            "params": [
+                {
+                    "param_name": "duration",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "Duration of the operation in seconds",
+                    "required": true
+                },
+                {
+                    "param_name": "steps",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "Number of steps in the operation",
+                    "required": true
+                }
+            ]
+        },
+        {
+            "name": "printEnv",
+            "description": "Prints all environment variables, helpful for debugging MCP server configuration",
+            "params": []
+        },
+        {
+            "name": "sampleLLM",
+            "description": "Samples from an LLM using MCP's sampling feature",
+            "params": [
+                {
+                    "param_name": "maxTokens",
+                    "param_type": {
+                        "Primitive": "number"
+                    },
+                    "param_description": "Maximum number of tokens to generate",
+                    "required": true
+                },
+                {
+                    "param_name": "prompt",
+                    "param_type": {
+                        "Primitive": "string"
+                    },
+                    "param_description": "The prompt to send to the LLM",
+                    "required": true
+                }
+            ]
+        }
+    ],
+    "prompts": [
+        {
+            "description": "A prompt without arguments",
+            "name": "simple_prompt"
+        },
+        {
+            "arguments": [
+                {
+                    "description": "Temperature setting",
+                    "name": "temperature",
+                    "required": true
+                },
+                {
+                    "description": "Output style",
+                    "name": "style",
+                    "required": false
+                }
+            ],
+            "description": "A prompt with arguments",
+            "name": "complex_prompt"
+        },
+        {
+            "arguments": [
+                {
+                    "description": "Resource ID to include (1-100)",
+                    "name": "resourceId",
+                    "required": true
+                }
+            ],
+            "description": "A prompt that includes an embedded resource reference",
+            "name": "resource_prompt"
+        }
+    ],
+    "resources": [
+        {
+            "mimeType": "text/plain",
+            "name": "Resource 1",
+            "uri": "test://static/resource/1"
+        },
+        {
+            "mimeType": "application/octet-stream",
+            "name": "Resource 2",
+            "uri": "test://static/resource/2"
+        },
+        {
+            "mimeType": "text/plain",
+            "name": "Resource 3",
+            "uri": "test://static/resource/3"
+        },
+        {
+            "mimeType": "application/octet-stream",
+            "name": "Resource 4",
+            "uri": "test://static/resource/4"
+        },
+        {
+            "mimeType": "text/plain",
+            "name": "Resource 5",
+            "uri": "test://static/resource/5"
+        },
+        {
+            "mimeType": "application/octet-stream",
+            "name": "Resource 6",
+            "uri": "test://static/resource/6"
+        },
+        {
+            "mimeType": "text/plain",
+            "name": "Resource 7",
+            "uri": "test://static/resource/7"
+        },
+        {
+            "mimeType": "application/octet-stream",
+            "name": "Resource 8",
+            "uri": "test://static/resource/8"
+        },
+        {
+            "mimeType": "text/plain",
+            "name": "Resource 9",
+            "uri": "test://static/resource/9"
+        },
+        {
+            "mimeType": "application/octet-stream",
+            "name": "Resource 10",
+            "uri": "test://static/resource/10"
+        }
+    ],
+    "resource_templates": [
+        {
+            "description": "A static resource with a numeric ID",
+            "name": "Static Resource",
+            "uriTemplate": "test://static/resource/{id}"
+        }
+    ]
+}

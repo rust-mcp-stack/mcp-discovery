@@ -1,0 +1,10 @@
+{{#if capabilities.prompts}}
+
+## 📝 Prompts ({{len prompts}})
+
+    {{#each prompts}}
+
+- **{{{this.name}}}**
+  - {{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>") "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}
+    {{/each}}
+{{/if}}

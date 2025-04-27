@@ -1,0 +1,23 @@
+# create md-create.md
+./mcp-discovery create -f ../../tests/fixtures/md-create.md -- npx -y @modelcontextprotocol/server-everything
+
+# create md-create.md
+./mcp-discovery create -f ../../tests/fixtures/md-plain-create.md --template md-plain -- npx -y @modelcontextprotocol/server-everything
+
+# create txt-create.txt
+./mcp-discovery create -f ../../tests/fixtures/txt-create.txt --template txt -- npx -y @modelcontextprotocol/server-everything
+
+# full update md-update.md
+./mcp-discovery update -f ../../tests/fixtures/md-update.md  -- npx -y @modelcontextprotocol/server-everything
+
+# full update md-plain-update.md
+./mcp-discovery update -f ../../tests/fixtures/md-plain-update.md -t md-plain  -- npx -y @modelcontextprotocol/server-everything
+
+#  md-plain-update-file-prop.md
+./mcp-discovery update -f ../../tests/fixtures/md-plain-update-file-prop.md -- npx -y @modelcontextprotocol/server-everything
+
+# md-plain-update-template-prop.md
+./mcp-discovery update -f ../../tests/fixtures/md-plain-update-template-prop.md -- npx -y @modelcontextprotocol/server-everything
+
+# md-plain-update-inline.md
+./mcp-discovery update -f ../../tests/fixtures/md-plain-update-inline.md -- npx -y @modelcontextprotocol/server-everything

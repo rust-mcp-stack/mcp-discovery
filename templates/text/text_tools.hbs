@@ -1,0 +1,8 @@
+{{#if capabilities.tools}}
+{{{capability_title "🛠️ Tools " (len tools) true}}}
+
+{{#each tools}} 
+{{plus_one @index}}. {{{this.name}}} : {{{this.description}}}
+
+{{/each}}
+{{/if}}
