@@ -432,12 +432,16 @@ impl McpDiscovery {
             return Ok(None);
         }
 
-        let resource_templates: Vec<ResourceTemplate> = client
+        let result = client
             .list_resource_templates(Some(ListResourceTemplatesRequestParams::default()))
-            .await?
-            .resource_templates;
-
-        Ok(Some(resource_templates))
+            .await;
+        match result {
+            Ok(data) => Ok(Some(data.resource_templates)),
+            Err(err) => {
+                eprintln!("Unable to retrieve resource templates : {}", err);
+                Ok(None)
+            }
+        }
     }
 
     pub async fn discover(&mut self) -> DiscoveryResult<&McpServerInfo> {

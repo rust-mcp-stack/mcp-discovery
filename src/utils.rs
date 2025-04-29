@@ -92,9 +92,6 @@ pub fn get_absolute_from_relative(
 
     let cwd = std::env::current_dir()?;
     Ok(cwd.join(joined_path).clean())
-
-    // Convert to absolute path (resolving symlinks and normalizing)
-    // Ok(fs::canonicalize(&joined_path).unwrap_or_else(|_| joined_path))
 }
 
 pub fn find_template_file(
