@@ -438,7 +438,7 @@ impl McpDiscovery {
         match result {
             Ok(data) => Ok(Some(data.resource_templates)),
             Err(err) => {
-                tracing::trace!("Unable to retrieve resource templates : {}", err);
+                eprintln!("Unable to retrieve resource templates : {}", err);
                 Ok(None)
             }
         }
