@@ -554,7 +554,7 @@ impl McpDiscovery {
 
         tracing::trace!(
             "launching command : {} {}",
-            mcp_command.get(0).map(String::as_ref).unwrap_or(""),
+            mcp_command.first().map(String::as_ref).unwrap_or(""),
             mcp_args.join(" ")
         );
 
