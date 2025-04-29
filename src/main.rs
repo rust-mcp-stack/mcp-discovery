@@ -1,6 +1,6 @@
 use clap::Parser;
 use colored::Colorize;
-use mcp_discovery::{CommandArguments, DiscoveryCommand, McpDiscovery, PrintOptions};
+use mcp_discovery::{CommandArguments, DiscoveryCommand, LogLevel, McpDiscovery, PrintOptions};
 use tracing_subscriber::{self, EnvFilter};
 
 #[tokio::main]
@@ -14,9 +14,21 @@ async fn main() {
             template: args.template,
             template_file: args.template_file,
             template_string: args.template_string,
+            log_level: args.log_level,
         }));
 
-    let tracing_filter = EnvFilter::try_new("info").unwrap_or_else(|_| EnvFilter::new("info"));
+    let filter = format!(
+        "{}={}",
+        env!("CARGO_PKG_NAME").to_string().replace("-", "_"),
+        command
+            .log_level()
+            .as_ref()
+            .unwrap_or(&LogLevel::info)
+            .to_string(),
+    );
+
+    let tracing_filter = EnvFilter::try_new(filter).unwrap_or_else(|_| EnvFilter::new("info"));
+
     tracing_subscriber::fmt()
         .with_env_filter(tracing_filter)
         .compact()

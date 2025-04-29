@@ -7,7 +7,7 @@ pub mod std_output;
 pub mod templates;
 pub mod utils;
 
-pub use cli::{CommandArguments, DiscoveryCommand, PrintOptions, Template, WriteOptions};
+pub use cli::{CommandArguments, DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
 use render_template::{detect_render_markers, render_template};
@@ -187,7 +187,7 @@ impl McpDiscovery {
     }
 
     pub async fn create_document(&self, create_options: &WriteOptions) -> DiscoveryResult<()> {
-        tracing::info!("Creating '{}' ", create_options.filename.to_string_lossy());
+        tracing::trace!("Creating '{}' ", create_options.filename.to_string_lossy());
 
         let server_info = self
             .server_info
@@ -201,8 +201,11 @@ impl McpDiscovery {
         tokio::fs::write(&create_options.filename, content).await?;
 
         tracing::info!(
-            "File '{}' was created successfully.\n full path: {}",
+            "File '{}' was created successfully.",
             create_options.filename.to_string_lossy(),
+        );
+        tracing::info!(
+            "Full path: {}",
             create_options
                 .filename
                 .canonicalize()
@@ -214,7 +217,7 @@ impl McpDiscovery {
     }
 
     pub async fn update_document(&self, update_options: &WriteOptions) -> DiscoveryResult<()> {
-        tracing::info!("Updating '{}' ", update_options.filename.to_string_lossy());
+        tracing::trace!("Updating '{}' ", update_options.filename.to_string_lossy());
 
         let server_info = self
             .server_info
