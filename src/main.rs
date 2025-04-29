@@ -20,11 +20,7 @@ async fn main() {
     let filter = format!(
         "{}={}",
         env!("CARGO_PKG_NAME").to_string().replace("-", "_"),
-        command
-            .log_level()
-            .as_ref()
-            .unwrap_or(&LogLevel::info)
-            .to_string(),
+        command.log_level().as_ref().unwrap_or(&LogLevel::info)
     );
 
     let tracing_filter = EnvFilter::try_new(filter).unwrap_or_else(|_| EnvFilter::new("info"));
