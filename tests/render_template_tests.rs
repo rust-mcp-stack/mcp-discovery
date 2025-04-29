@@ -112,6 +112,7 @@ fn test_detect_render_markers_valid() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
     let server_info = default_mcp_server_info();
     let result = detect_render_markers(&options, &server_info);
@@ -138,6 +139,7 @@ fn test_detect_render_markers_duplicate_template_start() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
     let server_info = default_mcp_server_info();
     let result = detect_render_markers(&options, &server_info);
@@ -163,6 +165,7 @@ fn test_detect_render_markers_template_outside_render() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
     let server_info = default_mcp_server_info();
     let result = detect_render_markers(&options, &server_info);
@@ -188,6 +191,7 @@ fn test_detect_render_markers_unmatched_template_end() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
     let server_info = default_mcp_server_info();
     let result = detect_render_markers(&options, &server_info);
@@ -214,6 +218,7 @@ fn test_detect_render_markers_conflicting_templates() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
     let server_info = default_mcp_server_info();
     let result = detect_render_markers(&options, &server_info);

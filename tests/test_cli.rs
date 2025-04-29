@@ -113,6 +113,7 @@ fn test_file_options_match_template_builtin() {
         template_file: None,
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
 
     let result = file_options.match_template();
@@ -128,6 +129,7 @@ fn test_file_options_match_template_custom() {
         template_file: Some(PathBuf::from("templates/markdown/markdown_template.md")),
         mcp_server_cmd: vec!["mcp-server".to_string()],
         template_string: None,
+        log_level: None,
     };
 
     let result = file_options.match_template();
