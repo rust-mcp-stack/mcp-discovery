@@ -8,9 +8,12 @@ pub struct MyClientHandler;
 impl ClientHandler for MyClientHandler {
     async fn handle_process_error(
         &self,
-        _error_message: String,
-        _: &dyn McpClient,
+        error_message: String,
+        runtime: &dyn McpClient,
     ) -> std::result::Result<(), RpcError> {
+        if !runtime.is_shut_down().await {
+            eprintln!("{}", error_message);
+        }
         Ok(())
     }
 }
