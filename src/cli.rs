@@ -1,4 +1,5 @@
 use std::{
+    fmt::Display,
     io::{self, ErrorKind},
     path::PathBuf,
 };
@@ -13,6 +14,28 @@ pub enum Template {
     MdPlain,
     Html,
     Txt,
+}
+
+#[derive(Debug, Clone, ValueEnum, PartialEq)]
+#[allow(non_camel_case_types)]
+pub enum LogLevel {
+    error,
+    warn,
+    info,
+    debug,
+    trace,
+}
+
+impl Display for LogLevel {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            LogLevel::error => write!(f, "error"),
+            LogLevel::warn => write!(f, "warn"),
+            LogLevel::info => write!(f, "info"),
+            LogLevel::debug => write!(f, "debug"),
+            LogLevel::trace => write!(f, "trace"),
+        }
+    }
 }
 
 #[derive(Subcommand, Debug)]
@@ -47,6 +70,9 @@ pub struct WriteOptions {
     )]
     pub template_string: Option<String>,
 
+    /// Specifies the logging level for the application (default: info)
+    #[arg(long, short)]
+    pub log_level: Option<LogLevel>,
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
@@ -98,6 +124,10 @@ conflicts_with_all = ["template", "template_string"])]
 )]
     pub template_string: Option<String>,
 
+    /// Specifies the logging level for the application (default: info)
+    #[arg(long, short)]
+    pub log_level: Option<LogLevel>,
+
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
@@ -125,6 +155,14 @@ impl DiscoveryCommand {
             DiscoveryCommand::Create(create_options) => &create_options.mcp_server_cmd,
             DiscoveryCommand::Update(update_options) => &update_options.mcp_server_cmd,
             DiscoveryCommand::Print(print_args) => &print_args.mcp_server_cmd,
+        }
+    }
+
+    pub fn log_level(&self) -> &Option<LogLevel> {
+        match self {
+            DiscoveryCommand::Create(create_options) => &create_options.log_level,
+            DiscoveryCommand::Update(update_options) => &update_options.log_level,
+            DiscoveryCommand::Print(print_args) => &print_args.log_level,
         }
     }
 }
@@ -155,6 +193,10 @@ pub struct CommandArguments {
      conflicts_with_all = ["template", "template_file"]
  )]
     pub template_string: Option<String>,
+
+    /// Specifies the logging level for the application (default: info)
+    #[arg(long, short)]
+    pub log_level: Option<LogLevel>,
 
     /// Command and arguments to launch the MCP server.
     #[arg(

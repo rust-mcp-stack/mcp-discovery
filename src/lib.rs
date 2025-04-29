@@ -7,7 +7,7 @@ pub mod std_output;
 pub mod templates;
 pub mod utils;
 
-pub use cli::{CommandArguments, DiscoveryCommand, PrintOptions, Template, WriteOptions};
+pub use cli::{CommandArguments, DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
 use render_template::{detect_render_markers, render_template};
@@ -37,6 +37,16 @@ pub struct McpCapabilities {
     pub resources: bool,
     pub logging: bool,
     pub experimental: bool,
+}
+
+impl Display for McpCapabilities {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "tools:{}, prompts:{}, resources:{}, logging:{}, experimental:{}",
+            self.tools, self.prompts, self.resources, self.logging, self.experimental
+        )
+    }
 }
 
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
@@ -177,6 +187,8 @@ impl McpDiscovery {
     }
 
     pub async fn create_document(&self, create_options: &WriteOptions) -> DiscoveryResult<()> {
+        tracing::trace!("Creating '{}' ", create_options.filename.to_string_lossy());
+
         let server_info = self
             .server_info
             .as_ref()
@@ -188,10 +200,25 @@ impl McpDiscovery {
 
         tokio::fs::write(&create_options.filename, content).await?;
 
+        tracing::info!(
+            "File '{}' was created successfully.",
+            create_options.filename.to_string_lossy(),
+        );
+        tracing::info!(
+            "Full path: {}",
+            create_options
+                .filename
+                .canonicalize()
+                .map(|f| f.to_string_lossy().into_owned())
+                .unwrap_or_else(|_| create_options.filename.to_string_lossy().into_owned())
+        );
+
         Ok(())
     }
 
     pub async fn update_document(&self, update_options: &WriteOptions) -> DiscoveryResult<()> {
+        tracing::trace!("Updating '{}' ", update_options.filename.to_string_lossy());
+
         let server_info = self
             .server_info
             .as_ref()
@@ -222,7 +249,10 @@ impl McpDiscovery {
         let updated_content = content_lines.join(&template_markers.line_ending);
 
         std::fs::write(&update_options.filename, updated_content)?;
-
+        tracing::info!(
+            "File '{}' was updated successfully.",
+            update_options.filename.to_string_lossy()
+        );
         Ok(())
     }
 
@@ -370,6 +400,8 @@ impl McpDiscovery {
             return Ok(None);
         }
 
+        tracing::trace!("retrieving tools...");
+
         let tools_result = client
             .list_tools(Some(ListToolsRequestParams::default()))
             .await?
@@ -399,6 +431,7 @@ impl McpDiscovery {
         if !client.server_has_prompts().unwrap_or(false) {
             return Ok(None);
         }
+        tracing::trace!("retrieving prompts...");
 
         let prompts: Vec<Prompt> = client
             .list_prompts(Some(ListPromptsRequestParams::default()))
@@ -416,6 +449,8 @@ impl McpDiscovery {
             return Ok(None);
         }
 
+        tracing::trace!("retrieving resources...");
+
         let resources: Vec<Resource> = client
             .list_resources(Some(ListResourcesRequestParams::default()))
             .await?
@@ -432,13 +467,15 @@ impl McpDiscovery {
             return Ok(None);
         }
 
+        tracing::trace!("retrieving resource templates...");
+
         let result = client
             .list_resource_templates(Some(ListResourceTemplatesRequestParams::default()))
             .await;
         match result {
             Ok(data) => Ok(Some(data.resource_templates)),
             Err(err) => {
-                eprintln!("Unable to retrieve resource templates : {}", err);
+                tracing::trace!("Unable to retrieve resource templates : {}", err);
                 Ok(None)
             }
         }
@@ -450,6 +487,12 @@ impl McpDiscovery {
         let server_version = client
             .server_version()
             .ok_or(DiscoveryError::ServerNotInitialized)?;
+
+        tracing::trace!(
+            "Server: {} v{}",
+            server_version.name,
+            server_version.version
+        );
 
         let capabilities: McpCapabilities = McpCapabilities {
             tools: client
@@ -468,6 +511,8 @@ impl McpDiscovery {
                 .server_has_experimental()
                 .ok_or(DiscoveryError::ServerNotInitialized)?,
         };
+
+        tracing::trace!("Capabilities: {}", capabilities);
 
         let tools = self.tools(Arc::clone(&client)).await?;
         let prompts = self.get_prompts(Arc::clone(&client)).await?;
@@ -499,7 +544,19 @@ impl McpDiscovery {
             protocol_version: JSONRPC_VERSION.into(),
         };
 
+        tracing::trace!(
+            "Client : {} v{}",
+            client_details.client_info.name,
+            client_details.client_info.version
+        );
+
         let (mcp_command, mcp_args) = self.options.mcp_launch_command().split_at(1);
+
+        tracing::trace!(
+            "launching command : {} {}",
+            mcp_command.first().map(String::as_ref).unwrap_or(""),
+            mcp_args.join(" ")
+        );
 
         let transport = StdioTransport::create_with_server_launch(
             mcp_command.first().unwrap(),
@@ -512,7 +569,11 @@ impl McpDiscovery {
 
         let client = client_runtime::create_client(client_details, transport, handler);
 
+        tracing::trace!("Launching MCP server ...");
+
         client.clone().start().await?;
+
+        tracing::trace!("MCP server started successfully.");
 
         Ok(client)
     }
