@@ -1,7 +1,7 @@
 use clap::Parser;
 use colored::Colorize;
-
 use mcp_discovery::{CommandArguments, DiscoveryCommand, McpDiscovery, PrintOptions};
+use tracing_subscriber::{self, EnvFilter};
 
 #[tokio::main]
 async fn main() {
@@ -15,6 +15,12 @@ async fn main() {
             template_file: args.template_file,
             template_string: args.template_string,
         }));
+
+    let tracing_filter = EnvFilter::try_new("info").unwrap_or_else(|_| EnvFilter::new("info"));
+    tracing_subscriber::fmt()
+        .with_env_filter(tracing_filter)
+        .compact()
+        .init();
 
     let launch_message = format!(
         "{} {} ...",
