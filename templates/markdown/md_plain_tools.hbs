@@ -4,7 +4,7 @@
 {{#each tools}}
 
 - **{{{this.name}}}**
-  - {{{replace_regex (replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>") "\\n" "\n  ") "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}
+  - {{{format_text this.description "<br/>" "['``']"}}}
   {{#if this.params}}  
   - **Inputs:**
     {{#each this.params}}

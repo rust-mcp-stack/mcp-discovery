@@ -5,7 +5,7 @@
 
 - **{{{this.name}}}**
   {{#if this.description}}
-  - {{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>") "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}{{/if}}
+  - {{{format_text this.description "<br/>" "['``']"}}}{{/if}}
     {{#if this.uri}}
   - URI: <a>{{this.uri}}</a> <i>{{#if this.mimeType}}({{{this.mimeType}}}){{/if}}</i>
     {{/if}}

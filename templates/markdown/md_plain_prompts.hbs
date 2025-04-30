@@ -5,6 +5,6 @@
     {{#each prompts}}
 
 - **{{{this.name}}}**
-  - {{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>") "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}
+  - {{{format_text this.description "<br/>" "['``']"}}}
     {{/each}}
 {{/if}}

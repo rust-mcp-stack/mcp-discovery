@@ -16,8 +16,7 @@
             <td>
                 <code><b>{{{this.name}}}</b></code>
             </td>
-            <td>{{{replace_regex (replace_regex this.description "'([\\w\\-\\_]+)'" "<code>$1</code>")
-                "\\[([\\w\\-\\_]+)\\]" "<code>$1</code>"}}}</td>
+            <td>{{{format_text this.description "<br/>" "['``']"}}}</td>
         </tr>
         {{/each}}
     </tbody>
