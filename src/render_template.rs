@@ -67,6 +67,46 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
     // Helper: Adds 1 to an integer value.
     handlebars_helper!(plus_one: |v: i64| format!("{}", v+1));
 
+    // Helper: replaces new line characters with provided `new_line` and optionally wraps tokens enclosed in specified delimiter pairs (like `` or '') with <code> tags.
+    // This can be used to format plain text for HTML or MD display, enabling readable line breaks and inline code styling.
+    handlebars_helper!(format_text: |text: Option<String>, new_line: Option<String>, code_wrap_chars:Option<String> | {
+
+        let text = text.unwrap_or_default();
+
+        let new_line =  new_line.unwrap_or(line_ending(&text, None).to_string());
+
+        let mut replacers = vec![("\\n".to_string(),new_line)];
+
+        if let Some(code_wrap_chars) = code_wrap_chars {
+            // Proceed only if `code_wrap_chars` contains an even number of characters,
+            // so we can pair each starting wrap character with a corresponding ending one.
+            if code_wrap_chars.len() % 2 == 0 {
+                for (left_char, right_char) in code_wrap_chars
+                    .chars()
+                    .take(code_wrap_chars.len() / 2)
+                    .zip(code_wrap_chars.chars().rev())
+                {
+                    replacers.push((
+                        format!(
+                            "{}([\\w\\-\\_]+){}",
+                            regex::escape(&left_char.to_string()),
+                            regex::escape(&right_char.to_string()),
+                        ),
+                        "<code>$1</code>".to_string(),
+                    ));
+                }
+            }
+        }
+
+        let mut result = text;
+        for (regex_str, replace_str) in replacers {
+            let re = Regex::new(&regex_str).unwrap();
+            result = re.replace_all(&result, replace_str).to_string();
+        }
+
+        result
+    });
+
     // Helper: Formats a capability tag with a boolean indicator and optional count.
     handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>| {
         let count_str = count.map_or("".to_string(), |count| format!(" ({})", count));
@@ -120,6 +160,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
     let helpers: Vec<(&str, Box<dyn HelperDef + Send + Sync>)> = vec![
         ("plus_one", Box::new(plus_one)),
         ("underline", Box::new(underline)),
+        ("format_text", Box::new(format_text)),
         ("capability_tag", Box::new(capability_tag)),
         ("capability", Box::new(capability)),
         ("capability_title", Box::new(capability_title)),
