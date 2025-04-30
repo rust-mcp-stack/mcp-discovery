@@ -37,6 +37,45 @@ Hello, World!
 ─────────────
 ```
 
+### `format_text`
+
+Thu helper is designed to prepare plain or structured text for HTML or Markdown-like rendering. It does the following:
+
+- Replaces line breaks (`\n`) in the input text with a custom line break string (like `<br/>` or an actual newline).
+
+- Wraps inline code snippets—identified by delimiter pairs like <code>\`</code> or `'` — in `<code>` tags for HTML formatting (e.g., turning 'param' into `<code>param</code>`).
+
+This helper is especially useful for formatting capability descriptions in web documentation, markdown previews, or any UI where readable line breaks and inline code styling are needed.
+
+The `code_wrap_chars` parameter (last parameter of the helper function) defines pairs of characters that will wrap inline code blocks and get converted to <code>...</code> in the output.
+
+You must pass a string made up of an even number of characters, where each two characters form one pair:
+
+    The first character is the opening delimiter
+    The last character is the closing delimiter
+
+| Input    | Effect                                 |
+| -------- | -------------------------------------- |
+| `"[]"`   | Matches `[code]` → `<code>code</code>` |
+| `"''"`   | Matches `'code'` → `<code>code</code>` |
+| `"['']"` | Matches both `[code]` and `'code'`     |
+
+Example:
+
+```hbs
+{{format_text "Each entry includes 'name', `type` , and 'children' for directories." "<br>" "'``'" }}
+```
+
+Output text:
+
+```md
+Each entry includes <code>name</code>, <code>type</code> , and <code>children</code> for directories.
+```
+
+Rendered Output:
+
+Each entry includes <code>name</code>, <code>type</code> , and <code>children</code> for directories.
+
 ### `capability`
 
 This helper formats a capability with an optional count and a boolean indicator based on whether the capability is supported.
