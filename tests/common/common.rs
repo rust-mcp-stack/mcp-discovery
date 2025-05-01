@@ -1,4 +1,4 @@
-use mcp_discovery::types::{McpCapabilities, McpServerInfo};
+use mcp_discovery::{McpCapabilities, McpServerInfo};
 use rust_mcp_sdk::macros::JsonSchema;
 
 pub fn default_mcp_server_info() -> McpServerInfo {
