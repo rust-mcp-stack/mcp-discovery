@@ -1,11 +1,17 @@
 pub mod error;
 mod handler;
-pub mod render_template;
-pub mod schema;
-pub mod std_output;
-pub mod templates;
-pub mod types;
-pub mod utils;
+mod render_template;
+mod schema;
+mod std_output;
+mod templates;
+mod types;
+mod utils;
+
+pub use templates::OutputTemplate;
+pub use types::{
+    DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
+    PrintOptions, Template, WriteOptions,
+};
 
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
@@ -13,10 +19,6 @@ use render_template::{detect_render_markers, render_template};
 use schema::tool_params;
 use std::io::stdout;
 use std_output::{print_header, print_list, print_summary};
-pub use templates::OutputTemplate;
-use types::{
-    DiscoveryCommand, McpCapabilities, McpServerInfo, McpToolMeta, PrintOptions, WriteOptions,
-};
 
 use std::sync::Arc;
 
@@ -326,10 +328,7 @@ impl McpDiscovery {
         Ok(Some(tools))
     }
 
-    async fn get_prompts(
-        &self,
-        client: Arc<ClientRuntime>,
-    ) -> DiscoveryResult<Option<Vec<Prompt>>> {
+    async fn prompts(&self, client: Arc<ClientRuntime>) -> DiscoveryResult<Option<Vec<Prompt>>> {
         if !client.server_has_prompts().unwrap_or(false) {
             return Ok(None);
         }
@@ -343,7 +342,7 @@ impl McpDiscovery {
         Ok(Some(prompts))
     }
 
-    async fn get_resources(
+    async fn resources(
         &self,
         client: Arc<ClientRuntime>,
     ) -> DiscoveryResult<Option<Vec<Resource>>> {
@@ -361,7 +360,7 @@ impl McpDiscovery {
         Ok(Some(resources))
     }
 
-    async fn get_resource_templates(
+    async fn resource_templates(
         &self,
         client: Arc<ClientRuntime>,
     ) -> DiscoveryResult<Option<Vec<ResourceTemplate>>> {
@@ -417,9 +416,9 @@ impl McpDiscovery {
         tracing::trace!("Capabilities: {}", capabilities);
 
         let tools = self.tools(Arc::clone(&client)).await?;
-        let prompts = self.get_prompts(Arc::clone(&client)).await?;
-        let resources = self.get_resources(Arc::clone(&client)).await?;
-        let resource_templates = self.get_resource_templates(Arc::clone(&client)).await?;
+        let prompts = self.prompts(Arc::clone(&client)).await?;
+        let resources = self.resources(Arc::clone(&client)).await?;
+        let resource_templates = self.resource_templates(Arc::clone(&client)).await?;
 
         let server_info = McpServerInfo {
             name: server_version.name,

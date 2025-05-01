@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
 use clap::{arg, command, Parser, Subcommand, ValueEnum};
-use mcp_discovery::types::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
+use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 pub enum CliTemplate {
@@ -207,7 +207,6 @@ pub struct CommandArguments {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use mcp_discovery::types::DiscoveryCommand;
 
     // Helper function to parse arguments from a vector of strings
     pub fn parse_args(args: Vec<&str>) -> CommandArguments {

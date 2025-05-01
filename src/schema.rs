@@ -8,7 +8,7 @@ use crate::{
 };
 
 /// Parses an object schema into a vector of `McpToolSParams`.
-pub fn get_param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<McpToolSParams>> {
+pub fn param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<McpToolSParams>> {
     let properties = object_map
         .get("properties")
         .and_then(|v| v.as_object())
@@ -31,7 +31,7 @@ pub fn get_param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<
                     "Property '{}' is not an object",
                     param_name
                 )))?;
-            let param_type = get_param_type(param_value)?;
+            let param_type = param_type(param_value)?;
             let param_description = object_map
                 .get("description")
                 .and_then(|v| v.as_str())
@@ -50,7 +50,7 @@ pub fn get_param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<
 }
 
 /// Determines the parameter type from a schema definition.
-pub fn get_param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTypes> {
+pub fn param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTypes> {
     let type_name =
         type_info
             .get("type")
@@ -66,9 +66,9 @@ pub fn get_param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTy
                     "Missing or invalid 'items' field in array type".to_string(),
                 ),
             )?;
-            Ok(ParamTypes::Array(vec![get_param_type(items_map)?]))
+            Ok(ParamTypes::Array(vec![param_type(items_map)?]))
         }
-        "object" => Ok(ParamTypes::Object(get_param_object(type_info)?)),
+        "object" => Ok(ParamTypes::Object(param_object(type_info)?)),
         _ => Ok(ParamTypes::Primitive(type_name.to_string())),
     }
 }
@@ -81,7 +81,7 @@ pub fn tool_params(
             .iter()
             .map(|(prop_name, prop_map)| {
                 let param_name = prop_name.to_owned();
-                let prop_type = get_param_type(prop_map).unwrap();
+                let prop_type = param_type(prop_map).unwrap();
                 let prop_description = prop_map
                     .get("description")
                     .and_then(|v| v.as_str())
