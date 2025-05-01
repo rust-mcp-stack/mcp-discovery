@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.6](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.5...v0.1.6) (2025-05-01)
+
+
+### 🐛 Bug Fixes
+
+* Update metadata ([1031033](https://github.com/rust-mcp-stack/mcp-discovery/commit/1031033ccbfda7891514d6daa3f7beab40a345c1))
+
 ## [0.1.5](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.4...v0.1.5) (2025-05-01)
 
 
