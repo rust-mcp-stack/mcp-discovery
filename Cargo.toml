@@ -17,12 +17,18 @@ homepage = "https://rust-mcp-stack.github.io/mcp-discovery"
 license = "MIT"
 edition = "2021"
 
+[lib]
+name = "mcp-discovery"
+path = "src/lib.rs"
+
 [package.metadata.wix]
 upgrade-guid = "F8C005B2-0006-40E0-93CF-01A2DA37CAB7"
 path-guid = "FE1B50BA-4553-470C-8819-8575C25AE238"
 license = false
 eula = false
 
+[package.metadata.docs.rs]
+all-features = true # Build with all features
 
 [dependencies]
 rust-mcp-sdk = "0.2"

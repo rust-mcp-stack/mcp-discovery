@@ -1,3 +1,5 @@
+//! A lightweight CLI tool for discovering and documenting MCP Server capabilities.
+
 pub mod error;
 mod handler;
 mod render_template;
