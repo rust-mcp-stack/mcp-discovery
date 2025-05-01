@@ -11,13 +11,13 @@ pub enum CliTemplate {
     Txt,
 }
 
-impl Into<Template> for CliTemplate {
-    fn into(self) -> Template {
-        match self {
-            CliTemplate::Md => Template::Md,
-            CliTemplate::MdPlain => Template::MdPlain,
-            CliTemplate::Html => Template::Html,
-            CliTemplate::Txt => Template::Txt,
+impl From<CliTemplate> for Template {
+    fn from(value: CliTemplate) -> Self {
+        match value {
+            CliTemplate::Md => Self::Md,
+            CliTemplate::MdPlain => Self::MdPlain,
+            CliTemplate::Html => Self::Html,
+            CliTemplate::Txt => Self::Txt,
         }
     }
 }
@@ -32,14 +32,14 @@ pub enum CliLogLevel {
     trace,
 }
 
-impl Into<LogLevel> for CliLogLevel {
-    fn into(self) -> LogLevel {
-        match self {
-            CliLogLevel::error => LogLevel::error,
-            CliLogLevel::warn => LogLevel::warn,
-            CliLogLevel::info => LogLevel::info,
-            CliLogLevel::debug => LogLevel::debug,
-            CliLogLevel::trace => LogLevel::trace,
+impl From<CliLogLevel> for LogLevel {
+    fn from(value: CliLogLevel) -> Self {
+        match value {
+            CliLogLevel::error => Self::error,
+            CliLogLevel::warn => Self::warn,
+            CliLogLevel::info => Self::info,
+            CliLogLevel::debug => Self::debug,
+            CliLogLevel::trace => Self::trace,
         }
     }
 }
@@ -89,15 +89,15 @@ pub struct CliWriteOptions {
     pub mcp_server_cmd: Vec<String>,
 }
 
-impl Into<WriteOptions> for CliWriteOptions {
-    fn into(self) -> WriteOptions {
-        WriteOptions {
-            filename: self.filename,
-            template: self.template.map(|t| t.into()),
-            template_file: self.template_file,
-            template_string: self.template_string,
-            log_level: self.log_level.map(|l| l.into()),
-            mcp_server_cmd: self.mcp_server_cmd,
+impl From<CliWriteOptions> for WriteOptions {
+    fn from(value: CliWriteOptions) -> Self {
+        Self {
+            filename: value.filename,
+            template: value.template.map(|t| t.into()),
+            template_file: value.template_file,
+            template_string: value.template_string,
+            log_level: value.log_level.map(|l| l.into()),
+            mcp_server_cmd: value.mcp_server_cmd,
         }
     }
 }
@@ -135,29 +135,27 @@ conflicts_with_all = ["template", "template_string"])]
     pub mcp_server_cmd: Vec<String>,
 }
 
-impl Into<PrintOptions> for CliPrintOptions {
-    fn into(self) -> PrintOptions {
-        PrintOptions {
-            template: self.template.map(|t| t.into()),
-            template_file: self.template_file,
-            template_string: self.template_string,
-            log_level: self.log_level.map(|l| l.into()),
-            mcp_server_cmd: self.mcp_server_cmd,
+impl From<CliPrintOptions> for PrintOptions {
+    fn from(value: CliPrintOptions) -> Self {
+        Self {
+            template: value.template.map(|t| t.into()),
+            template_file: value.template_file,
+            template_string: value.template_string,
+            log_level: value.log_level.map(|l| l.into()),
+            mcp_server_cmd: value.mcp_server_cmd,
         }
     }
 }
 
-impl Into<DiscoveryCommand> for CliDiscoveryCommand {
-    fn into(self) -> DiscoveryCommand {
-        match self {
-            CliDiscoveryCommand::Print(cli_print_options) => {
-                DiscoveryCommand::Print(cli_print_options.into())
-            }
+impl From<CliDiscoveryCommand> for DiscoveryCommand {
+    fn from(value: CliDiscoveryCommand) -> Self {
+        match value {
+            CliDiscoveryCommand::Print(cli_print_options) => Self::Print(cli_print_options.into()),
             CliDiscoveryCommand::Create(cli_write_options) => {
-                DiscoveryCommand::Create(cli_write_options.into())
+                Self::Create(cli_write_options.into())
             }
             CliDiscoveryCommand::Update(cli_write_options) => {
-                DiscoveryCommand::Update(cli_write_options.into())
+                Self::Update(cli_write_options.into())
             }
         }
     }
