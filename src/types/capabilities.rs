@@ -1,6 +1,7 @@
 use rust_mcp_schema::{Prompt, Resource, ResourceTemplate};
 use std::fmt::Display;
 
+/// Represents the capabilities of an MCP server, indicating which features are supported.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub struct McpCapabilities {
     pub tools: bool,
@@ -20,6 +21,7 @@ impl Display for McpCapabilities {
     }
 }
 
+/// Defines the possible parameter types for tools, which can be primitive (e.g., string, int), objects, or arrays.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub enum ParamTypes {
     Primitive(String),
@@ -69,6 +71,7 @@ impl Display for ParamTypes {
 //     }
 // }
 
+/// Represents a tool parameter, including its name, type, description, and whether it's required.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub struct McpToolSParams {
     pub param_name: String,
@@ -78,6 +81,7 @@ pub struct McpToolSParams {
     pub required: bool,
 }
 
+/// Represents metadata for an MCP tool, including its name, description, and parameters.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub struct McpToolMeta {
     pub name: String,
@@ -86,6 +90,7 @@ pub struct McpToolMeta {
     pub params: Vec<McpToolSParams>,
 }
 
+/// Represents the MCP server's information, including its name, version, capabilities, and supported features.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub struct McpServerInfo {
     pub name: String,

@@ -74,7 +74,8 @@ pub static PARTIALS: [(&str, &str); 21] = [
     ("txt-summary", TEXT_SUMMARY),
 ];
 
-// Struct to hold information about inline templates
+/// Struct to hold information about inline templates
+/// Used for templates embedded within other content with specific markers
 #[derive(Debug)]
 pub struct InlineTemplateInfo {
     pub template: String,
@@ -82,7 +83,8 @@ pub struct InlineTemplateInfo {
     pub marker_end: String,
 }
 
-// Enum representing different types of output templates
+/// Enum representing different types of output templates
+/// Used to specify the type of template to render
 #[derive(Debug)]
 pub enum OutputTemplate {
     /// Markdown template (generates tables)
@@ -104,12 +106,15 @@ pub enum OutputTemplate {
 }
 
 impl OutputTemplate {
+    /// Creates an OutputTemplate from a file path
+    /// Resolves the template file path relative to a base file if provided
+    /// Returns a DiscoveryResult containing the CustomTemplate variant
     pub fn from_file(template_file: &Path, base_file: Option<&PathBuf>) -> DiscoveryResult<Self> {
         let actual_template_file = find_template_file(template_file, base_file)?;
         Ok(OutputTemplate::CustomTemplate(actual_template_file))
     }
 
-    // Returns the content of the template as a Cow string
+    /// Returns the content of the template as a Cow string
     pub fn content(&self) -> Cow<'_, str> {
         match &self {
             // Return borrowed references to static templates
@@ -133,7 +138,8 @@ impl OutputTemplate {
         }
     }
 
-    // Generates formatted inline template, including the markers and proper line endings
+    /// Generates formatted inline template, including markers and proper line endings
+    /// Used for InlineTemplate variant to format the output with start/end markers
     fn inline_template(&self, inline_template_info: &InlineTemplateInfo) -> String {
         let line_ending = line_ending(&inline_template_info.template, None);
         format!(
@@ -147,6 +153,8 @@ impl OutputTemplate {
         )
     }
 
+    /// Renders the template with provided server information
+    /// Returns the rendered output as a `DiscoveryResult<String>`
     pub fn render_template(&self, server_info: &McpServerInfo) -> DiscoveryResult<String> {
         let rendered = render_template(self, server_info)?;
         match self {

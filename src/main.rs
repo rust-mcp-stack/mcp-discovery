@@ -2,7 +2,7 @@ mod cli;
 use clap::Parser;
 use cli::{CliDiscoveryCommand, CliPrintOptions, CommandArguments};
 use colored::Colorize;
-use mcp_discovery::{DiscoveryCommand, LogLevel, McpDiscovery};
+use mcp_discovery::{DiscoveryCommand, LogLevel, McpDiscovery, OutputTemplate};
 use tracing_subscriber::{self, EnvFilter};
 
 #[tokio::main]

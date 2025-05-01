@@ -11,6 +11,7 @@ use crate::{
     OutputTemplate,
 };
 
+/// Enum representing the main actions that can be performed for MCP discovery.
 #[derive(Debug)]
 pub enum DiscoveryCommand {
     /// Displays MCP server capability details in the terminal.
@@ -20,6 +21,8 @@ pub enum DiscoveryCommand {
     /// Updates a file by adding MCP server capability information between specified markers.
     Update(WriteOptions),
 }
+
+/// Enum defining the types of built-in templates supported for output formatting.
 #[derive(Debug, Clone, PartialEq)]
 pub enum Template {
     Md,
@@ -41,6 +44,7 @@ impl FromStr for Template {
     }
 }
 
+/// Enum representing supported log levels for controlling output verbosity.
 #[derive(Debug, Clone, PartialEq)]
 #[allow(non_camel_case_types)]
 pub enum LogLevel {
@@ -63,6 +67,7 @@ impl Display for LogLevel {
     }
 }
 
+/// Options used when running the `Print` variant of `DiscoveryCommand`.
 #[derive(Debug)]
 pub struct PrintOptions {
     /// Select an output template from the built-in options.
@@ -82,6 +87,7 @@ pub struct PrintOptions {
 }
 
 impl PrintOptions {
+    /// Resolves the output template (built-in, file, or string) based on user input.
     pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
         match_template(
             None,
@@ -92,6 +98,7 @@ impl PrintOptions {
     }
 }
 
+/// Options used when running the `Create` or `Update` variants of `DiscoveryCommand`.
 #[derive(Debug)]
 pub struct WriteOptions {
     pub filename: PathBuf,
@@ -112,6 +119,7 @@ pub struct WriteOptions {
 }
 
 impl WriteOptions {
+    /// Resolves the output template (built-in, file, or string) based on user input.
     pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
         match_template(
             Some(&self.filename),
@@ -134,6 +142,7 @@ impl WriteOptions {
 }
 
 impl DiscoveryCommand {
+    /// Retrieves the MCP server launch command for the current variant.
     pub fn mcp_launch_command(&self) -> &Vec<String> {
         match self {
             DiscoveryCommand::Create(create_options) => &create_options.mcp_server_cmd,
@@ -142,6 +151,7 @@ impl DiscoveryCommand {
         }
     }
 
+    /// Retrieves the configured log level for the current variant.
     pub fn log_level(&self) -> &Option<LogLevel> {
         match self {
             DiscoveryCommand::Create(create_options) => &create_options.log_level,

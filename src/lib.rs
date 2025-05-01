@@ -34,8 +34,11 @@ use rust_mcp_sdk::{
     McpClient, StdioTransport, TransportOptions,
 };
 
+/// Core struct representing the discovery mechanism for the MCP server.
 pub struct McpDiscovery {
+    /// Discovery action and its options
     options: DiscoveryCommand,
+    /// Collected server capabilities and metadata
     pub server_info: Option<McpServerInfo>,
 }
 
@@ -47,6 +50,7 @@ impl McpDiscovery {
         }
     }
 
+    /// Entry point to execute the discovery workflow based on the command.
     pub async fn start(&mut self) -> DiscoveryResult<()> {
         // launch mcp server and discover capabilities
 
@@ -60,13 +64,14 @@ impl McpDiscovery {
                 self.update_document(update_options).await?;
             }
             DiscoveryCommand::Print(print_options) => {
-                self.print_mcp_capabilities(print_options).await?;
+                self.print_server_capabilities(print_options).await?;
             }
         };
         Ok(())
     }
 
-    pub async fn print_mcp_capabilities(
+    /// Prints MCP server capabilities using a specific template or default view.
+    pub async fn print_server_capabilities(
         &self,
         print_options: &PrintOptions,
     ) -> DiscoveryResult<()> {
@@ -90,6 +95,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Creates a new file using a specified template and discovered server info.
     pub async fn create_document(&self, create_options: &WriteOptions) -> DiscoveryResult<()> {
         tracing::trace!("Creating '{}' ", create_options.filename.to_string_lossy());
 
@@ -120,6 +126,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Updates an existing file by replacing only templated sections.
     pub async fn update_document(&self, update_options: &WriteOptions) -> DiscoveryResult<()> {
         tracing::trace!("Updating '{}' ", update_options.filename.to_string_lossy());
 
@@ -160,7 +167,8 @@ impl McpDiscovery {
         Ok(())
     }
 
-    pub fn print_summary(&self) -> DiscoveryResult<usize> {
+    /// Print a brief summary of the discovered server information.
+    fn print_summary(&self) -> DiscoveryResult<usize> {
         let server_info = self
             .server_info
             .as_ref()
@@ -168,19 +176,8 @@ impl McpDiscovery {
         Ok(print_summary(stdout(), server_info)?)
     }
 
-    pub fn render_with_template(&self, template: OutputTemplate) -> DiscoveryResult<()> {
-        let server_info = self
-            .server_info
-            .as_ref()
-            .ok_or(DiscoveryError::NotDiscovered)?;
-
-        let content = template.render_template(server_info)?;
-
-        println!("{}", content);
-        Ok(())
-    }
-
-    pub fn print_server_details(&self) -> DiscoveryResult<()> {
+    /// Prints summary and then detailed info about tools, prompts, resources, and templates from server.
+    fn print_server_details(&self) -> DiscoveryResult<()> {
         let table_size = self.print_summary()?;
 
         let server_info = self
@@ -296,6 +293,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Retrieves tools metadata from the MCP server.
     pub async fn tools(
         &self,
         client: Arc<ClientRuntime>,
@@ -342,6 +340,7 @@ impl McpDiscovery {
         Ok(Some(prompts))
     }
 
+    /// Retrieves resources from the server.
     async fn resources(
         &self,
         client: Arc<ClientRuntime>,
@@ -360,6 +359,7 @@ impl McpDiscovery {
         Ok(Some(resources))
     }
 
+    /// Retrieves resource templates from the server.
     async fn resource_templates(
         &self,
         client: Arc<ClientRuntime>,
@@ -382,6 +382,7 @@ impl McpDiscovery {
         }
     }
 
+    /// Discovers all MCP server capabilities and stores them internally.
     pub async fn discover(&mut self) -> DiscoveryResult<&McpServerInfo> {
         let client = self.launch_mcp_server().await?;
 
@@ -435,7 +436,8 @@ impl McpDiscovery {
         Ok(self.server_info.as_ref().unwrap())
     }
 
-    pub async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+    /// Launches the MCP server as a subprocess and initializes the client.
+    async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
         let client_details: InitializeRequestParams = InitializeRequestParams {
             capabilities: ClientCapabilities::default(),
             client_info: Implementation {
