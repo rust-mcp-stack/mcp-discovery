@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.5](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.4...v0.1.5) (2025-05-01)
+
+
+### 🚀 Features
+
+* Update mcp discovery to support library crate ([#10](https://github.com/rust-mcp-stack/mcp-discovery/issues/10)) ([14c8e31](https://github.com/rust-mcp-stack/mcp-discovery/commit/14c8e3154d7acd2f1a348f93e9c786079a6d7c04))
+
 ## [0.1.4](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.3...v0.1.4) (2025-04-30)
 
 
