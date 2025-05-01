@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.8](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.7...v0.1.8) (2025-05-01)
+
+
+### 📚 Documentation
+
+* Docs.rs documentation ([f87d947](https://github.com/rust-mcp-stack/mcp-discovery/commit/f87d947a2de6a14f3b106c7f5d449a04663330e1))
+
 ## [0.1.7](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.6...v0.1.7) (2025-05-01)
 
 
