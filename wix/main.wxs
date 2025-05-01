@@ -173,7 +173,7 @@
         <!--<Icon Id='ProductICO' SourceFile='wix\Product.ico'/>-->
         <!--<Property Id='ARPPRODUCTICON' Value='ProductICO' />-->
 
-        <Property Id='ARPHELPLINK' Value='https://rust-mcp-stack.github.io/mcp-discovery'/>
+        <Property Id='ARPHELPLINK' Value='https://docs.rs/mcp-discovery'/>
         
         <UI>
             <UIRef Id='WixUI_FeatureTree'/>
