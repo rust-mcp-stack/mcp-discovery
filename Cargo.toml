@@ -9,7 +9,7 @@ documentation = "https://docs.rs/mcp-discovery"
 keywords = [
     "rust-mcp-stack",
     "mcp-discovery",
-    "mcp cli",
+    "mcp-cli",
     "rust-mcp-cli",
     "rust-mcp-discovery",
 ]
