@@ -1,5 +1,8 @@
 use clap::Parser;
-use mcp_discovery::{CommandArguments, McpCapabilities, McpServerInfo};
+use mcp_discovery::{
+    types::{McpCapabilities, McpServerInfo},
+    CommandArguments,
+};
 use rust_mcp_sdk::macros::JsonSchema;
 
 // Helper function to parse arguments from a vector of strings

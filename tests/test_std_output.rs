@@ -2,7 +2,7 @@ use mcp_discovery::{
     std_output::{
         print_header, print_json, print_list, print_summary, table_bottom, table_content, table_top,
     },
-    McpCapabilities, McpServerInfo,
+    types::{McpCapabilities, McpServerInfo},
 };
 use std::io::{self};
 use unicode_width::UnicodeWidthStr;

@@ -4,7 +4,7 @@ use serde_json::{Map, Value};
 
 use crate::{
     error::{DiscoveryError, DiscoveryResult},
-    McpToolSParams, ParamTypes,
+    types::{McpToolSParams, ParamTypes},
 };
 
 /// Parses an object schema into a vector of `McpToolSParams`.

@@ -15,10 +15,11 @@ use unicode_width::UnicodeWidthStr;
 use crate::{
     error::{DiscoveryError, DiscoveryResult},
     templates::{InlineTemplateInfo, PARTIALS},
+    types::ParamTypes,
     utils::{
         boolean_indicator, line_ending, match_template, RenderTemplateInfo, UpdateTemplateInfo,
     },
-    McpServerInfo, OutputTemplate, ParamTypes, Template, WriteOptions,
+    McpServerInfo, OutputTemplate, Template, WriteOptions,
 };
 
 /// Properties parsed from the `MCP_DISCOVERY_TEMPLATE_START` marker line in template files.
