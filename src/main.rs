@@ -1,21 +1,24 @@
+mod cli;
 use clap::Parser;
+use cli::{CliDiscoveryCommand, CliPrintOptions, CommandArguments};
 use colored::Colorize;
-use mcp_discovery::{CommandArguments, DiscoveryCommand, LogLevel, McpDiscovery, PrintOptions};
+use mcp_discovery::{DiscoveryCommand, LogLevel, McpDiscovery};
 use tracing_subscriber::{self, EnvFilter};
 
 #[tokio::main]
 async fn main() {
     let args = CommandArguments::parse();
 
-    let command = args
+    let command: DiscoveryCommand = args
         .command
-        .unwrap_or(DiscoveryCommand::Print(PrintOptions {
+        .unwrap_or(CliDiscoveryCommand::Print(CliPrintOptions {
             mcp_server_cmd: args.mcp_server_cmd,
             template: args.template,
             template_file: args.template_file,
             template_string: args.template_string,
             log_level: args.log_level,
-        }));
+        }))
+        .into();
 
     let filter = format!(
         "{}={}",

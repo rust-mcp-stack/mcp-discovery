@@ -1,6 +1,6 @@
 use path_clean::PathClean;
 
-use crate::{cli::Template, error::DiscoveryResult, OutputTemplate};
+use crate::{error::DiscoveryResult, types::Template, OutputTemplate};
 use std::{
     io::{self, ErrorKind},
     path::{Path, PathBuf},
@@ -76,7 +76,7 @@ pub fn boolean_indicator(boolean: bool) -> char {
     }
 }
 
-pub fn get_absolute_from_relative(
+pub fn absolute_from_relative(
     base_file_path: &Path,
     relative_file_path: &Path,
 ) -> io::Result<PathBuf> {
@@ -98,7 +98,7 @@ pub fn find_template_file(
     template_file: &Path,
     base_file: Option<&PathBuf>,
 ) -> DiscoveryResult<PathBuf> {
-    let relative_path = base_file.and_then(|f| get_absolute_from_relative(f, template_file).ok());
+    let relative_path = base_file.and_then(|f| absolute_from_relative(f, template_file).ok());
 
     let search_paths: Vec<_> = relative_path
         .into_iter()

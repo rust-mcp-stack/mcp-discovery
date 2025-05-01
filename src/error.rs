@@ -7,6 +7,8 @@ pub type DiscoveryResult<T> = core::result::Result<T, DiscoveryError>;
 pub enum DiscoveryError {
     #[error("The MCP Server failed to initialize successfully.")]
     ServerNotInitialized,
+    #[error("'{0}' is not a valid template!")]
+    InvalidTemplate(String),
     #[error("{0}")]
     InvalidSchema(String),
     #[error("{0}")]

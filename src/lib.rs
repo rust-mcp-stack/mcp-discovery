@@ -1,20 +1,24 @@
-mod cli;
 pub mod error;
 mod handler;
-pub mod render_template;
-pub mod schema;
-pub mod std_output;
-pub mod templates;
-pub mod utils;
+mod render_template;
+mod schema;
+mod std_output;
+mod templates;
+mod types;
+mod utils;
 
-pub use cli::{CommandArguments, DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
+pub use templates::OutputTemplate;
+pub use types::{
+    DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
+    PrintOptions, Template, WriteOptions,
+};
+
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
 use render_template::{detect_render_markers, render_template};
 use schema::tool_params;
-use std::{fmt::Display, io::stdout};
+use std::io::stdout;
 use std_output::{print_header, print_list, print_summary};
-pub use templates::OutputTemplate;
 
 use std::sync::Arc;
 
@@ -30,108 +34,11 @@ use rust_mcp_sdk::{
     McpClient, StdioTransport, TransportOptions,
 };
 
-#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-pub struct McpCapabilities {
-    pub tools: bool,
-    pub prompts: bool,
-    pub resources: bool,
-    pub logging: bool,
-    pub experimental: bool,
-}
-
-impl Display for McpCapabilities {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "tools:{}, prompts:{}, resources:{}, logging:{}, experimental:{}",
-            self.tools, self.prompts, self.resources, self.logging, self.experimental
-        )
-    }
-}
-
-#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-pub enum ParamTypes {
-    Primitive(String),
-    Object(Vec<McpToolSParams>),
-    Array(Vec<ParamTypes>),
-}
-
-impl Display for ParamTypes {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        let type_name = match self {
-            ParamTypes::Primitive(type_name) => type_name.to_owned(),
-            ParamTypes::Object(items) => {
-                format!(
-                    "{{{}}}",
-                    items
-                        .iter()
-                        .map(|t| format!("{} : {}", t.param_name, t.param_type))
-                        .collect::<Vec<String>>()
-                        .join(", ")
-                )
-            }
-            ParamTypes::Array(items) => format!("{} [ ]", items[0]),
-        };
-        write!(f, "{}", type_name)
-    }
-}
-
-// impl Serialize for ParamTypes {
-//     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-//     where
-//         S: Serializer,
-//     {
-//         match self {
-//             ParamTypes::Primitive(s) => {
-//                 let mut map = serializer.serialize_map(Some(1))?;
-//                 map.serialize_entry("Primitive", s)?;
-//                 map.end()
-//             }
-//
-//             ParamTypes::Object(params) => params.serialize(serializer), // Inline as array
-//             ParamTypes::Array(arr) => {
-//                 let mut map = serializer.serialize_map(Some(1))?;
-//                 map.serialize_entry("Array", arr)?;
-//                 map.end()
-//             }
-//         }
-//     }
-// }
-
-#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-pub struct McpToolSParams {
-    pub param_name: String,
-    pub param_type: ParamTypes,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub param_description: Option<String>,
-    pub required: bool,
-}
-
-#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-pub struct McpToolMeta {
-    pub name: String,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub description: Option<String>,
-    pub params: Vec<McpToolSParams>,
-}
-
-#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
-pub struct McpServerInfo {
-    pub name: String,
-    pub version: String,
-    pub capabilities: McpCapabilities,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub tools: Option<Vec<McpToolMeta>>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub prompts: Option<Vec<Prompt>>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub resources: Option<Vec<Resource>>,
-    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
-    pub resource_templates: Option<Vec<ResourceTemplate>>,
-}
-
+/// Core struct representing the discovery mechanism for the MCP server.
 pub struct McpDiscovery {
+    /// Discovery action and its options
     options: DiscoveryCommand,
+    /// Collected server capabilities and metadata
     pub server_info: Option<McpServerInfo>,
 }
 
@@ -143,6 +50,7 @@ impl McpDiscovery {
         }
     }
 
+    /// Entry point to execute the discovery workflow based on the command.
     pub async fn start(&mut self) -> DiscoveryResult<()> {
         // launch mcp server and discover capabilities
 
@@ -156,13 +64,14 @@ impl McpDiscovery {
                 self.update_document(update_options).await?;
             }
             DiscoveryCommand::Print(print_options) => {
-                self.print_mcp_capabilities(print_options).await?;
+                self.print_server_capabilities(print_options).await?;
             }
         };
         Ok(())
     }
 
-    pub async fn print_mcp_capabilities(
+    /// Prints MCP server capabilities using a specific template or default view.
+    pub async fn print_server_capabilities(
         &self,
         print_options: &PrintOptions,
     ) -> DiscoveryResult<()> {
@@ -186,6 +95,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Creates a new file using a specified template and discovered server info.
     pub async fn create_document(&self, create_options: &WriteOptions) -> DiscoveryResult<()> {
         tracing::trace!("Creating '{}' ", create_options.filename.to_string_lossy());
 
@@ -216,6 +126,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Updates an existing file by replacing only templated sections.
     pub async fn update_document(&self, update_options: &WriteOptions) -> DiscoveryResult<()> {
         tracing::trace!("Updating '{}' ", update_options.filename.to_string_lossy());
 
@@ -256,7 +167,8 @@ impl McpDiscovery {
         Ok(())
     }
 
-    pub fn print_summary(&self) -> DiscoveryResult<usize> {
+    /// Print a brief summary of the discovered server information.
+    fn print_summary(&self) -> DiscoveryResult<usize> {
         let server_info = self
             .server_info
             .as_ref()
@@ -264,19 +176,8 @@ impl McpDiscovery {
         Ok(print_summary(stdout(), server_info)?)
     }
 
-    pub fn render_with_template(&self, template: OutputTemplate) -> DiscoveryResult<()> {
-        let server_info = self
-            .server_info
-            .as_ref()
-            .ok_or(DiscoveryError::NotDiscovered)?;
-
-        let content = template.render_template(server_info)?;
-
-        println!("{}", content);
-        Ok(())
-    }
-
-    pub fn print_server_details(&self) -> DiscoveryResult<()> {
+    /// Prints summary and then detailed info about tools, prompts, resources, and templates from server.
+    fn print_server_details(&self) -> DiscoveryResult<()> {
         let table_size = self.print_summary()?;
 
         let server_info = self
@@ -392,6 +293,7 @@ impl McpDiscovery {
         Ok(())
     }
 
+    /// Retrieves tools metadata from the MCP server.
     pub async fn tools(
         &self,
         client: Arc<ClientRuntime>,
@@ -424,10 +326,7 @@ impl McpDiscovery {
         Ok(Some(tools))
     }
 
-    async fn get_prompts(
-        &self,
-        client: Arc<ClientRuntime>,
-    ) -> DiscoveryResult<Option<Vec<Prompt>>> {
+    async fn prompts(&self, client: Arc<ClientRuntime>) -> DiscoveryResult<Option<Vec<Prompt>>> {
         if !client.server_has_prompts().unwrap_or(false) {
             return Ok(None);
         }
@@ -441,7 +340,8 @@ impl McpDiscovery {
         Ok(Some(prompts))
     }
 
-    async fn get_resources(
+    /// Retrieves resources from the server.
+    async fn resources(
         &self,
         client: Arc<ClientRuntime>,
     ) -> DiscoveryResult<Option<Vec<Resource>>> {
@@ -459,7 +359,8 @@ impl McpDiscovery {
         Ok(Some(resources))
     }
 
-    async fn get_resource_templates(
+    /// Retrieves resource templates from the server.
+    async fn resource_templates(
         &self,
         client: Arc<ClientRuntime>,
     ) -> DiscoveryResult<Option<Vec<ResourceTemplate>>> {
@@ -481,6 +382,7 @@ impl McpDiscovery {
         }
     }
 
+    /// Discovers all MCP server capabilities and stores them internally.
     pub async fn discover(&mut self) -> DiscoveryResult<&McpServerInfo> {
         let client = self.launch_mcp_server().await?;
 
@@ -515,9 +417,9 @@ impl McpDiscovery {
         tracing::trace!("Capabilities: {}", capabilities);
 
         let tools = self.tools(Arc::clone(&client)).await?;
-        let prompts = self.get_prompts(Arc::clone(&client)).await?;
-        let resources = self.get_resources(Arc::clone(&client)).await?;
-        let resource_templates = self.get_resource_templates(Arc::clone(&client)).await?;
+        let prompts = self.prompts(Arc::clone(&client)).await?;
+        let resources = self.resources(Arc::clone(&client)).await?;
+        let resource_templates = self.resource_templates(Arc::clone(&client)).await?;
 
         let server_info = McpServerInfo {
             name: server_version.name,
@@ -534,7 +436,8 @@ impl McpDiscovery {
         Ok(self.server_info.as_ref().unwrap())
     }
 
-    pub async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+    /// Launches the MCP server as a subprocess and initializes the client.
+    async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
         let client_details: InitializeRequestParams = InitializeRequestParams {
             capabilities: ClientCapabilities::default(),
             client_info: Implementation {
