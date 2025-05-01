@@ -1,14 +1,5 @@
-use clap::Parser;
-use mcp_discovery::{
-    types::{McpCapabilities, McpServerInfo},
-    CommandArguments,
-};
+use mcp_discovery::types::{McpCapabilities, McpServerInfo};
 use rust_mcp_sdk::macros::JsonSchema;
-
-// Helper function to parse arguments from a vector of strings
-pub fn parse_args(args: Vec<&str>) -> CommandArguments {
-    CommandArguments::parse_from(args)
-}
 
 pub fn default_mcp_server_info() -> McpServerInfo {
     McpServerInfo {

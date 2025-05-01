@@ -1,7 +1,7 @@
 use crate::{
-    cli::Template,
     error::DiscoveryResult,
     render_template,
+    types::Template,
     utils::{find_template_file, line_ending},
     McpServerInfo,
 };

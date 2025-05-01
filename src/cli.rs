@@ -1,24 +1,30 @@
-use std::{
-    fmt::Display,
-    io::{self, ErrorKind},
-    path::PathBuf,
-};
+use std::path::PathBuf;
 
 use clap::{arg, command, Parser, Subcommand, ValueEnum};
-
-use crate::{error::DiscoveryResult, utils::match_template, OutputTemplate};
+use mcp_discovery::types::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
-pub enum Template {
+pub enum CliTemplate {
     Md,
     MdPlain,
     Html,
     Txt,
 }
 
+impl Into<Template> for CliTemplate {
+    fn into(self) -> Template {
+        match self {
+            CliTemplate::Md => Template::Md,
+            CliTemplate::MdPlain => Template::MdPlain,
+            CliTemplate::Html => Template::Html,
+            CliTemplate::Txt => Template::Txt,
+        }
+    }
+}
+
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 #[allow(non_camel_case_types)]
-pub enum LogLevel {
+pub enum CliLogLevel {
     error,
     warn,
     info,
@@ -26,36 +32,36 @@ pub enum LogLevel {
     trace,
 }
 
-impl Display for LogLevel {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl Into<LogLevel> for CliLogLevel {
+    fn into(self) -> LogLevel {
         match self {
-            LogLevel::error => write!(f, "error"),
-            LogLevel::warn => write!(f, "warn"),
-            LogLevel::info => write!(f, "info"),
-            LogLevel::debug => write!(f, "debug"),
-            LogLevel::trace => write!(f, "trace"),
+            CliLogLevel::error => LogLevel::error,
+            CliLogLevel::warn => LogLevel::warn,
+            CliLogLevel::info => LogLevel::info,
+            CliLogLevel::debug => LogLevel::debug,
+            CliLogLevel::trace => LogLevel::trace,
         }
     }
 }
 
 #[derive(Subcommand, Debug)]
-pub enum DiscoveryCommand {
+pub enum CliDiscoveryCommand {
     /// Displays MCP server capability details in the terminal.
-    Print(PrintOptions),
+    Print(CliPrintOptions),
     /// Creates a file with MCP server capability details.
-    Create(WriteOptions),
+    Create(CliWriteOptions),
     /// Updates a file by adding MCP server capability information between specified markers.
-    Update(WriteOptions),
+    Update(CliWriteOptions),
 }
 
 #[derive(Parser, Debug)]
-pub struct WriteOptions {
+pub struct CliWriteOptions {
     #[arg(short, long)]
     pub filename: PathBuf,
 
     /// Select an output template from the built-in options.
     #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
-    pub template: Option<Template>,
+    pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
@@ -72,7 +78,7 @@ pub struct WriteOptions {
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
-    pub log_level: Option<LogLevel>,
+    pub log_level: Option<CliLogLevel>,
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
@@ -83,33 +89,24 @@ pub struct WriteOptions {
     pub mcp_server_cmd: Vec<String>,
 }
 
-impl WriteOptions {
-    pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
-        match_template(
-            Some(&self.filename),
-            &self.template,
-            &self.template_file,
-            &self.template_string,
-        )
-    }
-
-    pub fn validate(&self) -> DiscoveryResult<()> {
-        if !self.filename.exists() {
-            return Err(io::Error::new(
-                ErrorKind::NotFound,
-                format!("File '{}' not found", self.filename.to_string_lossy()),
-            )
-            .into());
+impl Into<WriteOptions> for CliWriteOptions {
+    fn into(self) -> WriteOptions {
+        WriteOptions {
+            filename: self.filename,
+            template: self.template.map(|t| t.into()),
+            template_file: self.template_file,
+            template_string: self.template_string,
+            log_level: self.log_level.map(|l| l.into()),
+            mcp_server_cmd: self.mcp_server_cmd,
         }
-        Ok(())
     }
 }
 
 #[derive(Parser, Debug)]
-pub struct PrintOptions {
+pub struct CliPrintOptions {
     /// Select an output template from the built-in options.
     #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
-    pub template: Option<Template>,
+    pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
@@ -126,7 +123,7 @@ conflicts_with_all = ["template", "template_string"])]
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
-    pub log_level: Option<LogLevel>,
+    pub log_level: Option<CliLogLevel>,
 
     /// Command and arguments to launch the MCP server.
     #[arg(
@@ -138,31 +135,30 @@ conflicts_with_all = ["template", "template_string"])]
     pub mcp_server_cmd: Vec<String>,
 }
 
-impl PrintOptions {
-    pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
-        match_template(
-            None,
-            &self.template,
-            &self.template_file,
-            &self.template_string,
-        )
+impl Into<PrintOptions> for CliPrintOptions {
+    fn into(self) -> PrintOptions {
+        PrintOptions {
+            template: self.template.map(|t| t.into()),
+            template_file: self.template_file,
+            template_string: self.template_string,
+            log_level: self.log_level.map(|l| l.into()),
+            mcp_server_cmd: self.mcp_server_cmd,
+        }
     }
 }
 
-impl DiscoveryCommand {
-    pub fn mcp_launch_command(&self) -> &Vec<String> {
+impl Into<DiscoveryCommand> for CliDiscoveryCommand {
+    fn into(self) -> DiscoveryCommand {
         match self {
-            DiscoveryCommand::Create(create_options) => &create_options.mcp_server_cmd,
-            DiscoveryCommand::Update(update_options) => &update_options.mcp_server_cmd,
-            DiscoveryCommand::Print(print_args) => &print_args.mcp_server_cmd,
-        }
-    }
-
-    pub fn log_level(&self) -> &Option<LogLevel> {
-        match self {
-            DiscoveryCommand::Create(create_options) => &create_options.log_level,
-            DiscoveryCommand::Update(update_options) => &update_options.log_level,
-            DiscoveryCommand::Print(print_args) => &print_args.log_level,
+            CliDiscoveryCommand::Print(cli_print_options) => {
+                DiscoveryCommand::Print(cli_print_options.into())
+            }
+            CliDiscoveryCommand::Create(cli_write_options) => {
+                DiscoveryCommand::Create(cli_write_options.into())
+            }
+            CliDiscoveryCommand::Update(cli_write_options) => {
+                DiscoveryCommand::Update(cli_write_options.into())
+            }
         }
     }
 }
@@ -175,11 +171,11 @@ long_about = None)]
 #[clap(args_conflicts_with_subcommands = true)]
 pub struct CommandArguments {
     #[command(subcommand)]
-    pub command: Option<DiscoveryCommand>,
+    pub command: Option<CliDiscoveryCommand>,
 
     /// Select an output template from the built-in options.
     #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
-    pub template: Option<Template>,
+    pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
@@ -196,7 +192,7 @@ pub struct CommandArguments {
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
-    pub log_level: Option<LogLevel>,
+    pub log_level: Option<CliLogLevel>,
 
     /// Command and arguments to launch the MCP server.
     #[arg(
@@ -208,8 +204,186 @@ pub struct CommandArguments {
     pub mcp_server_cmd: Vec<String>,
 }
 
-impl CommandArguments {
-    pub fn mcp_launch_command(&self) -> &Vec<String> {
-        self.command.as_ref().unwrap().mcp_launch_command()
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use mcp_discovery::types::DiscoveryCommand;
+
+    // Helper function to parse arguments from a vector of strings
+    pub fn parse_args(args: Vec<&str>) -> CommandArguments {
+        CommandArguments::parse_from(args)
+    }
+
+    #[test]
+    fn test_version_flag() {
+        let args = vec!["mcp-tool", "--version"];
+        let result = CommandArguments::try_parse_from(args);
+        assert!(result.is_err(), "Expected clap to handle --version flag");
+        // Note: clap automatically handles --version and exits, so this test verifies it doesn't parse normally
+    }
+
+    #[test]
+    fn test_conflicting_template_and_template_file() {
+        let args = vec![
+            "mcp-tool",
+            "create",
+            "--filename",
+            "output.md",
+            "--template",
+            "md",
+            "--template-file",
+            "custom.hbs",
+            "--",
+            "mcp-server",
+        ];
+        let result = CommandArguments::try_parse_from(args);
+        assert!(
+            result.is_err(),
+            "Expected error due to conflicting template options"
+        );
+    }
+
+    #[test]
+    fn test_missing_required_mcp_server_cmd() {
+        let args = vec!["mcp-tool", "print"];
+        let result = CommandArguments::try_parse_from(args);
+        assert!(
+            result.is_err(),
+            "Expected error due to missing mcp_server_cmd"
+        );
+    }
+
+    #[test]
+    fn test_file_options_match_template_custom() {
+        let file_options = WriteOptions {
+            filename: PathBuf::from("output.html"),
+            template: None,
+            template_file: Some(PathBuf::from("templates/markdown/markdown_template.md")),
+            mcp_server_cmd: vec!["mcp-server".to_string()],
+            template_string: None,
+            log_level: None,
+        };
+
+        let result = file_options.match_template();
+
+        assert!(
+            result.is_ok(),
+            "Expected successful template matching with custom file"
+        );
+    }
+
+    #[test]
+    fn test_create_command_parsing() {
+        let args = vec![
+            "mcp-tool",
+            "create",
+            "--filename",
+            "output.md",
+            "--template",
+            "md",
+            "--",
+            "mcp-server",
+            "--some-params",
+            "some-values",
+        ];
+        let parsed = parse_args(args);
+
+        match parsed.command {
+            Some(CliDiscoveryCommand::Create(file_options)) => {
+                assert_eq!(file_options.filename, PathBuf::from("output.md"));
+                assert_eq!(file_options.template, Some(CliTemplate::Md));
+                assert_eq!(file_options.template_file, None);
+                assert_eq!(
+                    file_options.mcp_server_cmd,
+                    vec!["mcp-server", "--some-params", "some-values"]
+                );
+            }
+            _ => panic!("Expected Create command"),
+        }
+    }
+
+    #[test]
+    fn test_update_command_with_template_file() {
+        let args = vec![
+            "mcp-tool",
+            "update",
+            "--filename",
+            "output.html",
+            "--template-file",
+            "custom.hbs",
+            "--",
+            "mcp-server",
+            "--param",
+            "90",
+        ];
+        let parsed = parse_args(args);
+
+        match parsed.command {
+            Some(CliDiscoveryCommand::Update(file_options)) => {
+                assert_eq!(file_options.filename, PathBuf::from("output.html"));
+                assert_eq!(file_options.template, None);
+                assert_eq!(
+                    file_options.template_file,
+                    Some(PathBuf::from("custom.hbs"))
+                );
+                assert_eq!(
+                    file_options.mcp_server_cmd,
+                    vec!["mcp-server", "--param", "90"]
+                );
+            }
+            _ => panic!("Expected Update command"),
+        }
+    }
+
+    #[test]
+    fn test_print_command_with_json() {
+        let args = vec!["mcp-tool", "print", "--", "mcp-server", "--verbose"];
+        let parsed = parse_args(args);
+
+        match parsed.command {
+            Some(CliDiscoveryCommand::Print(print_options)) => {
+                assert_eq!(
+                    print_options.mcp_server_cmd,
+                    vec!["mcp-server", "--verbose"]
+                );
+            }
+            _ => panic!("Expected Print command"),
+        }
+    }
+
+    #[test]
+    fn test_mcp_launch_command_retrieval() {
+        let args = vec![
+            "mcp-tool",
+            "create",
+            "--filename",
+            "output.txt",
+            "--template",
+            "txt",
+            "--",
+            "mcp-server",
+            "--port",
+            "9090",
+        ];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+
+        let launch_cmd = command.mcp_launch_command();
+        assert_eq!(launch_cmd, &vec!["mcp-server", "--port", "9090"]);
+    }
+
+    #[test]
+    fn test_file_options_match_template_builtin() {
+        let file_options = WriteOptions {
+            filename: PathBuf::from("output.md"),
+            template: Some(Template::Md),
+            template_file: None,
+            mcp_server_cmd: vec!["mcp-server".to_string()],
+            template_string: None,
+            log_level: None,
+        };
+
+        let result = file_options.match_template();
+        assert!(result.is_ok(), "Expected successful template matching");
+        // Note: Cannot assert specific OutputTemplate without knowing its structure
     }
 }

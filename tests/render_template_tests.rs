@@ -5,8 +5,8 @@ use common::default_mcp_server_info;
 use handlebars::Handlebars;
 use mcp_discovery::{
     render_template::{detect_render_markers, extract_template_file, register_helpers},
-    types::ParamTypes,
-    OutputTemplate, WriteOptions,
+    types::{ParamTypes, WriteOptions},
+    OutputTemplate,
 };
 use serde_json::json;
 use std::fs::write;

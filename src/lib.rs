@@ -1,4 +1,3 @@
-mod cli;
 pub mod error;
 mod handler;
 pub mod render_template;
@@ -8,7 +7,6 @@ pub mod templates;
 pub mod types;
 pub mod utils;
 
-pub use cli::{CommandArguments, DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
 use render_template::{detect_render_markers, render_template};
@@ -16,7 +14,9 @@ use schema::tool_params;
 use std::io::stdout;
 use std_output::{print_header, print_list, print_summary};
 pub use templates::OutputTemplate;
-use types::{McpCapabilities, McpServerInfo, McpToolMeta};
+use types::{
+    DiscoveryCommand, McpCapabilities, McpServerInfo, McpToolMeta, PrintOptions, WriteOptions,
+};
 
 use std::sync::Arc;
 

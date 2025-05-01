@@ -1,8 +1,7 @@
 //! Module for rendering templates using Handlebars and handling MCP server template markers.
 
-use std::path::PathBuf;
+use std::{path::PathBuf, str::FromStr};
 
-use clap::ValueEnum;
 use handlebars::{
     handlebars_helper, Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext,
     RenderError,
@@ -15,11 +14,11 @@ use unicode_width::UnicodeWidthStr;
 use crate::{
     error::{DiscoveryError, DiscoveryResult},
     templates::{InlineTemplateInfo, PARTIALS},
-    types::ParamTypes,
+    types::{ParamTypes, Template, WriteOptions},
     utils::{
         boolean_indicator, line_ending, match_template, RenderTemplateInfo, UpdateTemplateInfo,
     },
-    McpServerInfo, OutputTemplate, Template, WriteOptions,
+    McpServerInfo, OutputTemplate,
 };
 
 /// Properties parsed from the `MCP_DISCOVERY_TEMPLATE_START` marker line in template files.
@@ -482,7 +481,7 @@ pub fn extract_template_prop(line: &str) -> Option<Template> {
         .captures(line)
         .and_then(|cap| cap.get(2).map(|m| m.as_str().trim().to_string()));
 
-    let template = Template::from_str(&prop_value.unwrap_or_default(), true);
+    let template = Template::from_str(&prop_value.unwrap_or_default());
     template.ok()
 }
 
