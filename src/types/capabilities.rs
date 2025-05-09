@@ -27,9 +27,10 @@ pub enum ParamTypes {
     Primitive(String),
     Object(Vec<McpToolSParams>),
     Array(Vec<ParamTypes>),
-    Anyof(Vec<ParamTypes>), // anyOf
-    OneOf(Vec<ParamTypes>), // oneOf
-    AllOf(Vec<ParamTypes>), // allOf
+    Anyof(Vec<ParamTypes>),      // anyOf
+    OneOf(Vec<ParamTypes>),      // oneOf
+    AllOf(Vec<ParamTypes>),      // allOf
+    EnumValues(Vec<ParamTypes>), // JSON Schema enum
 }
 
 impl Display for ParamTypes {
@@ -62,6 +63,11 @@ impl Display for ParamTypes {
                 .map(|t| t.to_string())
                 .collect::<Vec<String>>()
                 .join(" & "),
+            ParamTypes::EnumValues(types) => types
+                .iter()
+                .map(|t| t.to_string())
+                .collect::<Vec<String>>()
+                .join("|"),
         };
         write!(f, "{}", type_name)
     }

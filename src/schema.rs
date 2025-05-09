@@ -51,7 +51,45 @@ pub fn param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<McpT
 
 /// Determines the parameter type from a schema definition.
 pub fn param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTypes> {
-    // Check for 'anyOf' (enum)
+    // Check for 'enum' keyword
+    if let Some(enum_values) = type_info.get("enum") {
+        let values = enum_values.as_array().ok_or(DiscoveryError::InvalidSchema(
+            "'enum' field must be an array".to_string(),
+        ))?;
+        if values.is_empty() {
+            return Err(DiscoveryError::InvalidSchema(
+                "'enum' array cannot be empty".to_string(),
+            ));
+        }
+        let mut param_types = Vec::new();
+        for value in values {
+            let param_type = match value {
+                Value::String(s) => ParamTypes::Primitive(s.clone()),
+                Value::Number(n) => ParamTypes::Primitive(n.to_string()),
+                Value::Bool(b) => ParamTypes::Primitive(b.to_string()),
+                Value::Null => ParamTypes::Primitive("null".to_string()),
+                _ => {
+                    return Err(DiscoveryError::InvalidSchema(format!(
+                        "Unsupported enum value type: {}",
+                        serde_json::to_string(value).unwrap_or_default()
+                    )))
+                }
+            };
+            param_types.push(param_type);
+        }
+        return Ok(ParamTypes::EnumValues(param_types));
+    }
+
+    // Check for 'const' keyword
+    if let Some(const_value) = type_info.get("const") {
+        return Ok(ParamTypes::Primitive(
+            serde_json::to_string(const_value)
+                .unwrap_or_default()
+                .trim_matches('"')
+                .to_string(),
+        ));
+    }
+
     if let Some(any_of) = type_info.get("anyOf") {
         let any_of_array = any_of.as_array().ok_or(DiscoveryError::InvalidSchema(
             "'anyOf' field must be an array".to_string(),
@@ -111,7 +149,7 @@ pub fn param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTypes>
         return Ok(ParamTypes::AllOf(all_of_types));
     }
 
-    // Existing logic for other types
+    // other types
     let type_name =
         type_info
             .get("type")

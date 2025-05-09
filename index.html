@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <title>mcp-git 1.8.0</title>
+  <style>
+    body,
+    html {
+      height: 100%
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin: 0 0 1rem;
+      margin-top: 0px;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      margin: 15px 0 .8rem;
+    }
+
+    body {
+      -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      color: #34495e;
+      font-family: Source Sans Pro, Helvetica Neue, Arial, sans-serif;
+      font-size: 15px;
+      letter-spacing: 0;
+      margin: 0;
+      overflow-x: hidden
+    }
+
+    a {
+      color: #2856a6;
+      font-weight: 500;
+    }
+
+    .mcp-section {
+      margin: 0 auto;
+      max-width: 80%;
+      padding: 0px 15px 40px;
+      position: relative;
+    }
+
+    .mcp-section-0 {
+      margin: 0 auto;
+      max-width: 80%;
+      position: relative;
+    }
+
+    code {
+      border-radius: 2px;
+      color: #e96900;
+      margin: 0 2px;
+      padding: 3px 5px;
+      white-space: pre-wrap;
+    }
+
+    code,
+    pre {
+      background-color: #f8f8f8;
+    }
+
+    table {
+      border-collapse: collapse;
+      border-spacing: 0;
+      display: block;
+      margin-bottom: 1rem;
+      overflow: auto;
+      width: 100%
+    }
+
+    th {
+      font-weight: 700
+    }
+
+    td,
+    th {
+      border: 1px solid #ddd;
+      padding: 6px 13px
+    }
+
+    tr {
+      border-top: 1px solid #ccc
+    }
+
+    p.tip,
+    tr:nth-child(2n) {
+      background-color: #f8f8f8
+    }
+
+    ul {
+      padding-left: 0.5rem;
+      margin: 0.5rem 0;
+    }
+    li {
+      padding: 3px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="mcp-section-0" style="padding-top: 2rem;">
+    <h1>mcp-git 1.8.0</h1>  </section>
+
+  <section class="mcp-section-0" style="padding: 0 0 2rem 0;">
+    <table>
+            <thead>
+              <tr>
+                <th>Tools</th>
+                <th>Prompts</th>
+                <th>Resources</th>
+                <th>Logging</th>
+                <th>Experimental</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>🟢 Tools (11)</td>
+                <td><span style="opacity:0.6">🔴 Prompts</span></td>
+                <td><span style="opacity:0.6">🔴 Resources</span></td>
+                <td><span style="opacity:0.6">🔴 Logging</span></td>
+                <td>🟢 Experimental</td>
+              </tr>
+            </tbody>
+          </table>  </section>
+
+
+  <section class="mcp-section">
+
+    <h2>🛠️ Tools (11)</h2>
+    <table style="text-align: left;">
+        <thead>
+            <tr>
+                <th style="width: auto;"></th>
+                <th style="width: auto;">Tool Name</th>
+                <th style="width: auto;">Description</th>
+                <th style="width: auto;">Inputs</th>
+            </tr>
+        </thead>
+        <tbody style="vertical-align: top;">
+            <tr>
+                <td>1.</td>
+                <td>
+                    <code><b>git_add</b></code>
+                </td>
+                <td>Adds file contents to the staging area</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>files</code> : string [ ]<br /></li>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>2.</td>
+                <td>
+                    <code><b>git_checkout</b></code>
+                </td>
+                <td>Switches branches</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>branch_name</code> : string<br /></li>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>3.</td>
+                <td>
+                    <code><b>git_commit</b></code>
+                </td>
+                <td>Records changes to the repository</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>message</code> : string<br /></li>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>4.</td>
+                <td>
+                    <code><b>git_create_branch</b></code>
+                </td>
+                <td>Creates a new branch from an optional base branch</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>base_branch</code> : string | null<br /></li>
+                        <li style="white-space: nowrap;"> <code>branch_name</code> : string<br /></li>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>5.</td>
+                <td>
+                    <code><b>git_diff</b></code>
+                </td>
+                <td>Shows differences between branches or commits</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                        <li style="white-space: nowrap;"> <code>target</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>6.</td>
+                <td>
+                    <code><b>git_diff_staged</b></code>
+                </td>
+                <td>Shows changes that are staged for commit</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>7.</td>
+                <td>
+                    <code><b>git_diff_unstaged</b></code>
+                </td>
+                <td>Shows changes in the working directory that are not yet staged</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>8.</td>
+                <td>
+                    <code><b>git_log</b></code>
+                </td>
+                <td>Shows the commit logs</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>max_count</code> : integer<br /></li>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>9.</td>
+                <td>
+                    <code><b>git_reset</b></code>
+                </td>
+                <td>Unstages all staged changes</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>10.</td>
+                <td>
+                    <code><b>git_show</b></code>
+                </td>
+                <td>Shows the contents of a commit</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                        <li style="white-space: nowrap;"> <code>revision</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+            <tr>
+                <td>11.</td>
+                <td>
+                    <code><b>git_status</b></code>
+                </td>
+                <td>Shows the working tree status</td>
+                <td>
+                    <ul>
+                        <li style="white-space: nowrap;"> <code>repo_path</code> : string<br /></li>
+                    </ul>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+  </section>
+
+
+
+
+
+  <section class="mcp-section">
+    <sub>◾ generated by <a href="https://github.com/rust-mcp-stack/mcp-discovery"
+        target="_blank">mcp-discovery</a></sub>
+  </section>
+
+
+</body>
+
+</html>
