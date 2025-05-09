@@ -51,13 +51,75 @@ pub fn param_object(object_map: &Map<String, Value>) -> DiscoveryResult<Vec<McpT
 
 /// Determines the parameter type from a schema definition.
 pub fn param_type(type_info: &Map<String, Value>) -> DiscoveryResult<ParamTypes> {
+    // Check for 'anyOf' (enum)
+    if let Some(any_of) = type_info.get("anyOf") {
+        let any_of_array = any_of.as_array().ok_or(DiscoveryError::InvalidSchema(
+            "'anyOf' field must be an array".to_string(),
+        ))?;
+        if any_of_array.is_empty() {
+            return Err(DiscoveryError::InvalidSchema(
+                "'anyOf' array cannot be empty".to_string(),
+            ));
+        }
+        let mut enum_types = Vec::new();
+        for item in any_of_array {
+            let item_map = item.as_object().ok_or(DiscoveryError::InvalidSchema(
+                "Items in 'anyOf' must be objects".to_string(),
+            ))?;
+            enum_types.push(param_type(item_map)?);
+        }
+        return Ok(ParamTypes::Anyof(enum_types));
+    }
+
+    // Check for 'oneOf'
+    if let Some(one_of) = type_info.get("oneOf") {
+        let one_of_array = one_of.as_array().ok_or(DiscoveryError::InvalidSchema(
+            "'oneOf' field must be an array".to_string(),
+        ))?;
+        if one_of_array.is_empty() {
+            return Err(DiscoveryError::InvalidSchema(
+                "'oneOf' array cannot be empty".to_string(),
+            ));
+        }
+        let mut one_of_types = Vec::new();
+        for item in one_of_array {
+            let item_map = item.as_object().ok_or(DiscoveryError::InvalidSchema(
+                "Items in 'oneOf' must be objects".to_string(),
+            ))?;
+            one_of_types.push(param_type(item_map)?);
+        }
+        return Ok(ParamTypes::OneOf(one_of_types));
+    }
+
+    // Check for 'allOf'
+    if let Some(all_of) = type_info.get("allOf") {
+        let all_of_array = all_of.as_array().ok_or(DiscoveryError::InvalidSchema(
+            "'allOf' field must be an array".to_string(),
+        ))?;
+        if all_of_array.is_empty() {
+            return Err(DiscoveryError::InvalidSchema(
+                "'allOf' array cannot be empty".to_string(),
+            ));
+        }
+        let mut all_of_types = Vec::new();
+        for item in all_of_array {
+            let item_map = item.as_object().ok_or(DiscoveryError::InvalidSchema(
+                "Items in 'allOf' must be objects".to_string(),
+            ))?;
+            all_of_types.push(param_type(item_map)?);
+        }
+        return Ok(ParamTypes::AllOf(all_of_types));
+    }
+
+    // Existing logic for other types
     let type_name =
         type_info
             .get("type")
             .and_then(|v| v.as_str())
-            .ok_or(DiscoveryError::InvalidSchema(
-                "Missing or invalid 'type' field".to_string(),
-            ))?;
+            .ok_or(DiscoveryError::InvalidSchema(format!(
+                "Missing or invalid 'type' field: {}",
+                serde_json::to_string(&type_info).unwrap_or_default()
+            )))?;
 
     match type_name {
         "array" => {
