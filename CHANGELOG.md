@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.9](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.8...v0.1.9) (2025-05-09)
+
+
+### 🚀 Features
+
+* Add support for advanced JSON Schema types such as anyOf and allOf, oneOf ([#16](https://github.com/rust-mcp-stack/mcp-discovery/issues/16)) ([adb8787](https://github.com/rust-mcp-stack/mcp-discovery/commit/adb87875c3f3340021ca88ffe94e930b3c2f4248))
+
 ## [0.1.8](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.7...v0.1.8) (2025-05-01)
 
 
