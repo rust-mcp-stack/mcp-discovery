@@ -1,4 +1,4 @@
-use rust_mcp_schema::{Prompt, Resource, ResourceTemplate};
+use rust_mcp_sdk::schema::{Prompt, Resource, ResourceTemplate};
 use std::fmt::Display;
 
 /// Represents the capabilities of an MCP server, indicating which features are supported.

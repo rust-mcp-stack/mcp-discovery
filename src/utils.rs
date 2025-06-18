@@ -11,6 +11,7 @@ pub struct RenderTemplateInfo {
     pub rendered_template: String,
     pub render_location: (usize, usize),
 }
+
 #[derive(Debug)]
 pub struct UpdateTemplateInfo {
     /// Content of the file to be updated by mcp-discovery

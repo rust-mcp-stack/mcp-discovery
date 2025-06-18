@@ -1,5 +1,5 @@
 use async_trait::async_trait;
-use rust_mcp_schema::RpcError;
+use rust_mcp_sdk::schema::RpcError;
 use rust_mcp_sdk::{mcp_client::ClientHandler, McpClient};
 
 pub struct MyClientHandler;
