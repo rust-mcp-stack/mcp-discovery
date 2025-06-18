@@ -25,10 +25,10 @@ use std_output::{print_header, print_list, print_summary};
 use std::sync::Arc;
 
 use handler::MyClientHandler;
-use rust_mcp_schema::{
+use rust_mcp_sdk::schema::{
     ClientCapabilities, Implementation, InitializeRequestParams, ListPromptsRequestParams,
     ListResourceTemplatesRequestParams, ListResourcesRequestParams, ListToolsRequestParams, Prompt,
-    Resource, ResourceTemplate, JSONRPC_VERSION,
+    Resource, ResourceTemplate, LATEST_PROTOCOL_VERSION,
 };
 use rust_mcp_sdk::{
     error::SdkResult,
@@ -188,33 +188,13 @@ impl McpDiscovery {
             .ok_or(DiscoveryError::NotDiscovered)?;
 
         if let Some(tools) = &server_info.tools {
-            print_header(
-                stdout(),
-                &format!("{}({})", "Tools".bold(), tools.len()),
-                table_size,
-            )?;
-            let mut tool_list: Vec<_> = tools
-                .iter()
-                .map(|item| {
-                    (
-                        item.name.clone(),
-                        item.description.clone().unwrap_or_default(),
-                    )
-                })
-                .collect();
-            tool_list.sort_by(|a, b| a.0.cmp(&b.0));
-            print_list(stdout(), tool_list)?;
-        }
-
-        if let Some(prompts) = &server_info.prompts {
-            print_header(
-                stdout(),
-                &format!("{}({})", "Prompts".bold(), prompts.len()),
-                table_size,
-            )?;
-            print_list(
-                stdout(),
-                prompts
+            if !tools.is_empty() {
+                print_header(
+                    stdout(),
+                    &format!("{}({})", "Tools".bold(), tools.len()),
+                    table_size,
+                )?;
+                let mut tool_list: Vec<_> = tools
                     .iter()
                     .map(|item| {
                         (
@@ -222,74 +202,108 @@ impl McpDiscovery {
                             item.description.clone().unwrap_or_default(),
                         )
                     })
-                    .collect(),
-            )?;
+                    .collect();
+                tool_list.sort_by(|a, b| a.0.cmp(&b.0));
+                print_list(stdout(), tool_list)?;
+            }
+        }
+
+        if let Some(prompts) = &server_info.prompts {
+            if !prompts.is_empty() {
+                print_header(
+                    stdout(),
+                    &format!("{}({})", "Prompts".bold(), prompts.len()),
+                    table_size,
+                )?;
+                print_list(
+                    stdout(),
+                    prompts
+                        .iter()
+                        .map(|item| {
+                            (
+                                item.name.clone(),
+                                item.description.clone().unwrap_or_default(),
+                            )
+                        })
+                        .collect(),
+                )?;
+            }
         }
 
         if let Some(resources) = &server_info.resources {
-            print_header(
-                stdout(),
-                &format!("{}({})", "Resources".bold(), resources.len()),
-                table_size,
-            )?;
-            print_list(
-                stdout(),
-                resources
-                    .iter()
-                    .map(|item| {
-                        (
-                            item.name.clone(),
-                            format!(
-                                "{}{}{}",
-                                item.uri,
-                                item.mime_type
-                                    .as_ref()
-                                    .map_or("".to_string(), |mime_type| format!(" ({})", mime_type))
-                                    .dimmed(),
-                                item.description.as_ref().map_or(
-                                    "".to_string(),
-                                    |description| format!("\n{}", description.dimmed())
-                                )
-                            ),
-                        )
-                    })
-                    .collect(),
-            )?;
+            if !resources.is_empty() {
+                print_header(
+                    stdout(),
+                    &format!("{}({})", "Resources".bold(), resources.len()),
+                    table_size,
+                )?;
+                print_list(
+                    stdout(),
+                    resources
+                        .iter()
+                        .map(|item| {
+                            (
+                                item.name.clone(),
+                                format!(
+                                    "{}{}{}",
+                                    item.uri,
+                                    item.mime_type
+                                        .as_ref()
+                                        .map_or("".to_string(), |mime_type| format!(
+                                            " ({})",
+                                            mime_type
+                                        ))
+                                        .dimmed(),
+                                    item.description.as_ref().map_or(
+                                        "".to_string(),
+                                        |description| format!("\n{}", description.dimmed())
+                                    )
+                                ),
+                            )
+                        })
+                        .collect(),
+                )?;
+            }
         }
 
         if let Some(resource_templates) = &server_info.resource_templates {
-            print_header(
-                stdout(),
-                &format!(
-                    "{}({})",
-                    "Resource Templates".bold(),
-                    resource_templates.len()
-                ),
-                table_size,
-            )?;
-            print_list(
-                stdout(),
-                resource_templates
-                    .iter()
-                    .map(|item| {
-                        (
-                            item.name.clone(),
-                            format!(
-                                "{}{}{}",
-                                item.uri_template,
-                                item.mime_type
-                                    .as_ref()
-                                    .map_or("".to_string(), |mime_type| format!(" ({})", mime_type))
-                                    .dimmed(),
-                                item.description.as_ref().map_or(
-                                    "".to_string(),
-                                    |description| format!("\n{}", description.dimmed())
-                                )
-                            ),
-                        )
-                    })
-                    .collect(),
-            )?;
+            if !resource_templates.is_empty() {
+                print_header(
+                    stdout(),
+                    &format!(
+                        "{}({})",
+                        "Resource Templates".bold(),
+                        resource_templates.len()
+                    ),
+                    table_size,
+                )?;
+                print_list(
+                    stdout(),
+                    resource_templates
+                        .iter()
+                        .map(|item| {
+                            (
+                                item.name.clone(),
+                                format!(
+                                    "{}{}{}",
+                                    item.uri_template,
+                                    item.mime_type
+                                        .as_ref()
+                                        .map_or("".to_string(), |mime_type| format!(
+                                            " ({})",
+                                            mime_type
+                                        ))
+                                        .dimmed(),
+                                    item.description.as_ref().map_or(
+                                        "".to_string(),
+                                        |description| format!("\n{}", description.dimmed())
+                                    )
+                                ),
+                            )
+                        })
+                        .collect(),
+                )?;
+            }
         }
 
         Ok(())
@@ -395,9 +409,12 @@ impl McpDiscovery {
         tracing::trace!(
             "Server: {} v{}",
             server_version.name,
-            server_version.version
+            server_version.version,
         );
-
+        println!(
+            ">>>PROTO  {:?} ",
+            client.server_info().unwrap().protocol_version
+        );
         let capabilities: McpCapabilities = McpCapabilities {
             tools: client
                 .server_has_tools()
@@ -446,7 +463,7 @@ impl McpDiscovery {
                 name: env!("CARGO_PKG_NAME").to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
             },
-            protocol_version: JSONRPC_VERSION.into(),
+            protocol_version: LATEST_PROTOCOL_VERSION.into(),
         };
 
         tracing::trace!(

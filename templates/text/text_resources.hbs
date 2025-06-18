@@ -1,7 +1,7 @@
-{{#if capabilities.resources}}
+{{#if resources}}
 {{{capability_title "📄 Resources " (len resources) true}}}
 
-{{#each resources}} 
+{{#each resources}}
 {{plus_one @index}}. {{{this.name}}} : {{{this.uri}}} {{#if this.mimeType}}({{{this.mimeType}}}){{/if}}
 
 {{/each}}
