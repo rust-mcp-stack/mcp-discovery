@@ -31,7 +31,10 @@ eula = false
 all-features = true # Build with all features
 
 [dependencies]
-rust-mcp-sdk = {git="https://github.com/rust-mcp-stack/rust-mcp-sdk", branch="feat/support-selecting-protocol-version-with-cargo-features", default-features=false, features=["client","2024_11_05"]}
+rust-mcp-sdk = { version = "0.4", default-features = false, features = [
+    "client",
+    "2024_11_05",
+] }
 
 clap = { version = "4.5", features = ["derive"] }
 serde = "1.0"

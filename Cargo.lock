@@ -164,9 +164,9 @@ checksum = "baf1de4339761588bc0619e3cbc0120ee582ebb74b53b4efbf79117bd2da40fd"
 
 [[package]]
 name = "clap"
-version = "4.5.39"
+version = "4.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fd60e63e9be68e5fb56422e397cf9baddded06dae1d2e523401542383bc72a9f"
+checksum = "40b6887a1d8685cebccf115538db5c0efe625ccac9696ad45c409d96566e910f"
 dependencies = [
  "clap_builder",
  "clap_derive",
@@ -174,9 +174,9 @@ dependencies = [
 
 [[package]]
 name = "clap_builder"
-version = "4.5.39"
+version = "4.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "89cc6392a1f72bbeb820d71f32108f61fdaf18bc526e1d23954168a67759ef51"
+checksum = "e0c66c08ce9f0c698cbce5c0279d0bb6ac936d8674174fe48f736533b964f59e"
 dependencies = [
  "anstream",
  "anstyle",
@@ -186,9 +186,9 @@ dependencies = [
 
 [[package]]
 name = "clap_derive"
-version = "4.5.32"
+version = "4.5.40"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "09176aae279615badda0765c0c0b3f6ed53f4709118af73cf4655d85d1530cd7"
+checksum = "d2c7947ae4cc3d851207c1adb5b5e260ff0cca11446b1d6d1423788e442257ce"
 dependencies = [
  "heck",
  "proc-macro2",
@@ -1325,8 +1325,9 @@ dependencies = [
 
 [[package]]
 name = "rust-mcp-macros"
-version = "0.4.0"
-source = "git+https://github.com/rust-mcp-stack/rust-mcp-sdk?branch=feat%2Fsupport-selecting-protocol-version-with-cargo-features#430aee929d955dd75b6d512dc3a354b5851f7a45"
+version = "0.4.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "375eba9388d9d5ffc8951e5f25296f9739be4e5700375ac7c74ad957a903b92b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1337,9 +1338,9 @@ dependencies = [
 
 [[package]]
 name = "rust-mcp-schema"
-version = "0.5.2"
+version = "0.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4c9966340f5104a8d22b6c2db8901f8626a0f737820a385db3ffbb29b1f6ae0f"
+checksum = "a794de25669a2d21c5074ec5082f74f5e88863a112339fe90264d9e480b0ee8b"
 dependencies = [
  "serde",
  "serde_json",
@@ -1347,8 +1348,9 @@ dependencies = [
 
 [[package]]
 name = "rust-mcp-sdk"
-version = "0.4.1"
-source = "git+https://github.com/rust-mcp-stack/rust-mcp-sdk?branch=feat%2Fsupport-selecting-protocol-version-with-cargo-features#430aee929d955dd75b6d512dc3a354b5851f7a45"
+version = "0.4.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6bed508dfa638d89b1a797ddfe1b4b4022db834036b3f1bcdf2909cea5be14a2"
 dependencies = [
  "async-trait",
  "futures",
@@ -1365,8 +1367,9 @@ dependencies = [
 
 [[package]]
 name = "rust-mcp-transport"
-version = "0.3.3"
-source = "git+https://github.com/rust-mcp-stack/rust-mcp-sdk?branch=feat%2Fsupport-selecting-protocol-version-with-cargo-features#430aee929d955dd75b6d512dc3a354b5851f7a45"
+version = "0.3.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6318216799507090512e6ffa7ea7fd26c6f2098c655cb72942dd5e221cfdea3d"
 dependencies = [
  "async-trait",
  "bytes",
@@ -1924,9 +1927,9 @@ checksum = "5a5f39404a5da50712a4c1eecf25e90dd62b613502b7e925fd4e4d19b5c96512"
 
 [[package]]
 name = "unicode-width"
-version = "0.2.0"
+version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fc81956842c57dac11422a97c3b8195a1ff727f06e85c84ed2e8aa277c9a0fd"
+checksum = "4a1a07cc7db3810833284e8d372ccdc6da29741639ecc70c9ec107df0fa6154c"
 
 [[package]]
 name = "untrusted"
