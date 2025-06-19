@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.10](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.9...v0.1.10) (2025-06-18)
+
+
+### 🐛 Bug Fixes
+
+* Update templates to hide empty capabilities ([#18](https://github.com/rust-mcp-stack/mcp-discovery/issues/18)) ([29276fe](https://github.com/rust-mcp-stack/mcp-discovery/commit/29276fe9aa149467f37db882944b6d4f4bafb4ae))
+
 ## [0.1.9](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.8...v0.1.9) (2025-05-09)
 
 

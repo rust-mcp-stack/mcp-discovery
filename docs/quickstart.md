@@ -9,13 +9,13 @@
 <!-- x-release-please-start-version -->
 
 ```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-installer.sh | sh
 ```
 
 #### **PowerShell script**
 
 ```sh
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-installer.ps1 | iex"
 ```
 
 <!-- x-release-please-end -->
@@ -46,78 +46,78 @@ cargo install mcp-discovery --locked
     <tr>      
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-aarch64-apple-darwin.tar.gz">mcp-discovery-aarch64-apple-darwin.tar.gz</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-aarch64-apple-darwin.tar.gz">mcp-discovery-aarch64-apple-darwin.tar.gz</a>
       <!-- x-release-please-end -->
       </td>
       <td>Apple Silicon macOS</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-aarch64-apple-darwin.tar.gz.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-aarch64-apple-darwin.tar.gz.sha256">checksum</a>
       <!-- x-release-please-end -->    
       </td>
     </tr>
     <tr>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-apple-darwin.tar.gz">mcp-discovery-x86_64-apple-darwin.tar.gz</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-apple-darwin.tar.gz">mcp-discovery-x86_64-apple-darwin.tar.gz</a>
       <!-- x-release-please-end -->
       </td>
       <td>Intel macOS</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-apple-darwin.tar.gz.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-apple-darwin.tar.gz.sha256">checksum</a>
       <!-- x-release-please-end -->
       </td>
     </tr>
     <tr>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-pc-windows-msvc.zip">mcp-discovery-x86_64-pc-windows-msvc.zip</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-pc-windows-msvc.zip">mcp-discovery-x86_64-pc-windows-msvc.zip</a>
       <!-- x-release-please-end -->
       </td>
       <td>x64 Windows (zip)</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-pc-windows-msvc.zip.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-pc-windows-msvc.zip.sha256">checksum</a>
       <!-- x-release-please-end -->
       </td>
     </tr>
     <tr>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-pc-windows-msvc.msi">mcp-discovery-x86_64-pc-windows-msvc.msi</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-pc-windows-msvc.msi">mcp-discovery-x86_64-pc-windows-msvc.msi</a>
       <!-- x-release-please-end -->
       </td>
       <td>x64 Windows (msi)</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-pc-windows-msvc.msi.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-pc-windows-msvc.msi.sha256">checksum</a>
       <!-- x-release-please-end -->
       </td>
     </tr>
     <tr>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-aarch64-unknown-linux-gnu.tar.gz">mcp-discovery-aarch64-unknown-linux-gnu.tar.gz</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-aarch64-unknown-linux-gnu.tar.gz">mcp-discovery-aarch64-unknown-linux-gnu.tar.gz</a>
       <!-- x-release-please-end -->
       </td>
       <td>ARM64 Linux</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-aarch64-unknown-linux-gnu.tar.gz.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-aarch64-unknown-linux-gnu.tar.gz.sha256">checksum</a>
       <!-- x-release-please-end -->
       </td>
     </tr>
     <tr>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-unknown-linux-gnu.tar.gz">mcp-discovery-x86_64-unknown-linux-gnu.tar.gz</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-unknown-linux-gnu.tar.gz">mcp-discovery-x86_64-unknown-linux-gnu.tar.gz</a>
       <!-- x-release-please-end -->
       </td>
       <td>x64 Linux</td>
       <td>
       <!-- x-release-please-start-version -->
-      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.9/mcp-discovery-x86_64-unknown-linux-gnu.tar.gz.sha256">checksum</a>
+      <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.1.10/mcp-discovery-x86_64-unknown-linux-gnu.tar.gz.sha256">checksum</a>
       <!-- x-release-please-end -->
       </td>
     </tr>
