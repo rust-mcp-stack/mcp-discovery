@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.11](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.10...v0.1.11) (2025-06-20)
+
+
+### 🚀 Features
+
+* Improve templates and dependencies ([#20](https://github.com/rust-mcp-stack/mcp-discovery/issues/20)) ([aed96ef](https://github.com/rust-mcp-stack/mcp-discovery/commit/aed96ef700344989086c4572d3370045bcc4e155))
+
 ## [0.1.10](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.9...v0.1.10) (2025-06-18)
 
 
