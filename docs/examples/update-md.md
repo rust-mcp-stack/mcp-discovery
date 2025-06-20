@@ -38,7 +38,7 @@
             <td>
                 <ul>
                     <li style="white-space: nowrap;"> <code>includeImage</code> : boolean<br /></li>
-                    <li style="white-space: nowrap;"> <code>messageType</code> : string<br /></li>
+                    <li style="white-space: nowrap;"> <code>messageType</code> : error|success|debug<br /></li>
                 </ul>
             </td>
         </tr>
@@ -285,7 +285,7 @@
                 <code><b>Static Resource</b></code>
             </td>
             <td>
-                <a>test://static/resource/{id}</a>
+                <a>test://static/resource/{id}</a> 
             </td>
             <td>A static resource with a numeric ID</td>
         </tr>

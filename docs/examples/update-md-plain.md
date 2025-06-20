@@ -17,7 +17,7 @@
   - Demonstrates how annotations can be used to provide metadata about content
   - **Inputs:**
       - <code>includeImage</code> : boolean<br />
-      - <code>messageType</code> : string<br />
+      - <code>messageType</code> : error|success|debug<br />
 
 - **echo**
   - Echoes back the input
