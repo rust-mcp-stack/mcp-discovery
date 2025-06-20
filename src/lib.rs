@@ -411,10 +411,7 @@ impl McpDiscovery {
             server_version.name,
             server_version.version,
         );
-        println!(
-            ">>>PROTO  {:?} ",
-            client.server_info().unwrap().protocol_version
-        );
+
         let capabilities: McpCapabilities = McpCapabilities {
             tools: client
                 .server_has_tools()

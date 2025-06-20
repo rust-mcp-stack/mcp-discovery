@@ -20,3 +20,113 @@ dependencies = ["fmt", "clippy", "test"]
 [tasks.clippy-fix]
 command = "cargo"
 args = ["clippy", "--fix", "--allow-dirty"]
+
+
+[tasks.generate-examples]
+dependencies = [
+    "example-create-md",
+    "example-create-md-plain",
+    "example-create-server-info-html",
+    "example-update-md",
+    "example-update-md-plain",
+    "example-update-md-plain",
+    "example-update-md-inline",
+]
+
+
+[tasks.example-create-md]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "create",
+    "-t",
+    "md",
+    "-f",
+    "docs/examples/create-md.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+[tasks.example-create-md-plain]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "create",
+    "-t",
+    "md-plain",
+    "-f",
+    "docs/examples/create-md-plain.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+[tasks.example-create-server-info-html]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "create",
+    "-t",
+    "html",
+    "-f",
+    "docs/examples/server-info.html",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+
+[tasks.example-update-md]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "update",
+    "-t",
+    "md",
+    "-f",
+    "docs/examples/update-md.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+
+[tasks.example-update-md-plain]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "update",
+    "-t",
+    "md-plain",
+    "-f",
+    "docs/examples/update-md-plain.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+
+[tasks.example-update-md-inline]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "update",
+    "-f",
+    "docs/examples/update-md-inline.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
