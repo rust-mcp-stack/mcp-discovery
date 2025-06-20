@@ -109,7 +109,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
 
     // Helper: Formats a capability tag with a boolean indicator and optional count.
     handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>| {
-        let count_str = count.map_or("".to_string(), |count| format!(" ({})", count));
+        let count_str = count.map_or("".to_string(), |count| if count>0 {format!(" ({})", count)} else{"".to_string()});
         if supported.as_bool().unwrap_or(false) {
         format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
         }
