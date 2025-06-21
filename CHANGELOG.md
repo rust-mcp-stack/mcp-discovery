@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.12](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.11...v0.1.12) (2025-06-21)
+
+
+### 🚀 Features
+
+* Add $ref support to JSON Schema parser ([#22](https://github.com/rust-mcp-stack/mcp-discovery/issues/22)) ([41abe75](https://github.com/rust-mcp-stack/mcp-discovery/commit/41abe75dedb160b2ac13b3df2f21543f4dbdd136))
+
 ## [0.1.11](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.10...v0.1.11) (2025-06-20)
 
 
