@@ -9,6 +9,7 @@ mod templates;
 mod types;
 mod utils;
 
+use serde_json::{to_value, Map, Value};
 pub use templates::OutputTemplate;
 pub use types::{
     DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
@@ -328,7 +329,9 @@ impl McpDiscovery {
         let mut tools: Vec<_> = tools_result
             .iter()
             .map(|tool| {
-                let params = tool_params(&tool.input_schema.properties);
+                let root_schema: serde_json::Value =
+                    to_value(&tool.input_schema).unwrap_or_else(|_| Value::Object(Map::new()));
+                let params = tool_params(&tool.input_schema.properties, &root_schema);
 
                 Ok::<McpToolMeta, DiscoveryError>(McpToolMeta {
                     name: tool.name.to_owned(),
