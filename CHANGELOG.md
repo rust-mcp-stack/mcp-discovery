@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.1](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.0...v0.2.1) (2025-09-22)
+
+
+### 🚀 Features
+
+* Npm package publish ([#26](https://github.com/rust-mcp-stack/mcp-discovery/issues/26)) ([149f587](https://github.com/rust-mcp-stack/mcp-discovery/commit/149f587266da2edba789cf16070acf8114109fe1))
+
 ## [0.2.0](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.12...v0.2.0) (2025-09-22)
 
 
