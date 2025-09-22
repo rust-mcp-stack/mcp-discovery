@@ -1,7 +1,8 @@
 ## example-servers/everything 1.0.0
-| 🟢 Tools (8) | 🟢 Prompts (3) | 🟢 Resources (10) | 🟢 Logging | <span style="opacity:0.6">🔴 Experimental</span> |
-| --- | --- | --- | --- | --- |
-## 🛠️ Tools (8)
+| 🟢 Tools (10) | 🟢 Prompts (3) | 🟢 Resources (10) | 🟢 Logging | 🟢 Completions | <span style="opacity:0.6">🔴 Experimental</span> |
+| --- | --- | --- | --- | --- | --- |
+
+## 🛠️ Tools (10)
 
 
 - **add**
@@ -20,6 +21,11 @@
   - Echoes back the input
   - **Inputs:**
       - <code>message</code> : string<br />
+
+- **getResourceLinks**
+  - Returns multiple resource links that reference different types of resources
+  - **Inputs:**
+      - <code>count</code> : number<br />
 
 - **getResourceReference**
   - Returns a resource reference that can be used by MCP clients
@@ -43,6 +49,11 @@
   - **Inputs:**
       - <code>maxTokens</code> : number<br />
       - <code>prompt</code> : string<br />
+
+- **structuredContent**
+  - Returns structured content along with an output schema for client data validation
+  - **Inputs:**
+      - <code>location</code> : string<br />
 
 
 ## 📝 Prompts (3)

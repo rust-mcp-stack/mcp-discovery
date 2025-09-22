@@ -14,7 +14,7 @@
     <br/>
     <b>Version: </b>1.0.0
     <br/>
-    <b>Number of tools:</b> 8
+    <b>Number of tools:</b> 10
     <h2>Summary:</h2>
     <table>
             <thead>
@@ -23,15 +23,17 @@
                 <th>Prompts</th>
                 <th>Resources</th>
                 <th>Logging</th>
+                <th>Completions</th>
                 <th>Experimental</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td>🟢 Tools (8)</td>
+                <td>🟢 Tools (10)</td>
                 <td>🟢 Prompts (3)</td>
                 <td>🟢 Resources (10)</td>
                 <td>🟢 Logging</td>
+                <td>🟢 Completions</td>
                 <td><span style="opacity:0.6">🔴 Experimental</span></td>
               </tr>
             </tbody>

@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use rust_mcp_sdk::schema::RpcError;
-use rust_mcp_sdk::{mcp_client::ClientHandler, McpClient};
+use rust_mcp_sdk::{McpClient, mcp_client::ClientHandler};
 
 pub struct MyClientHandler;
 
@@ -12,7 +12,7 @@ impl ClientHandler for MyClientHandler {
         runtime: &dyn McpClient,
     ) -> std::result::Result<(), RpcError> {
         if !runtime.is_shut_down().await {
-            eprintln!("{}", error_message);
+            eprintln!("{error_message}");
         }
         Ok(())
     }

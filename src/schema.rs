@@ -15,15 +15,13 @@ fn resolve_ref<'a>(
 ) -> DiscoveryResult<&'a Value> {
     if !ref_path.starts_with("#/") {
         return Err(DiscoveryError::InvalidSchema(format!(
-            "$ref '{}' must start with '#/'",
-            ref_path
+            "$ref '{ref_path}' must start with '#/'"
         )));
     }
 
     if !visited.insert(ref_path.to_string()) {
         return Err(DiscoveryError::InvalidSchema(format!(
-            "Cycle detected in $ref path '{}'",
-            ref_path
+            "Cycle detected in $ref path '{ref_path}'"
         )));
     }
 
@@ -33,15 +31,13 @@ fn resolve_ref<'a>(
     for segment in path {
         if segment.is_empty() {
             return Err(DiscoveryError::InvalidSchema(format!(
-                "Invalid $ref path '{}': empty segment",
-                ref_path
+                "Invalid $ref path '{ref_path}': empty segment"
             )));
         }
         current = match current {
             Value::Object(obj) => obj.get(segment).ok_or_else(|| {
                 DiscoveryError::InvalidSchema(format!(
-                    "Invalid $ref path '{}': segment '{}' not found",
-                    ref_path, segment
+                    "Invalid $ref path '{ref_path}': segment '{segment}' not found"
                 ))
             })?,
             Value::Array(arr) => segment
@@ -50,15 +46,13 @@ fn resolve_ref<'a>(
                 .and_then(|i| arr.get(i))
                 .ok_or_else(|| {
                     DiscoveryError::InvalidSchema(format!(
-                        "Invalid $ref path '{}': segment '{}' not found in array",
-                        ref_path, segment
+                        "Invalid $ref path '{ref_path}': segment '{segment}' not found in array"
                     ))
                 })?,
             _ => {
                 return Err(DiscoveryError::InvalidSchema(format!(
-                    "Invalid $ref path '{}': cannot traverse into non-object/array",
-                    ref_path
-                )))
+                    "Invalid $ref path '{ref_path}': cannot traverse into non-object/array"
+                )));
             }
         };
     }
@@ -91,8 +85,7 @@ pub fn param_object(
             let param_value = param_value
                 .as_object()
                 .ok_or(DiscoveryError::InvalidSchema(format!(
-                    "Property '{}' is not an object",
-                    param_name
+                    "Property '{param_name}' is not an object"
                 )))?;
             let param_type = param_type(param_value, root_schema, visited)?;
             let param_description = object_map
@@ -127,8 +120,7 @@ pub fn param_type(
         let ref_map = ref_value
             .as_object()
             .ok_or(DiscoveryError::InvalidSchema(format!(
-                "$ref '{}' does not point to an object",
-                ref_path_str
+                "$ref '{ref_path_str}' does not point to an object"
             )))?;
         return param_type(ref_map, root_schema, visited);
     }
@@ -154,7 +146,7 @@ pub fn param_type(
                     return Err(DiscoveryError::InvalidSchema(format!(
                         "Unsupported enum value type: {}",
                         serde_json::to_string(value).unwrap_or_default()
-                    )))
+                    )));
                 }
             };
             param_types.push(param_type);

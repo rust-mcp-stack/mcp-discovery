@@ -1,4 +1,4 @@
-use rust_mcp_sdk::schema::{Prompt, Resource, ResourceTemplate};
+use rust_mcp_sdk::schema::{Prompt, Resource, ResourceTemplate, ToolInputSchema};
 use std::fmt::Display;
 
 /// Represents the capabilities of an MCP server, indicating which features are supported.
@@ -8,6 +8,7 @@ pub struct McpCapabilities {
     pub prompts: bool,
     pub resources: bool,
     pub logging: bool,
+    pub completions: bool,
     pub experimental: bool,
 }
 
@@ -15,8 +16,13 @@ impl Display for McpCapabilities {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "tools:{}, prompts:{}, resources:{}, logging:{}, experimental:{}",
-            self.tools, self.prompts, self.resources, self.logging, self.experimental
+            "tools:{}, prompts:{}, resources:{}, logging:{}, completions:{} , experimental:{}",
+            self.tools,
+            self.prompts,
+            self.resources,
+            self.logging,
+            self.completions,
+            self.experimental
         )
     }
 }
@@ -69,7 +75,7 @@ impl Display for ParamTypes {
                 .collect::<Vec<String>>()
                 .join("|"),
         };
-        write!(f, "{}", type_name)
+        write!(f, "{type_name}")
     }
 }
 
@@ -112,6 +118,7 @@ pub struct McpToolMeta {
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
     pub description: Option<String>,
     pub params: Vec<McpToolSParams>,
+    pub input_schema: ToolInputSchema,
 }
 
 /// Represents the MCP server's information, including its name, version, capabilities, and supported features.

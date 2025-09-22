@@ -21,6 +21,11 @@ dependencies = ["fmt", "clippy", "test"]
 command = "cargo"
 args = ["clippy", "--fix", "--allow-dirty"]
 
+[tasks.check]
+dependencies = ["fmt", "clippy", "test"]
+
+
+
 
 [tasks.generate-examples]
 dependencies = [
@@ -125,6 +130,23 @@ args = [
     "update",
     "-f",
     "docs/examples/update-md-inline.md",
+    "--",
+    "npx",
+    "-y",
+    "@modelcontextprotocol/server-everything",
+]
+
+
+[tasks.example-update-json]
+command = "cargo"
+args = [
+    "run",
+    "--",
+    "update",
+    "-f",
+    "docs/examples/json.txt",
+    "-s",
+    "{{json}}",
     "--",
     "npx",
     "-y",

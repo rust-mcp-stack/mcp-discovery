@@ -9,7 +9,7 @@ mod templates;
 mod types;
 mod utils;
 
-use serde_json::{to_value, Map, Value};
+use serde_json::{Map, Value, to_value};
 pub use templates::OutputTemplate;
 pub use types::{
     DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
@@ -27,14 +27,14 @@ use std::sync::Arc;
 
 use handler::MyClientHandler;
 use rust_mcp_sdk::schema::{
-    ClientCapabilities, Implementation, InitializeRequestParams, ListPromptsRequestParams,
-    ListResourceTemplatesRequestParams, ListResourcesRequestParams, ListToolsRequestParams, Prompt,
-    Resource, ResourceTemplate, LATEST_PROTOCOL_VERSION,
+    ClientCapabilities, Implementation, InitializeRequestParams, LATEST_PROTOCOL_VERSION,
+    ListPromptsRequestParams, ListResourceTemplatesRequestParams, ListResourcesRequestParams,
+    ListToolsRequestParams, Prompt, Resource, ResourceTemplate,
 };
 use rust_mcp_sdk::{
-    error::SdkResult,
-    mcp_client::{client_runtime, ClientRuntime},
     McpClient, StdioTransport, TransportOptions,
+    error::SdkResult,
+    mcp_client::{ClientRuntime, client_runtime},
 };
 
 /// Core struct representing the discovery mechanism for the MCP server.
@@ -91,7 +91,7 @@ impl McpDiscovery {
             }
             _ => {
                 let content = template.render_template(server_info)?;
-                println!("{}", content);
+                println!("{content}");
             }
         }
 
@@ -251,8 +251,7 @@ impl McpDiscovery {
                                     item.mime_type
                                         .as_ref()
                                         .map_or("".to_string(), |mime_type| format!(
-                                            " ({})",
-                                            mime_type
+                                            " ({mime_type})"
                                         ))
                                         .dimmed(),
                                     item.description.as_ref().map_or(
@@ -291,8 +290,7 @@ impl McpDiscovery {
                                     item.mime_type
                                         .as_ref()
                                         .map_or("".to_string(), |mime_type| format!(
-                                            " ({})",
-                                            mime_type
+                                            " ({mime_type})"
                                         ))
                                         .dimmed(),
                                     item.description.as_ref().map_or(
@@ -337,6 +335,7 @@ impl McpDiscovery {
                     name: tool.name.to_owned(),
                     description: tool.description.to_owned(),
                     params,
+                    input_schema: tool.input_schema.clone(),
                 })
             })
             .filter_map(Result::ok)
@@ -428,6 +427,12 @@ impl McpDiscovery {
             logging: client
                 .server_supports_logging()
                 .ok_or(DiscoveryError::ServerNotInitialized)?,
+            completions: client
+                .server_info()
+                .ok_or(DiscoveryError::ServerNotInitialized)?
+                .capabilities
+                .completions
+                .is_some(),
             experimental: client
                 .server_has_experimental()
                 .ok_or(DiscoveryError::ServerNotInitialized)?,
@@ -460,6 +465,7 @@ impl McpDiscovery {
         let client_details: InitializeRequestParams = InitializeRequestParams {
             capabilities: ClientCapabilities::default(),
             client_info: Implementation {
+                title: Some("MCP Discovery - By Rust MCP Stack".to_string()),
                 name: env!("CARGO_PKG_NAME").to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
             },

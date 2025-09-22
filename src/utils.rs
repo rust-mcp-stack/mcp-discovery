@@ -1,6 +1,6 @@
 use path_clean::PathClean;
 
-use crate::{error::DiscoveryResult, types::Template, OutputTemplate};
+use crate::{OutputTemplate, error::DiscoveryResult, types::Template};
 use std::{
     io::{self, ErrorKind},
     path::{Path, PathBuf},
