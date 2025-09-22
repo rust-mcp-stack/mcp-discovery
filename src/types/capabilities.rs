@@ -75,7 +75,7 @@ impl Display for ParamTypes {
                 .collect::<Vec<String>>()
                 .join("|"),
         };
-        write!(f, "{}", type_name)
+        write!(f, "{type_name}")
     }
 }
 

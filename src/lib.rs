@@ -91,7 +91,7 @@ impl McpDiscovery {
             }
             _ => {
                 let content = template.render_template(server_info)?;
-                println!("{}", content);
+                println!("{content}");
             }
         }
 
@@ -251,8 +251,7 @@ impl McpDiscovery {
                                     item.mime_type
                                         .as_ref()
                                         .map_or("".to_string(), |mime_type| format!(
-                                            " ({})",
-                                            mime_type
+                                            " ({mime_type})"
                                         ))
                                         .dimmed(),
                                     item.description.as_ref().map_or(
@@ -291,8 +290,7 @@ impl McpDiscovery {
                                     item.mime_type
                                         .as_ref()
                                         .map_or("".to_string(), |mime_type| format!(
-                                            " ({})",
-                                            mime_type
+                                            " ({mime_type})"
                                         ))
                                         .dimmed(),
                                     item.description.as_ref().map_or(

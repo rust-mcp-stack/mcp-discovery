@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{arg, command, Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum, arg, command};
 use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]

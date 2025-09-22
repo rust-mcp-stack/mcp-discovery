@@ -44,7 +44,7 @@ async fn main() {
     let mut discovery_agent = McpDiscovery::new(command);
 
     if let Err(error) = discovery_agent.start().await {
-        eprintln!("Error: {}", error);
+        eprintln!("Error: {error}");
         std::process::exit(1);
     }
 }

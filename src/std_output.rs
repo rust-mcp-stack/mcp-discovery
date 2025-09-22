@@ -2,7 +2,7 @@ use colored::Colorize;
 use std::io::{self, Write};
 use unicode_width::UnicodeWidthStr;
 
-use crate::{utils::boolean_indicator, McpServerInfo};
+use crate::{McpServerInfo, utils::boolean_indicator};
 
 const SUMMARY_HEADER_SIZE: usize = 50;
 

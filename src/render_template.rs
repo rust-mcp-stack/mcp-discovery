@@ -109,7 +109,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
 
     // Helper: Formats a capability tag with a boolean indicator and optional count.
     handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>| {
-        let count_str = count.map_or("".to_string(), |count| if count>0 {format!(" ({})", count)} else{"".to_string()});
+        let count_str = count.map_or("".to_string(), |count| if count>0 {format!(" ({count})")} else{"".to_string()});
         if supported.as_bool().unwrap_or(false) {
         format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
         }
@@ -139,8 +139,8 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
     // Helper: Formats a capability title with optional count and underline.
     handlebars_helper!(capability_title: |label:Option<String>, count: Option<i64>, with_underline:Option<bool>| {
     let label = label.unwrap_or("".to_string());
-    let count_str = count.map(|c| format!("({})", c)).unwrap_or("".to_string());
-    let text = format!("{}{}", label, count_str);
+    let count_str = count.map(|c| format!("({c})")).unwrap_or("".to_string());
+    let text = format!("{label}{count_str}");
     let underline_str = with_underline.unwrap_or(false).then(|| format!("\n{}", "─".repeat(text.width())));
     format!("{}{}",text,underline_str.unwrap_or("".to_string()))
     });
@@ -150,7 +150,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
        let label = label.unwrap_or("".to_string());
        let re = Regex::new(&regex.to_string()).unwrap();
        let result = re.replace_all(&label, replacer.to_string());
-       format!("{}", result)
+       format!("{result}")
     });
     // Helper: Converts a ParamTypes enum to its string representation.
     handlebars_helper!(tool_param_type: |param_type:ParamTypes| {
@@ -514,6 +514,7 @@ mod tests {
                 resources: false,
                 logging: false,
                 experimental: false,
+                completions: false,
             },
             tools: Default::default(),
             prompts: Default::default(),
@@ -574,7 +575,7 @@ mod tests {
 
         // Test json helper (pretty)
         let result = handlebar
-            .render_template("{{json true}}", &json!({"key": "value"}))
+            .render_template("{{json this 'pretty'}}", &json!({"key": "value"}))
             .expect("Failed to render json");
         assert_eq!(result, "{\n  \"key\": \"value\"\n}");
 
