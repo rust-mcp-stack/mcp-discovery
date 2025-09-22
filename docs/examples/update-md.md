@@ -2,9 +2,10 @@
 
 <!-- mcp-discovery-render -->
 ## example-servers/everything 1.0.0
-| 🟢 Tools (8) | 🟢 Prompts (3) | 🟢 Resources (10) | 🟢 Logging | <span style="opacity:0.6">🔴 Experimental</span> |
-| --- | --- | --- | --- | --- |
-## 🛠️ Tools (8)
+| 🟢 Tools (10) | 🟢 Prompts (3) | 🟢 Resources (10) | 🟢 Logging | 🟢 Completions | <span style="opacity:0.6">🔴 Experimental</span> |
+| --- | --- | --- | --- | --- | --- |
+
+## 🛠️ Tools (10)
 
 <table style="text-align: left;">
 <thead>
@@ -24,8 +25,8 @@
             <td>Adds two numbers</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>a</code> : number<br /></li>
-                    <li style="white-space: nowrap;"> <code>b</code> : number<br /></li>
+                    <li> <code>a</code> : number<br /></li>
+                    <li> <code>b</code> : number<br /></li>
                 </ul>
             </td>
         </tr>
@@ -37,8 +38,8 @@
             <td>Demonstrates how annotations can be used to provide metadata about content</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>includeImage</code> : boolean<br /></li>
-                    <li style="white-space: nowrap;"> <code>messageType</code> : error|success|debug<br /></li>
+                    <li> <code>includeImage</code> : boolean<br /></li>
+                    <li> <code>messageType</code> : error|success|debug<br /></li>
                 </ul>
             </td>
         </tr>
@@ -50,24 +51,36 @@
             <td>Echoes back the input</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>message</code> : string<br /></li>
+                    <li> <code>message</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
         <tr>
             <td>4.</td>
             <td>
-                <code><b>getResourceReference</b></code>
+                <code><b>getResourceLinks</b></code>
             </td>
-            <td>Returns a resource reference that can be used by MCP clients</td>
+            <td>Returns multiple resource links that reference different types of resources</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>resourceId</code> : number<br /></li>
+                    <li> <code>count</code> : number<br /></li>
                 </ul>
             </td>
         </tr>
         <tr>
             <td>5.</td>
+            <td>
+                <code><b>getResourceReference</b></code>
+            </td>
+            <td>Returns a resource reference that can be used by MCP clients</td>
+            <td>
+                <ul>
+                    <li> <code>resourceId</code> : number<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>6.</td>
             <td>
                 <code><b>getTinyImage</b></code>
             </td>
@@ -78,20 +91,20 @@
             </td>
         </tr>
         <tr>
-            <td>6.</td>
+            <td>7.</td>
             <td>
                 <code><b>longRunningOperation</b></code>
             </td>
             <td>Demonstrates a long running operation with progress updates</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>duration</code> : number<br /></li>
-                    <li style="white-space: nowrap;"> <code>steps</code> : number<br /></li>
+                    <li> <code>duration</code> : number<br /></li>
+                    <li> <code>steps</code> : number<br /></li>
                 </ul>
             </td>
         </tr>
         <tr>
-            <td>7.</td>
+            <td>8.</td>
             <td>
                 <code><b>printEnv</b></code>
             </td>
@@ -102,15 +115,27 @@
             </td>
         </tr>
         <tr>
-            <td>8.</td>
+            <td>9.</td>
             <td>
                 <code><b>sampleLLM</b></code>
             </td>
             <td>Samples from an LLM using MCP's sampling feature</td>
             <td>
                 <ul>
-                    <li style="white-space: nowrap;"> <code>maxTokens</code> : number<br /></li>
-                    <li style="white-space: nowrap;"> <code>prompt</code> : string<br /></li>
+                    <li> <code>maxTokens</code> : number<br /></li>
+                    <li> <code>prompt</code> : string<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>10.</td>
+            <td>
+                <code><b>structuredContent</b></code>
+            </td>
+            <td>Returns structured content along with an output schema for client data validation</td>
+            <td>
+                <ul>
+                    <li> <code>location</code> : string<br /></li>
                 </ul>
             </td>
         </tr>

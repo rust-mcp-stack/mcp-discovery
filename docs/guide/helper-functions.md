@@ -156,7 +156,7 @@ Example:
 Output:
 
 ```md
-includeImage : boolean  
+includeImage : boolean
  messageType : string
 ```
 
@@ -186,16 +186,29 @@ Output:
 Each entry includes <code>name</code>, <code>type</code> .
 ```
 
-### `json_helper`
+### `json`
 
-A Handlebars helper that serializes the entire template context into a JSON string. It supports optional pretty-printing when a truthy argument is passed.
+A Handlebars helper that converts an object into a JSON string. If the second parameter is 'pretty', the output will be formatted with indentation for readability.
 
 Example:
 
-_Wraps words enclosed in single quotes with `<code>` and `</code>` tags._
+
+_Produces a JSON string that represents the list of tools._
 
 ```hbs
-{{json true}}
+{{json this.tools}}
+```
+
+_Produces a formatted JSON string that represents the list of tools._
+
+```hbs
+{{json this.tools}}
+```
+
+_Outputs the complete payload as a pretty-printed JSON string._
+
+```hbs
+{{json this 'pretty'}}
 ```
 
 <a href="examples/json.txt" target="_blank"> 📎 output json</a>

@@ -3,8 +3,8 @@
 use std::{path::PathBuf, str::FromStr};
 
 use handlebars::{
-    handlebars_helper, Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext,
-    RenderError,
+    Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext, RenderError,
+    RenderErrorReason, handlebars_helper,
 };
 use regex::Regex;
 use serde::Serialize;
@@ -12,13 +12,13 @@ use serde_json::Value;
 use unicode_width::UnicodeWidthStr;
 
 use crate::{
+    McpServerInfo, OutputTemplate,
     error::{DiscoveryError, DiscoveryResult},
     templates::{InlineTemplateInfo, PARTIALS},
     types::{ParamTypes, Template, WriteOptions},
     utils::{
-        boolean_indicator, line_ending, match_template, RenderTemplateInfo, UpdateTemplateInfo,
+        RenderTemplateInfo, UpdateTemplateInfo, boolean_indicator, line_ending, match_template,
     },
-    McpServerInfo, OutputTemplate,
 };
 
 /// Properties parsed from the `MCP_DISCOVERY_TEMPLATE_START` marker line in template files.
@@ -178,27 +178,30 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
 fn json_helper(
     h: &Helper,
     _: &Handlebars,
-    ctx: &Context,
+    _: &Context,
     _: &mut RenderContext,
     out: &mut dyn Output,
 ) -> HelperResult {
-    let data: &Value = ctx.data();
+    let pretty_print = h
+        .param(1)
+        .and_then(|v| v.value().as_str())
+        .is_some_and(|s| s.to_lowercase() == "pretty");
 
-    // Check if the first param (pretty) is passed and true
-    let pretty = h
-        .param(0)
-        .and_then(|v| v.value().as_bool())
-        .unwrap_or(false);
+    match h.param(0) {
+        Some(value) => {
+            let json_output = if pretty_print {
+                serde_json::to_string_pretty(value.value())
+                    .map_err(|err| RenderError::from(RenderErrorReason::Other(err.to_string())))?
+            } else {
+                serde_json::to_string(value.value())
+                    .map_err(|err| RenderError::from(RenderErrorReason::Other(err.to_string())))?
+            };
 
-    let json_output = if pretty {
-        serde_json::to_string_pretty(data)
-    } else {
-        serde_json::to_string(data)
+            out.write(&json_output)?;
+            Ok(())
+        }
+        None => Ok(()),
     }
-    .unwrap_or_else(|_| String::from("/* failed to serialize */"));
-
-    out.write(&json_output)?;
-    Ok(())
 }
 
 // Registers Handlebars partials from the PARTIALS constant.
@@ -652,10 +655,12 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("Duplicate template start marker"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("Duplicate template start marker")
+        );
     }
 
     #[test]
@@ -678,10 +683,12 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("outside a render section"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("outside a render section")
+        );
     }
 
     #[test]
@@ -704,10 +711,12 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("no matching start marker"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("no matching start marker")
+        );
     }
 
     #[test]
@@ -731,10 +740,12 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("both a 'template-file' and an inline template"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("both a 'template-file' and an inline template")
+        );
     }
 
     #[test]

@@ -4,7 +4,7 @@ use unicode_width::UnicodeWidthStr;
 
 use crate::{utils::boolean_indicator, McpServerInfo};
 
-const SUMMARY_HEADER_SIZE: usize = 44;
+const SUMMARY_HEADER_SIZE: usize = 50;
 
 /// Function to print a list of items to the given writer `w`.
 /// Each item is printed with an index, key and value.
@@ -12,7 +12,7 @@ pub fn print_list<W: Write>(mut w: W, list_items: Vec<(String, String)>) -> io::
     for (index, (key, val)) in list_items.iter().enumerate() {
         writeln!(
             w,
-            "{}. {}: {}\n",
+            "{}. {}: {}",
             (index + 1).to_string().bold().cyan(),
             key.bold().cyan(),
             val
@@ -67,14 +67,15 @@ pub fn print_summary<W: Write>(mut w: W, server_info: &McpServerInfo) -> io::Res
     let caps = &server_info.capabilities;
     let lines = [
         format!(
-            "{} Tools    {} Prompts    {} Resources",
+            "{} Tools   {} Prompts   {} Resources   {} Logging",
             boolean_indicator(caps.tools),
             boolean_indicator(caps.prompts),
-            boolean_indicator(caps.resources)
+            boolean_indicator(caps.resources),
+            boolean_indicator(caps.logging),
         ),
         format!(
-            "{} Logging  {} Experimental",
-            boolean_indicator(caps.logging),
+            "{} Completions   {} Experimental",
+            boolean_indicator(caps.completions),
             boolean_indicator(caps.experimental)
         ),
     ];
@@ -157,6 +158,7 @@ mod tests {
                 resources: false,
                 logging: true,
                 experimental: false,
+                completions: true,
             },
             tools: None,
             prompts: None,
@@ -194,6 +196,7 @@ mod tests {
                 resources: true,
                 logging: false,
                 experimental: false,
+                completions: true,
             },
             tools: None,
             prompts: None,

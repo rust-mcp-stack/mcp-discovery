@@ -15,7 +15,7 @@ keywords = [
 ]
 homepage = "https://rust-mcp-stack.github.io/mcp-discovery"
 license = "MIT"
-edition = "2021"
+edition = "2024"
 
 [lib]
 name = "mcp_discovery"
@@ -31,9 +31,10 @@ eula = false
 all-features = true # Build with all features
 
 [dependencies]
-rust-mcp-sdk = { version = "0.4", default-features = false, features = [
+rust-mcp-sdk = { version = "0.7", default-features = false, features = [
     "client",
-    "2024_11_05",
+    "stdio",
+    "2025_06_18"
 ] }
 
 clap = { version = "4.5", features = ["derive"] }
