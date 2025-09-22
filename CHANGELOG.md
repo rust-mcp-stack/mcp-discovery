@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.12...v0.2.0) (2025-09-22)
+
+
+### ⚠ BREAKING CHANGES
+
+* upgrade to mcp 2025-06-18 ([#24](https://github.com/rust-mcp-stack/mcp-discovery/issues/24))
+
+### 🚀 Features
+
+* Upgrade to mcp 2025-06-18 ([#24](https://github.com/rust-mcp-stack/mcp-discovery/issues/24)) ([5a67018](https://github.com/rust-mcp-stack/mcp-discovery/commit/5a67018a3b18e4b284f215024cf6c1c408da69e6))
+
 ## [0.1.12](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.1.11...v0.1.12) (2025-06-21)
 
 
