@@ -6,12 +6,8 @@
 
 A command-line tool written in Rust for discovering and documenting MCP Server capabilities.
 
-`mcp-discovery` launches an MCP Server using provided commands, queries its capabilities, tools, resources etc.
-It supports outputting the results in the terminal or saving them to files in Markdown, HTML, or plain text formats.
+It supports outputting the results in the terminal or saving them to files in [Markdown](https://github.com/rust-mcp-stack/mcp-discovery/blob/main/docs/examples/update-md.md#server-info-and-capabilities), [HTML](https://rust-mcp-stack.github.io/mcp-discovery/examples/server-info.html), [plain text](https://rust-mcp-stack.github.io/mcp-discovery/examples/capabilities.txt), JSON, or a custom template defined by you.
 
-🌐 Check out the **rust-mcp-filesystem** [capabilities](https://rust-mcp-stack.github.io/rust-mcp-filesystem/#/capabilities) page for sample output.
-
-This project is open-source and leverages the [rust-mcp-schema](https://github.com/rust-mcp-stack/rust-mcp-schema) and [rust-mcp-sdk](https://github.com/rust-mcp-stack/rust-mcp-sdk) crates for seamless interaction with MCP Servers.
 
 Check the [project documentation](https://rust-mcp-stack.github.io/mcp-discovery) for instructions and [command examples](https://rust-mcp-stack.github.io/mcp-discovery/#/guide/command-examples).
 
@@ -23,6 +19,11 @@ Check the [project documentation](https://rust-mcp-stack.github.io/mcp-discovery
 - **Flexible Output Customization**: Choose from built-in templates (`md`, `md-plain`, `html`, `txt`) or supply custom Handlebars templates for personalized output.
 - **MCP Discovery GitHub Action**: Integrate the mcp-discovery CLI as a GitHub Action to automate and maintain up-to-date MCP Server documentation in your development workflow.
 
+
+<img align="top" src="docs/_media/rust-mcp-stack-icon.png" width="24" style="border-radius:0.2rem;"> This open-source project leverages the [rust-mcp-sdk](https://github.com/rust-mcp-stack/rust-mcp-sdk) for seamless interaction with MCP Servers.
+
+🌐 Check out the **rust-mcp-filesystem** [capabilities](https://rust-mcp-stack.github.io/rust-mcp-filesystem/#/capabilities) page for a sample output.
+
 ## Installation ⬇️
 
 ### Running as CLI
@@ -31,7 +32,7 @@ Check the [project documentation](https://rust-mcp-stack.github.io/mcp-discovery
 
 ### GitHub Action
 
-The easiest way to automate and maintain up-to-date MCP Server documentation , is to use mcp-discovery as a GitHub action.  
+The easiest way to automate and maintain up-to-date MCP Server documentation , is to use mcp-discovery as a GitHub action.
 Please see [rust-mcp-stack/mcp-discovery-action](https://github.com/rust-mcp-stack/mcp-discovery-action) for installation and configuration instructions.
 
 ## Subcommands
@@ -105,8 +106,8 @@ mcp-discovery create -f capabilities.md  --template-file=custom_template.hbs -- 
 
 ## Defining Update Regions with Markers
 
-When using the `update` subcommand, `mcp-discovery` places capabilities between designated markers in the target file, which vary by file format and are typically comment lines.  
-The update command simplifies the process for developers and maintainers to keep documentation current effortlessly.  
+When using the `update` subcommand, `mcp-discovery` places capabilities between designated markers in the target file, which vary by file format and are typically comment lines.
+The update command simplifies the process for developers and maintainers to keep documentation current effortlessly.
 Run the mcp-discovery update command anytime to refresh the file with the latest MCP Server capabilities.
 
 ### Marker Annotations
@@ -188,7 +189,7 @@ Server Capabilities will be placed here...
     <b>Name: </b>{{name}}
     <br/>
     <b>Version: </b>{{version}}
-    <br/>      
+    <br/>
     <b>Number of tools:</b> {{len tools}}
     <h2>Summary:</h2>
     {{> html-summary }}

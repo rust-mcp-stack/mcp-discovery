@@ -43,19 +43,27 @@ Server Name: example-servers/everything, Server Version: 1.0.0
 
 #### ▪️ Print MCP Server capabilities to the terminal as JSON:
 
-We use the `json` helper function as a template string. It accepts an optional boolean argument—when set to true, the output is pretty-printed:
+We use the `json` helper function in a template string. It accepts an object and optional second parameter with value of 'pretty' for a formatted output:
 
+
+- Print the Full MCP Server Capabilities to the Terminal in JSON Format:
 ```bash
-mcp-discovery --template-string "{{{json true}}}" -- npx -y @modelcontextprotocol/server-everything
+mcp-discovery --template-string "{{{json this}}}" -- npx -y @modelcontextprotocol/server-everything
+```
+<a href="examples/json.txt" target="_blank"> 📎 printed json</a>
+
+- Print MCP Server tools to the Terminal in pretty-formatted JSON :
+```bash
+mcp-discovery --template-string "{{{json this.tools}}}" -- npx -y @modelcontextprotocol/server-everything
 ```
 
-<a href="examples/json.txt" target="_blank"> 📎 printed json</a>
+
 
 ---
 
 ## Create
 
-#### Create a Markdown file (\*.md) with MCP Server capabilities:
+#### Create a Markdown file (\*.md) describing MCP Server capabilities:
 
 ```bash
 mcp-discovery create -f create-md.md -- npx -y @modelcontextprotocol/server-everything
@@ -77,13 +85,22 @@ mcp-discovery create -f create-md-plain.md --template md-plain -- npx -y @modelc
 
 ---
 
-#### Create a HTML file (\*.html) with MCP Server capabilities:
+#### Create a HTML file (\*.html) describing MCP Server capabilities:
 
 ```bash
 mcp-discovery create -f server-info.html -- npx -y @modelcontextprotocol/server-everything
 ```
 
 <a href="examples/server-info.html" target="_blank">📎 view generated file</a>
+
+#### Create a TEXT file (\*.txt) describing MCP Server capabilities:
+
+```bash
+mcp-discovery create -f capabilities.txt -- npx -y @modelcontextprotocol/server-everything
+```
+
+<a href="examples/capabilities.txt" target="_blank">📎 view generated file</a>
+
 
 ## Update
 
@@ -96,7 +113,7 @@ Refer to the ["Update Regions with Markers"](./guide/mcp-discovery-markers.md) p
 mcp-discovery update -f update-md.md -- npx -y @modelcontextprotocol/server-everything
 ```
 
-Below is a typical md file containing a render block marked with `<!-- mcp-discovery-render -->` and `<!-- mcp-discovery-render-end -->`.  
+Below is a typical md file containing a render block marked with `<!-- mcp-discovery-render -->` and `<!-- mcp-discovery-render-end -->`.
 MCP Discovery will overwrite the content between these markers with the latest generated output.
 
 ```md

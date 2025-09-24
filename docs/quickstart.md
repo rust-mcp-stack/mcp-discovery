@@ -32,6 +32,12 @@ brew install rust-mcp-stack/tap/mcp-discovery
 cargo install mcp-discovery --locked
 ```
 
+#### **NPM**
+
+```sh
+npm i -g @rustmcp/mcp-discovery@latest
+```
+
 #### **Download Binaries**
 
 <table>
@@ -43,7 +49,7 @@ cargo install mcp-discovery --locked
     </tr>
   </thead>
   <tbody>
-    <tr>      
+    <tr>
       <td>
       <!-- x-release-please-start-version -->
       <a href="https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.2.1/mcp-discovery-aarch64-apple-darwin.tar.gz">mcp-discovery-aarch64-apple-darwin.tar.gz</a>

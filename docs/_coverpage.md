@@ -16,7 +16,7 @@
 - ⚙️ CI/CD-friendly
 
 [GitHub](https://github.com/rust-mcp-stack/mcp-discovery)
-[Install](https://rust-mcp-stack.github.io/mcp-discovery#/quickstart)
+[Install](https://rust-mcp-stack.github.io/mcp-discovery#quickstart)
 [Get Started](#mcp-discovery)
 
 <!-- background color -->
