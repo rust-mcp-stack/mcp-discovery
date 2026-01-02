@@ -6,17 +6,17 @@
             <th>Resources</th>
             <th>Logging</th>
             <th>Completions</th>
-            <th>Experimental</th>
+            <th>Tasks</th>
           </tr>
         </thead>
         <tbody>
           <tr>
-            <td>{{{capability_tag "Tools" capabilities.tools (len tools)}}}</td>
-            <td>{{{capability_tag "Prompts" capabilities.prompts (len prompts)}}}</td>
-            <td>{{{capability_tag "Resources" capabilities.resources (len resources)}}}</td>
-            <td>{{{capability_tag "Logging" capabilities.logging null}}}</td>
-            <td>{{{capability_tag "Completions" capabilities.completions null}}}</td>
-            <td>{{{capability_tag "Experimental" capabilities.experimental null}}}</td>
+            <td>{{{capability_tag "Tools" capabilities.tools (len tools) null}}}</td>
+            <td>{{{capability_tag "Prompts" capabilities.prompts (len prompts) null }}}</td>
+            <td>{{{capability_tag "Resources" capabilities.resources (len resources) null}}}</td>
+            <td>{{{capability_tag "Logging" capabilities.logging null null }}}</td>
+            <td>{{{capability_tag "Completions" capabilities.completions null null}}}</td>
+            <td>{{{capability_tag "Tasks" capabilities.tasks null null }}}</td>
           </tr>
         </tbody>
       </table>

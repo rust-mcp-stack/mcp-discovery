@@ -7,6 +7,7 @@ use handlebars::{
     RenderErrorReason, handlebars_helper,
 };
 use regex::Regex;
+use rust_mcp_sdk::schema::Icon;
 use serde::Serialize;
 use serde_json::Value;
 use unicode_width::UnicodeWidthStr;
@@ -108,14 +109,40 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
     });
 
     // Helper: Formats a capability tag with a boolean indicator and optional count.
-    handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>| {
+    handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>, is_md: Option<bool>| {
         let count_str = count.map_or("".to_string(), |count| if count>0 {format!(" ({count})")} else{"".to_string()});
         if supported.as_bool().unwrap_or(false) {
-        format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
+
+            if is_md.unwrap_or(false) {
+                format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
+            }
+            else{
+                format!(r#"<span class="success">{} {}{}</span>"#, boolean_indicator(true), label.as_str().unwrap(), count_str)
+            }
+
         }
         else{
-        format!(r#"<span style="opacity:0.6">{} {}</span>"#, boolean_indicator(false), label.as_str().unwrap())
+            if is_md.unwrap_or(false) {
+                format!(r#"~~<span style="opacity:0.6" class="error">{} {}</span>~~"#, boolean_indicator(false), label.as_str().unwrap())
+            }
+            else{
+                format!(r#"<span style="opacity:0.6" class="error">{} {}</span>"#, boolean_indicator(false), label.as_str().unwrap())
+            }
         }
+    });
+
+    // Helper: create an image tag for icons
+    // currently not looking at dimensions and takes the first icon
+    handlebars_helper!(icon_image: |icons: Option<Vec<Icon>>, w: Option<i64>, h: Option<i64>| {
+        let icons = icons.unwrap_or_default();
+        if let Some(icon) = icons.first() {
+            let width = w.unwrap_or(32);
+            let height = h.unwrap_or(32);
+            format!(r#"<img src="{}" width="{width}" height="{height}"/>"#, icon.src)
+        }
+        else{
+            "<!--- no icon -->".to_string()
+          }
     });
 
     // Helper: Formats a capability with a boolean indicator and optional count.
@@ -162,6 +189,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
         ("underline", Box::new(underline)),
         ("format_text", Box::new(format_text)),
         ("capability_tag", Box::new(capability_tag)),
+        ("icon_image", Box::new(icon_image)),
         ("capability", Box::new(capability)),
         ("capability_title", Box::new(capability_title)),
         ("replace_regex", Box::new(replace_regex)),

@@ -9,6 +9,8 @@ mod templates;
 mod types;
 mod utils;
 
+use rust_mcp_sdk::ToMcpClientHandler;
+use rust_mcp_sdk::mcp_client::McpClientOptions;
 use serde_json::{Map, Value, to_value};
 pub use templates::OutputTemplate;
 pub use types::{
@@ -27,15 +29,18 @@ use std::sync::Arc;
 
 use handler::MyClientHandler;
 use rust_mcp_sdk::schema::{
-    ClientCapabilities, Implementation, InitializeRequestParams, LATEST_PROTOCOL_VERSION,
-    ListPromptsRequestParams, ListResourceTemplatesRequestParams, ListResourcesRequestParams,
-    ListToolsRequestParams, Prompt, Resource, ResourceTemplate,
+    ClientCapabilities, ClientElicitation, ClientRoots, ClientSampling, ClientTaskElicitation,
+    ClientTaskSampling, ClientTasks, Implementation, InitializeRequestParams,
+    LATEST_PROTOCOL_VERSION, PaginatedRequestParams, Prompt, Resource, ResourceTemplate,
+    SamplingMessage, Tool,
 };
 use rust_mcp_sdk::{
     McpClient, StdioTransport, TransportOptions,
     error::SdkResult,
     mcp_client::{ClientRuntime, client_runtime},
 };
+
+use crate::types::McpTaskSupport;
 
 /// Core struct representing the discovery mechanism for the MCP server.
 pub struct McpDiscovery {
@@ -176,7 +181,7 @@ impl McpDiscovery {
             .server_info
             .as_ref()
             .ok_or(DiscoveryError::NotDiscovered)?;
-        Ok(print_summary(stdout(), server_info)?)
+        Ok(print_summary(&mut stdout(), server_info)?)
     }
 
     /// Prints summary and then detailed info about tools, prompts, resources, and templates from server.
@@ -191,7 +196,7 @@ impl McpDiscovery {
         if let Some(tools) = &server_info.tools {
             if !tools.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Tools".bold(), tools.len()),
                     table_size,
                 )?;
@@ -212,7 +217,7 @@ impl McpDiscovery {
         if let Some(prompts) = &server_info.prompts {
             if !prompts.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Prompts".bold(), prompts.len()),
                     table_size,
                 )?;
@@ -234,7 +239,7 @@ impl McpDiscovery {
         if let Some(resources) = &server_info.resources {
             if !resources.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Resources".bold(), resources.len()),
                     table_size,
                 )?;
@@ -269,7 +274,7 @@ impl McpDiscovery {
         if let Some(resource_templates) = &server_info.resource_templates {
             if !resource_templates.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!(
                         "{}({})",
                         "Resource Templates".bold(),
@@ -320,7 +325,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving tools...");
 
         let tools_result = client
-            .list_tools(Some(ListToolsRequestParams::default()))
+            .request_tool_list(Some(PaginatedRequestParams::default()))
             .await?
             .tools;
 
@@ -333,9 +338,14 @@ impl McpDiscovery {
 
                 Ok::<McpToolMeta, DiscoveryError>(McpToolMeta {
                     name: tool.name.to_owned(),
+                    title: tool.title.to_owned(),
+                    icons: tool.icons.to_owned(),
+                    execution: tool.execution.to_owned(),
+                    annotations: tool.annotations.to_owned(),
                     description: tool.description.to_owned(),
                     params,
                     input_schema: tool.input_schema.clone(),
+                    meta: tool.meta.to_owned(),
                 })
             })
             .filter_map(Result::ok)
@@ -351,7 +361,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving prompts...");
 
         let prompts: Vec<Prompt> = client
-            .list_prompts(Some(ListPromptsRequestParams::default()))
+            .request_prompt_list(Some(PaginatedRequestParams::default()))
             .await?
             .prompts;
 
@@ -370,7 +380,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving resources...");
 
         let resources: Vec<Resource> = client
-            .list_resources(Some(ListResourcesRequestParams::default()))
+            .request_resource_list(Some(PaginatedRequestParams::default()))
             .await?
             .resources;
 
@@ -389,7 +399,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving resource templates...");
 
         let result = client
-            .list_resource_templates(Some(ListResourceTemplatesRequestParams::default()))
+            .request_resource_template_list(Some(PaginatedRequestParams::default()))
             .await;
         match result {
             Ok(data) => Ok(Some(data.resource_templates)),
@@ -436,6 +446,20 @@ impl McpDiscovery {
             experimental: client
                 .server_has_experimental()
                 .ok_or(DiscoveryError::ServerNotInitialized)?,
+            task: McpTaskSupport {
+                tool_call_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_run_task_augmented_tools(),
+                list_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_list_tasks(),
+                cancel_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_cancel_tasks(),
+            },
         };
 
         tracing::trace!("Capabilities: {}", capabilities);
@@ -448,6 +472,9 @@ impl McpDiscovery {
         let server_info = McpServerInfo {
             name: server_version.name,
             version: server_version.version,
+            title: server_version.title,
+            description: server_version.description,
+            website_url: server_version.website_url,
             capabilities,
             tools,
             prompts,
@@ -463,13 +490,23 @@ impl McpDiscovery {
     /// Launches the MCP server as a subprocess and initializes the client.
     async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
         let client_details: InitializeRequestParams = InitializeRequestParams {
-            capabilities: ClientCapabilities::default(),
+            capabilities: ClientCapabilities{
+                elicitation: Some(ClientElicitation{ form: Some(Map::new()), url: Some(Map::new()) }),
+                experimental: None,
+                roots: Some(ClientRoots{ list_changed:Some(true) }),
+                sampling: Some(ClientSampling{ context: Some(Map::new()), tools: Some(Map::new()) }),
+                tasks: Some(ClientTasks{ cancel: Some(Map::new()), list:Some(Map::new()), requests: Some(rust_mcp_sdk::schema::ClientTaskRequest { elicitation: Some(ClientTaskElicitation { create: Some(Map::new()) }), sampling:Some(ClientTaskSampling { create_message: Some(Map::new()) }) }) })
+            },
             client_info: Implementation {
                 title: Some("MCP Discovery - By Rust MCP Stack".to_string()),
                 name: env!("CARGO_PKG_NAME").to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
+                description: Some("A lightweight CLI tool built in Rust for discovering and documenting MCP server capabilities.".into()),
+                icons: vec![],
+                website_url: Some("https://rust-mcp-stack.github.io/mcp-discovery".into())
             },
             protocol_version: LATEST_PROTOCOL_VERSION.into(),
+            meta: None
         };
 
         tracing::trace!(
@@ -495,7 +532,13 @@ impl McpDiscovery {
 
         let handler = MyClientHandler {};
 
-        let client = client_runtime::create_client(client_details, transport, handler);
+        let client = client_runtime::create_client(McpClientOptions {
+            client_details,
+            transport,
+            handler: handler.to_mcp_client_handler(),
+            task_store: None,
+            server_task_store: None,
+        });
 
         tracing::trace!("Launching MCP server ...");
 

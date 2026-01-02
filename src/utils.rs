@@ -72,8 +72,8 @@ pub fn match_template(
 
 pub fn boolean_indicator(boolean: bool) -> char {
     match boolean {
-        true => '🟢',
-        false => '🔴',
+        true => '✔',
+        false => '✘',
     }
 }
 

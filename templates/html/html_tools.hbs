@@ -5,6 +5,7 @@
     <thead>
         <tr>
             <th style="width: auto;"></th>
+            <th style="width: auto;">Icon</th>
             <th style="width: auto;">Tool Name</th>
             <th style="width: auto;">Description</th>
             <th style="width: auto;">Inputs</th>
@@ -14,6 +15,9 @@
         {{#each tools}}
         <tr>
             <td>{{plus_one @index}}.</td>
+            <td>
+                {{{icon_image this.icons 32 32}}}
+            </td>
             <td>
                 <code><b>{{{this.name}}}</b></code>
             </td>

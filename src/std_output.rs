@@ -1,4 +1,4 @@
-use colored::Colorize;
+use colored::{ColoredString, Colorize};
 use std::io::{self, Write};
 use unicode_width::UnicodeWidthStr;
 
@@ -13,8 +13,8 @@ pub fn print_list<W: Write>(mut w: W, list_items: Vec<(String, String)>) -> io::
         writeln!(
             w,
             "{}. {}: {}",
-            (index + 1).to_string().bold().cyan(),
-            key.bold().cyan(),
+            (index + 1).to_string().cyan(),
+            key.cyan(),
             val
         )?;
     }
@@ -23,7 +23,7 @@ pub fn print_list<W: Write>(mut w: W, list_items: Vec<(String, String)>) -> io::
 
 /// Function to print a header table with a title and table size to the writer `w`.
 /// The header includes a top border, the title in the center, and a bottom border.
-pub fn print_header<W: Write>(mut w: W, title: &str, table_size: usize) -> io::Result<()> {
+pub fn print_header<W: Write>(w: &mut W, title: &str, table_size: usize) -> io::Result<()> {
     writeln!(w, "{}", table_top(table_size))?;
     writeln!(w, "{}", table_content(table_size, title))?;
     writeln!(w, "{}", table_bottom(table_size))?;
@@ -50,45 +50,102 @@ pub fn table_content(width: usize, content: &str) -> String {
     format!("│{}{}{}│", " ".repeat(l_pad), content, " ".repeat(r_pad))
 }
 
+#[allow(unused)]
+fn strikethrough(text: &str, strike: bool) -> ColoredString {
+    if strike {
+        text.normal()
+    } else {
+        text.strikethrough()
+    }
+}
+
+fn capability_output(title: &str, supported: bool) -> String {
+    let (indicator, title) = if supported {
+        (
+            String::from(boolean_indicator(supported))
+                .bold()
+                .green()
+                .to_string(),
+            title.green().to_string(),
+        )
+    } else {
+        (
+            String::from(boolean_indicator(supported))
+                .bold()
+                .red()
+                .to_string(),
+            title.red().to_string(),
+        )
+    };
+
+    format!("{} {}", indicator, title)
+}
+
 /// Function to print a formatted summary of the server information.
-pub fn print_summary<W: Write>(mut w: W, server_info: &McpServerInfo) -> io::Result<usize> {
+pub fn print_summary<W: Write>(w: &mut W, server_info: &McpServerInfo) -> io::Result<usize> {
     let server_name = format!("{} {}", server_info.name, server_info.version);
     let title_length = server_name.width(); // Use display width for accuracy
     let table_size = SUMMARY_HEADER_SIZE.max(title_length + 4); // 2 padding on each side
 
+    // writeln!(w, "{}", &server_name.bold().cyan().to_string())?;
     writeln!(w, "{}", table_top(table_size))?;
+    writeln!(w, "{}", table_content(table_size, ""))?;
     writeln!(
         w,
         "{}",
         table_content(table_size, &server_name.bold().cyan().to_string())
     )?;
     writeln!(w, "{}", table_content(table_size, ""))?;
+    writeln!(w, "{}", table_bottom(table_size))?;
+
+    if let Some(title) = &server_info.title {
+        writeln!(w, "{}:{}", "Title".cyan().to_string(), title)?;
+    }
+    if let Some(description) = &server_info.description {
+        writeln!(w, "{}:{}", "Description".cyan().to_string(), description)?;
+    }
+    if let Some(website_url) = &server_info.website_url {
+        writeln!(w, "{}: {}", "Website".cyan().to_string(), website_url)?;
+    }
+
+    print_header(w, &"Capabilities".bold().to_string(), table_size)?;
 
     let caps = &server_info.capabilities;
-    let lines = [
-        format!(
-            "{} Tools   {} Prompts   {} Resources   {} Logging",
-            boolean_indicator(caps.tools),
-            boolean_indicator(caps.prompts),
-            boolean_indicator(caps.resources),
-            boolean_indicator(caps.logging),
-        ),
-        format!(
-            "{} Completions   {} Experimental",
-            boolean_indicator(caps.completions),
-            boolean_indicator(caps.experimental)
-        ),
+    let capabilities_text = [
+        capability_output("Tools", caps.tools),
+        capability_output("Resources", caps.resources),
+        capability_output("Prompts", caps.prompts),
+        capability_output("Logging", caps.logging),
+        capability_output("Completions", caps.completions),
     ];
 
-    let adjust = lines[0].width().saturating_sub(lines[1].width());
-    writeln!(w, "{}", table_content(table_size, &lines[0]))?;
-    writeln!(
-        w,
-        "{}",
-        table_content(table_size, &format!("{}{}", &lines[1], " ".repeat(adjust)))
-    )?;
+    writeln!(w, "{}", capabilities_text.join("  "))?;
 
-    writeln!(w, "{}", table_bottom(table_size))?;
+    if caps.task.supports_tasks() {
+        let task_str = format!(
+            "{} {}: {} {} , {} {} , {} {}",
+            boolean_indicator(caps.task.supports_tasks()),
+            "Tasks".green().to_string(),
+            boolean_indicator(caps.task.tool_call_task),
+            "Tools Task".green().to_string(),
+            boolean_indicator(caps.task.list_task),
+            "List Tasks".green().to_string(),
+            boolean_indicator(caps.task.cancel_task),
+            "Cancel Task".green().to_string(),
+        );
+        writeln!(w, "{}", task_str)?;
+    } else {
+        writeln!(
+            w,
+            "{} {}",
+            String::from(boolean_indicator(false))
+                .bold()
+                .red()
+                .to_string(),
+            "Tasks".red().to_string(),
+        )?;
+    }
+
     Ok(table_size)
 }
 
@@ -205,6 +262,6 @@ mod tests {
         };
 
         // Print directly to stdout
-        print_summary(io::stdout(), &info).unwrap();
+        print_summary(&mut io::stdout(), &info).unwrap();
     }
 }
