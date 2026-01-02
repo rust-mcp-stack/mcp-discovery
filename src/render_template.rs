@@ -3,8 +3,8 @@
 use std::{path::PathBuf, str::FromStr};
 
 use handlebars::{
-    Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext, RenderError,
-    RenderErrorReason, handlebars_helper,
+    handlebars_helper, Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext,
+    RenderError, RenderErrorReason,
 };
 use regex::Regex;
 use rust_mcp_sdk::schema::Icon;
@@ -13,13 +13,13 @@ use serde_json::Value;
 use unicode_width::UnicodeWidthStr;
 
 use crate::{
-    McpServerInfo, OutputTemplate,
     error::{DiscoveryError, DiscoveryResult},
     templates::{InlineTemplateInfo, PARTIALS},
     types::{ParamTypes, Template, WriteOptions},
     utils::{
-        RenderTemplateInfo, UpdateTemplateInfo, boolean_indicator, line_ending, match_template,
+        boolean_indicator, line_ending, match_template, RenderTemplateInfo, UpdateTemplateInfo,
     },
+    McpServerInfo, OutputTemplate,
 };
 
 /// Properties parsed from the `MCP_DISCOVERY_TEMPLATE_START` marker line in template files.
@@ -697,12 +697,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("Duplicate template start marker")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Duplicate template start marker"));
     }
 
     #[test]
@@ -725,12 +723,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("outside a render section")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("outside a render section"));
     }
 
     #[test]
@@ -753,12 +749,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("no matching start marker")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("no matching start marker"));
     }
 
     #[test]
@@ -782,12 +776,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("both a 'template-file' and an inline template")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("both a 'template-file' and an inline template"));
     }
 
     #[test]

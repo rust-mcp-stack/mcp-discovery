@@ -15,7 +15,8 @@ keywords = [
 ]
 homepage = "https://rust-mcp-stack.github.io/mcp-discovery"
 license = "MIT"
-edition = "2024"
+edition = "2021"
+rust-version = "1.80.0"
 
 [lib]
 name = "mcp_discovery"

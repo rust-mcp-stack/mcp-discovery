@@ -2,7 +2,7 @@ use colored::{ColoredString, Colorize};
 use std::io::{self, Write};
 use unicode_width::UnicodeWidthStr;
 
-use crate::{McpServerInfo, utils::boolean_indicator};
+use crate::{utils::boolean_indicator, McpServerInfo};
 
 const SUMMARY_HEADER_SIZE: usize = 50;
 
@@ -148,7 +148,7 @@ pub fn print_summary<W: Write>(w: &mut W, server_info: &McpServerInfo) -> io::Re
 
 #[cfg(test)]
 mod tests {
-    use crate::{McpCapabilities, types::McpTaskSupport};
+    use crate::{types::McpTaskSupport, McpCapabilities};
 
     use super::*;
 

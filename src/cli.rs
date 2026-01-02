@@ -1,6 +1,6 @@
 use std::path::PathBuf;
 
-use clap::{Parser, Subcommand, ValueEnum, arg, command};
+use clap::{arg, command, Parser, Subcommand, ValueEnum};
 use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
@@ -164,7 +164,7 @@ impl From<CliDiscoveryCommand> for DiscoveryCommand {
 #[derive(Parser, Debug)]
 #[command(name =  env!("CARGO_PKG_NAME"), arg_required_else_help = true)]
 #[command(version = env!("CARGO_PKG_VERSION"))]
-#[command(about = "A command-line tool designed to connect to an MCP Server and explore its capabilities. It offers output options in terminal, JSON, or Markdown formats.", 
+#[command(about = "A command-line tool designed to connect to an MCP Server and explore its capabilities. It offers output options in terminal, JSON, or Markdown formats.",
 long_about = None)]
 #[clap(args_conflicts_with_subcommands = true)]
 pub struct CommandArguments {

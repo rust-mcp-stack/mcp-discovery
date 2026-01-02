@@ -9,10 +9,10 @@ mod templates;
 mod types;
 mod utils;
 
-use rust_mcp_sdk::ToMcpClientHandler;
 use rust_mcp_sdk::error::McpSdkError;
 use rust_mcp_sdk::mcp_client::McpClientOptions;
-use serde_json::{Map, Value, to_value};
+use rust_mcp_sdk::ToMcpClientHandler;
+use serde_json::{to_value, Map, Value};
 pub use templates::OutputTemplate;
 pub use types::{
     DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
@@ -30,9 +30,9 @@ use rust_mcp_sdk::schema::{
     PaginatedRequestParams, Prompt, ProtocolVersion, Resource, ResourceTemplate,
 };
 use rust_mcp_sdk::{
-    McpClient, StdioTransport, TransportOptions,
     error::SdkResult,
-    mcp_client::{ClientRuntime, client_runtime},
+    mcp_client::{client_runtime, ClientRuntime},
+    McpClient, StdioTransport, TransportOptions,
 };
 use schema::tool_params;
 use std::io::stdout;
