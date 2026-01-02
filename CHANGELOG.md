@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.2...v0.2.3) (2026-01-02)
+
+
+### 🚀 Features
+
+* Upgrade to rust-mcp-sdk 0.8, add multi-protocol fallback, icons, and task capability support ([#29](https://github.com/rust-mcp-stack/mcp-discovery/issues/29)) ([5239aee](https://github.com/rust-mcp-stack/mcp-discovery/commit/5239aeee566b3580275513a44d3e116d2a7296f0))
+
 ## [0.2.2](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.1...v0.2.2) (2025-09-24)
 
 
