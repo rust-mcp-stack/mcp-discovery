@@ -486,12 +486,12 @@ impl McpDiscovery {
 
     // Attempt server launch with multiple protocol versions when the latest protocol is not supported.
     async fn try_launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
-        let protocol_vesions = [
+        let protocol_versions = [
             ProtocolVersion::V2025_11_25,
             ProtocolVersion::V2025_06_18,
             ProtocolVersion::V2025_03_26,
         ];
-        for version in protocol_vesions {
+        for version in protocol_versions {
             let current_version = format!("with protocol version: {}", version.to_string().bold(),);
             println!("{}", current_version.bright_green());
 
