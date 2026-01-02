@@ -11,7 +11,7 @@ mod utils;
 
 use rust_mcp_sdk::error::McpSdkError;
 use rust_mcp_sdk::mcp_client::McpClientOptions;
-use rust_mcp_sdk::ToMcpClientHandler;
+use rust_mcp_sdk::{mcp_icon, ToMcpClientHandler};
 use serde_json::{to_value, Map, Value};
 pub use templates::OutputTemplate;
 pub use types::{
@@ -524,7 +524,13 @@ impl McpDiscovery {
                 name: env!("CARGO_PKG_NAME").to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
                 description: Some("A lightweight CLI tool built in Rust for discovering and documenting MCP server capabilities.".into()),
-                icons: vec![],
+                icons: vec![
+                    mcp_icon!(
+                        src = "https://rust-mcp-stack.github.io/mcp-discovery/_media/mcp-discovery.png",
+                        mime_type = "image/png",
+                        sizes = ["110x110"]
+                    ),
+                ],
                 website_url: Some("https://rust-mcp-stack.github.io/mcp-discovery".into())
             },
             protocol_version: protocol_version.into(),
