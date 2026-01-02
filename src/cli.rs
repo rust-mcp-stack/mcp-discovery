@@ -1,7 +1,6 @@
-use std::path::PathBuf;
-
 use clap::{arg, command, Parser, Subcommand, ValueEnum};
 use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
+use std::path::PathBuf;
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
 pub enum CliTemplate {
