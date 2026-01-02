@@ -10,6 +10,7 @@ mod types;
 mod utils;
 
 use rust_mcp_sdk::ToMcpClientHandler;
+use rust_mcp_sdk::error::McpSdkError;
 use rust_mcp_sdk::mcp_client::McpClientOptions;
 use serde_json::{Map, Value, to_value};
 pub use templates::OutputTemplate;
@@ -18,29 +19,26 @@ pub use types::{
     PrintOptions, Template, WriteOptions,
 };
 
+use crate::types::McpTaskSupport;
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
-use render_template::{detect_render_markers, render_template};
-use schema::tool_params;
-use std::io::stdout;
-use std_output::{print_header, print_list, print_summary};
-
-use std::sync::Arc;
-
 use handler::MyClientHandler;
+use render_template::{detect_render_markers, render_template};
 use rust_mcp_sdk::schema::{
     ClientCapabilities, ClientElicitation, ClientRoots, ClientSampling, ClientTaskElicitation,
     ClientTaskSampling, ClientTasks, Implementation, InitializeRequestParams,
-    LATEST_PROTOCOL_VERSION, PaginatedRequestParams, Prompt, Resource, ResourceTemplate,
-    SamplingMessage, Tool,
+    LATEST_PROTOCOL_VERSION, PaginatedRequestParams, ParseProtocolVersionError, Prompt,
+    ProtocolVersion, Resource, ResourceTemplate,
 };
 use rust_mcp_sdk::{
     McpClient, StdioTransport, TransportOptions,
     error::SdkResult,
     mcp_client::{ClientRuntime, client_runtime},
 };
-
-use crate::types::McpTaskSupport;
+use schema::tool_params;
+use std::io::stdout;
+use std::sync::Arc;
+use std_output::{print_header, print_list, print_summary};
 
 /// Core struct representing the discovery mechanism for the MCP server.
 pub struct McpDiscovery {
@@ -412,7 +410,7 @@ impl McpDiscovery {
 
     /// Discovers all MCP server capabilities and stores them internally.
     pub async fn discover(&mut self) -> DiscoveryResult<&McpServerInfo> {
-        let client = self.launch_mcp_server().await?;
+        let client = self.try_launch_mcp_server().await?;
 
         let server_version = client
             .server_version()
@@ -487,8 +485,33 @@ impl McpDiscovery {
         Ok(self.server_info.as_ref().unwrap())
     }
 
+    // Attempt server launch with multiple protocol versions when the latest protocol is not supported.
+    async fn try_launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+        let protocol_vesions = [
+            ProtocolVersion::V2025_11_25,
+            ProtocolVersion::V2025_06_18,
+            ProtocolVersion::V2025_03_26,
+        ];
+        for version in protocol_vesions {
+            let current_version = format!("with protocol version: {}", version.to_string().bold(),);
+            println!("{}", current_version.bright_green());
+
+            match self.launch_mcp_server(version).await {
+                Ok(client) => return Ok(client),
+                Err(McpSdkError::Protocol { kind: _ }) => {}
+                Err(err) => return Err(err),
+            }
+        }
+        return Err(McpSdkError::Internal {
+            description: "Failed to launch the server.".into(),
+        });
+    }
+
     /// Launches the MCP server as a subprocess and initializes the client.
-    async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+    async fn launch_mcp_server(
+        &self,
+        protocol_version: ProtocolVersion,
+    ) -> SdkResult<Arc<ClientRuntime>> {
         let client_details: InitializeRequestParams = InitializeRequestParams {
             capabilities: ClientCapabilities{
                 elicitation: Some(ClientElicitation{ form: Some(Map::new()), url: Some(Map::new()) }),
@@ -505,7 +528,7 @@ impl McpDiscovery {
                 icons: vec![],
                 website_url: Some("https://rust-mcp-stack.github.io/mcp-discovery".into())
             },
-            protocol_version: LATEST_PROTOCOL_VERSION.into(),
+            protocol_version: protocol_version.into(),
             meta: None
         };
 
