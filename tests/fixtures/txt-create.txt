@@ -1,10 +1,11 @@
 example-servers/everything 1.0.0
 
-🟢 Tools (8)   🟢 Prompts (3) 🟢 Resources (10)   🟢 Logging   🔴 Experimental
+✔ Tools (13)   ✔ Prompts (3) ✔ Resources (10)   ✔ Logging ✔ Completions  ✘ Tasks
+
    
 
-🛠️ Tools (8)
-────────────
+🛠️ Tools (13)
+─────────────
 
 1. add : Adds two numbers
 
@@ -12,15 +13,25 @@ example-servers/everything 1.0.0
 
 3. echo : Echoes back the input
 
-4. getResourceReference : Returns a resource reference that can be used by MCP clients
+4. getResourceLinks : Returns multiple resource links that reference different types of resources
 
-5. getTinyImage : Returns the MCP_TINY_IMAGE
+5. getResourceReference : Returns a resource reference that can be used by MCP clients
 
-6. longRunningOperation : Demonstrates a long running operation with progress updates
+6. getTinyImage : Returns the MCP_TINY_IMAGE
 
-7. printEnv : Prints all environment variables, helpful for debugging MCP server configuration
+7. listRoots : Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.
 
-8. sampleLLM : Samples from an LLM using MCP's sampling feature
+8. longRunningOperation : Demonstrates a long running operation with progress updates
+
+9. printEnv : Prints all environment variables, helpful for debugging MCP server configuration
+
+10. sampleLLM : Samples from an LLM using MCP's sampling feature
+
+11. startElicitation : Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)
+
+12. structuredContent : Returns structured content along with an output schema for client data validation
+
+13. zip : Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.
 
 
 

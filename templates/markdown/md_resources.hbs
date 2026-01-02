@@ -5,15 +5,19 @@
 <thead>
     <tr>
         <th style="width: auto;"></th>
+        <th style="width: auto;">Icon</th>
         <th style="width: auto;">Resource Name</th>
         <th style="width: auto;">Uri</th>
         <th style="width: auto;">Description</th>
     </tr>
 </thead>
 <tbody style="vertical-align: top;">
-    {{#each resources}} 
+    {{#each resources}}
         <tr>
             <td>{{plus_one @index}}.</td>
+            <td>
+              {{{icon_image this.icons 32 32}}}
+            </td>
             <td>
                 <code><b>{{this.name}}</b></code>
             </td>

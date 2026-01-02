@@ -6,9 +6,9 @@ use std::{
 };
 
 use crate::{
-    OutputTemplate,
     error::{DiscoveryError, DiscoveryResult},
     utils::match_template,
+    OutputTemplate,
 };
 
 /// Enum representing the main actions that can be performed for MCP discovery.

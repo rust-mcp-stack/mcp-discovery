@@ -1,6 +1,6 @@
 use path_clean::PathClean;
 
-use crate::{OutputTemplate, error::DiscoveryResult, types::Template};
+use crate::{error::DiscoveryResult, types::Template, OutputTemplate};
 use std::{
     io::{self, ErrorKind},
     path::{Path, PathBuf},
@@ -72,8 +72,8 @@ pub fn match_template(
 
 pub fn boolean_indicator(boolean: bool) -> char {
     match boolean {
-        true => '🟢',
-        false => '🔴',
+        true => '✔',
+        false => '✘',
     }
 }
 

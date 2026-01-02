@@ -90,8 +90,8 @@ Example:
 Output:
 
 ```md
-🟢 Feature A (5)
-🔴 Feature B
+✔ Feature A (5)
+✘ Feature B
 ```
 
 ### `capability_tag`
@@ -103,17 +103,17 @@ Similar to `capability` , this helper formats a capability tag depending on whet
 Example:
 
 ```hbs
-{{capability_tag 'Feature A' true 5}}
-{{capability_tag 'Feature B' false 0}}
-{{capability_tag 'Feature C' true null}}
+{{capability_tag 'Feature A' true 5 null}}
+{{capability_tag 'Feature B' false 0 null}}
+{{capability_tag 'Feature C' true null null}}
 ```
 
 Output:
 
 ```md
-🟢 Feature A (5)
-<span style="opacity:0.6">🔴 Feature B</span>
-🟢 Feature C
+✔ Feature A (5)
+<span style="opacity:0.6">✘ Feature B</span>
+✔ Feature C
 ```
 
 ### `capability_title`

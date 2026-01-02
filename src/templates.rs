@@ -1,9 +1,9 @@
 use crate::{
-    McpServerInfo,
     error::DiscoveryResult,
     render_template,
     types::Template,
     utils::{find_template_file, line_ending},
+    McpServerInfo,
 };
 use std::{
     borrow::Cow,

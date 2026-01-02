@@ -1,7 +1,8 @@
 ## example-servers/everything 1.0.0
-| 🟢 Tools (8) | 🟢 Prompts (3) | 🟢 Resources (10) | 🟢 Logging | <span style="opacity:0.6">🔴 Experimental</span> |
-| --- | --- | --- | --- | --- |
-## 🛠️ Tools (8)
+| ✔ Tools (13) | ✔ Prompts (3) | ✔ Resources (10) | ✔ Logging | ✔ Completions | ~~<span style="opacity:0.6">✘ Tasks</span>~~ |
+| --- | --- | --- | --- | --- | --- |
+
+## 🛠️ Tools (13)
 
 
 - **add**
@@ -14,12 +15,17 @@
   - Demonstrates how annotations can be used to provide metadata about content
   - **Inputs:**
       - <code>includeImage</code> : boolean<br />
-      - <code>messageType</code> : string<br />
+      - <code>messageType</code> : error|success|debug<br />
 
 - **echo**
   - Echoes back the input
   - **Inputs:**
       - <code>message</code> : string<br />
+
+- **getResourceLinks**
+  - Returns multiple resource links that reference different types of resources
+  - **Inputs:**
+      - <code>count</code> : number<br />
 
 - **getResourceReference**
   - Returns a resource reference that can be used by MCP clients
@@ -28,6 +34,9 @@
 
 - **getTinyImage**
   - Returns the MCP_TINY_IMAGE
+
+- **listRoots**
+  - Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.
 
 - **longRunningOperation**
   - Demonstrates a long running operation with progress updates
@@ -43,6 +52,19 @@
   - **Inputs:**
       - <code>maxTokens</code> : number<br />
       - <code>prompt</code> : string<br />
+
+- **startElicitation**
+  - Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)
+
+- **structuredContent**
+  - Returns structured content along with an output schema for client data validation
+  - **Inputs:**
+      - <code>location</code> : string<br />
+
+- **zip**
+  - Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.
+  - **Inputs:**
+      - <code>files</code> : unknown<br />
 
 
 ## 📝 Prompts (3)

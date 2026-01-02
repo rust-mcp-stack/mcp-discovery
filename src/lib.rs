@@ -9,33 +9,35 @@ mod templates;
 mod types;
 mod utils;
 
-use serde_json::{Map, Value, to_value};
+use rust_mcp_sdk::error::McpSdkError;
+use rust_mcp_sdk::mcp_client::McpClientOptions;
+use rust_mcp_sdk::{mcp_icon, ToMcpClientHandler};
+use serde_json::{to_value, Map, Value};
 pub use templates::OutputTemplate;
 pub use types::{
     DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
     PrintOptions, Template, WriteOptions,
 };
 
+use crate::types::McpTaskSupport;
 use colored::Colorize;
 use error::{DiscoveryError, DiscoveryResult};
-use render_template::{detect_render_markers, render_template};
-use schema::tool_params;
-use std::io::stdout;
-use std_output::{print_header, print_list, print_summary};
-
-use std::sync::Arc;
-
 use handler::MyClientHandler;
+use render_template::{detect_render_markers, render_template};
 use rust_mcp_sdk::schema::{
-    ClientCapabilities, Implementation, InitializeRequestParams, LATEST_PROTOCOL_VERSION,
-    ListPromptsRequestParams, ListResourceTemplatesRequestParams, ListResourcesRequestParams,
-    ListToolsRequestParams, Prompt, Resource, ResourceTemplate,
+    ClientCapabilities, ClientElicitation, ClientRoots, ClientSampling, ClientTaskElicitation,
+    ClientTaskSampling, ClientTasks, Implementation, InitializeRequestParams,
+    PaginatedRequestParams, Prompt, ProtocolVersion, Resource, ResourceTemplate,
 };
 use rust_mcp_sdk::{
-    McpClient, StdioTransport, TransportOptions,
     error::SdkResult,
-    mcp_client::{ClientRuntime, client_runtime},
+    mcp_client::{client_runtime, ClientRuntime},
+    McpClient, StdioTransport, TransportOptions,
 };
+use schema::tool_params;
+use std::io::stdout;
+use std::sync::Arc;
+use std_output::{print_header, print_list, print_summary};
 
 /// Core struct representing the discovery mechanism for the MCP server.
 pub struct McpDiscovery {
@@ -176,7 +178,7 @@ impl McpDiscovery {
             .server_info
             .as_ref()
             .ok_or(DiscoveryError::NotDiscovered)?;
-        Ok(print_summary(stdout(), server_info)?)
+        Ok(print_summary(&mut stdout(), server_info)?)
     }
 
     /// Prints summary and then detailed info about tools, prompts, resources, and templates from server.
@@ -191,7 +193,7 @@ impl McpDiscovery {
         if let Some(tools) = &server_info.tools {
             if !tools.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Tools".bold(), tools.len()),
                     table_size,
                 )?;
@@ -212,7 +214,7 @@ impl McpDiscovery {
         if let Some(prompts) = &server_info.prompts {
             if !prompts.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Prompts".bold(), prompts.len()),
                     table_size,
                 )?;
@@ -234,7 +236,7 @@ impl McpDiscovery {
         if let Some(resources) = &server_info.resources {
             if !resources.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!("{}({})", "Resources".bold(), resources.len()),
                     table_size,
                 )?;
@@ -269,7 +271,7 @@ impl McpDiscovery {
         if let Some(resource_templates) = &server_info.resource_templates {
             if !resource_templates.is_empty() {
                 print_header(
-                    stdout(),
+                    &mut stdout(),
                     &format!(
                         "{}({})",
                         "Resource Templates".bold(),
@@ -320,7 +322,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving tools...");
 
         let tools_result = client
-            .list_tools(Some(ListToolsRequestParams::default()))
+            .request_tool_list(Some(PaginatedRequestParams::default()))
             .await?
             .tools;
 
@@ -333,9 +335,14 @@ impl McpDiscovery {
 
                 Ok::<McpToolMeta, DiscoveryError>(McpToolMeta {
                     name: tool.name.to_owned(),
+                    title: tool.title.to_owned(),
+                    icons: tool.icons.to_owned(),
+                    execution: tool.execution.to_owned(),
+                    annotations: tool.annotations.to_owned(),
                     description: tool.description.to_owned(),
                     params,
                     input_schema: tool.input_schema.clone(),
+                    meta: tool.meta.to_owned(),
                 })
             })
             .filter_map(Result::ok)
@@ -351,7 +358,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving prompts...");
 
         let prompts: Vec<Prompt> = client
-            .list_prompts(Some(ListPromptsRequestParams::default()))
+            .request_prompt_list(Some(PaginatedRequestParams::default()))
             .await?
             .prompts;
 
@@ -370,7 +377,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving resources...");
 
         let resources: Vec<Resource> = client
-            .list_resources(Some(ListResourcesRequestParams::default()))
+            .request_resource_list(Some(PaginatedRequestParams::default()))
             .await?
             .resources;
 
@@ -389,7 +396,7 @@ impl McpDiscovery {
         tracing::trace!("retrieving resource templates...");
 
         let result = client
-            .list_resource_templates(Some(ListResourceTemplatesRequestParams::default()))
+            .request_resource_template_list(Some(PaginatedRequestParams::default()))
             .await;
         match result {
             Ok(data) => Ok(Some(data.resource_templates)),
@@ -402,7 +409,7 @@ impl McpDiscovery {
 
     /// Discovers all MCP server capabilities and stores them internally.
     pub async fn discover(&mut self) -> DiscoveryResult<&McpServerInfo> {
-        let client = self.launch_mcp_server().await?;
+        let client = self.try_launch_mcp_server().await?;
 
         let server_version = client
             .server_version()
@@ -436,6 +443,20 @@ impl McpDiscovery {
             experimental: client
                 .server_has_experimental()
                 .ok_or(DiscoveryError::ServerNotInitialized)?,
+            task: McpTaskSupport {
+                tool_call_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_run_task_augmented_tools(),
+                list_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_list_tasks(),
+                cancel_task: client
+                    .server_capabilities()
+                    .ok_or(DiscoveryError::ServerNotInitialized)?
+                    .can_cancel_tasks(),
+            },
         };
 
         tracing::trace!("Capabilities: {}", capabilities);
@@ -448,6 +469,9 @@ impl McpDiscovery {
         let server_info = McpServerInfo {
             name: server_version.name,
             version: server_version.version,
+            title: server_version.title,
+            description: server_version.description,
+            website_url: server_version.website_url,
             capabilities,
             tools,
             prompts,
@@ -460,16 +484,57 @@ impl McpDiscovery {
         Ok(self.server_info.as_ref().unwrap())
     }
 
+    // Attempt server launch with multiple protocol versions when the latest protocol is not supported.
+    async fn try_launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+        let protocol_versions = [
+            ProtocolVersion::V2025_11_25,
+            ProtocolVersion::V2025_06_18,
+            ProtocolVersion::V2025_03_26,
+        ];
+        for version in protocol_versions {
+            let current_version = format!("with protocol version: {}", version.to_string().bold(),);
+            println!("{}", current_version.bright_green());
+
+            match self.launch_mcp_server(version).await {
+                Ok(client) => return Ok(client),
+                Err(McpSdkError::Protocol { kind: _ }) => {}
+                Err(err) => return Err(err),
+            }
+        }
+        Err(McpSdkError::Internal {
+            description: "Failed to launch the server.".into(),
+        })
+    }
+
     /// Launches the MCP server as a subprocess and initializes the client.
-    async fn launch_mcp_server(&self) -> SdkResult<Arc<ClientRuntime>> {
+    async fn launch_mcp_server(
+        &self,
+        protocol_version: ProtocolVersion,
+    ) -> SdkResult<Arc<ClientRuntime>> {
         let client_details: InitializeRequestParams = InitializeRequestParams {
-            capabilities: ClientCapabilities::default(),
+            capabilities: ClientCapabilities{
+                elicitation: Some(ClientElicitation{ form: Some(Map::new()), url: Some(Map::new()) }),
+                experimental: None,
+                roots: Some(ClientRoots{ list_changed:Some(true) }),
+                sampling: Some(ClientSampling{ context: Some(Map::new()), tools: Some(Map::new()) }),
+                tasks: Some(ClientTasks{ cancel: Some(Map::new()), list:Some(Map::new()), requests: Some(rust_mcp_sdk::schema::ClientTaskRequest { elicitation: Some(ClientTaskElicitation { create: Some(Map::new()) }), sampling:Some(ClientTaskSampling { create_message: Some(Map::new()) }) }) })
+            },
             client_info: Implementation {
                 title: Some("MCP Discovery - By Rust MCP Stack".to_string()),
                 name: env!("CARGO_PKG_NAME").to_string(),
                 version: env!("CARGO_PKG_VERSION").to_string(),
+                description: Some("A lightweight CLI tool built in Rust for discovering and documenting MCP server capabilities.".into()),
+                icons: vec![
+                    mcp_icon!(
+                        src = "https://rust-mcp-stack.github.io/mcp-discovery/_media/mcp-discovery.png",
+                        mime_type = "image/png",
+                        sizes = ["110x110"]
+                    ),
+                ],
+                website_url: Some("https://rust-mcp-stack.github.io/mcp-discovery".into())
             },
-            protocol_version: LATEST_PROTOCOL_VERSION.into(),
+            protocol_version: protocol_version.into(),
+            meta: None
         };
 
         tracing::trace!(
@@ -495,7 +560,13 @@ impl McpDiscovery {
 
         let handler = MyClientHandler {};
 
-        let client = client_runtime::create_client(client_details, transport, handler);
+        let client = client_runtime::create_client(McpClientOptions {
+            client_details,
+            transport,
+            handler: handler.to_mcp_client_handler(),
+            task_store: None,
+            server_task_store: None,
+        });
 
         tracing::trace!("Launching MCP server ...");
 

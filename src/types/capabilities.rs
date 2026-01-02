@@ -1,5 +1,19 @@
-use rust_mcp_sdk::schema::{Prompt, Resource, ResourceTemplate, ToolInputSchema};
+use rust_mcp_sdk::schema::{
+    Icon, Prompt, Resource, ResourceTemplate, ToolAnnotations, ToolExecution, ToolInputSchema,
+};
 use std::fmt::Display;
+
+#[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
+pub struct McpTaskSupport {
+    pub tool_call_task: bool,
+    pub list_task: bool,
+    pub cancel_task: bool,
+}
+impl McpTaskSupport {
+    pub fn supports_tasks(&self) -> bool {
+        self.cancel_task | self.list_task | self.tool_call_task
+    }
+}
 
 /// Represents the capabilities of an MCP server, indicating which features are supported.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
@@ -10,6 +24,7 @@ pub struct McpCapabilities {
     pub logging: bool,
     pub completions: bool,
     pub experimental: bool,
+    pub task: McpTaskSupport,
 }
 
 impl Display for McpCapabilities {
@@ -119,12 +134,31 @@ pub struct McpToolMeta {
     pub description: Option<String>,
     pub params: Vec<McpToolSParams>,
     pub input_schema: ToolInputSchema,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub execution: ::std::option::Option<ToolExecution>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub title: Option<String>,
+    pub icons: Vec<Icon>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub annotations: ::std::option::Option<ToolAnnotations>,
+    #[serde(
+        rename = "_meta",
+        default,
+        skip_serializing_if = "::std::option::Option::is_none"
+    )]
+    pub meta: ::std::option::Option<::serde_json::Map<::std::string::String, ::serde_json::Value>>,
 }
 
 /// Represents the MCP server's information, including its name, version, capabilities, and supported features.
 #[derive(::serde::Deserialize, ::serde::Serialize, Clone, Debug)]
 pub struct McpServerInfo {
     pub name: String,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub title: Option<String>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub description: Option<String>,
+    #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]
+    pub website_url: Option<String>,
     pub version: String,
     pub capabilities: McpCapabilities,
     #[serde(default, skip_serializing_if = "::std::option::Option::is_none")]

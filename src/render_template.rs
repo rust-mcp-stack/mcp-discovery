@@ -3,22 +3,23 @@
 use std::{path::PathBuf, str::FromStr};
 
 use handlebars::{
-    Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext, RenderError,
-    RenderErrorReason, handlebars_helper,
+    handlebars_helper, Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext,
+    RenderError, RenderErrorReason,
 };
 use regex::Regex;
+use rust_mcp_sdk::schema::Icon;
 use serde::Serialize;
 use serde_json::Value;
 use unicode_width::UnicodeWidthStr;
 
 use crate::{
-    McpServerInfo, OutputTemplate,
     error::{DiscoveryError, DiscoveryResult},
     templates::{InlineTemplateInfo, PARTIALS},
     types::{ParamTypes, Template, WriteOptions},
     utils::{
-        RenderTemplateInfo, UpdateTemplateInfo, boolean_indicator, line_ending, match_template,
+        boolean_indicator, line_ending, match_template, RenderTemplateInfo, UpdateTemplateInfo,
     },
+    McpServerInfo, OutputTemplate,
 };
 
 /// Properties parsed from the `MCP_DISCOVERY_TEMPLATE_START` marker line in template files.
@@ -108,14 +109,39 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
     });
 
     // Helper: Formats a capability tag with a boolean indicator and optional count.
-    handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>| {
+    handlebars_helper!(capability_tag: |label:Value, supported: Value, count: Option<i64>, is_md: Option<bool>| {
         let count_str = count.map_or("".to_string(), |count| if count>0 {format!(" ({count})")} else{"".to_string()});
         if supported.as_bool().unwrap_or(false) {
-        format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
+
+            if is_md.unwrap_or(false) {
+                format!("{} {}{}", boolean_indicator(true), label.as_str().unwrap(), count_str)
+            }
+            else{
+                format!(r#"<span class="success">{} {}{}</span>"#, boolean_indicator(true), label.as_str().unwrap(), count_str)
+            }
+
+        }
+        else if is_md.unwrap_or(false) {
+                format!(r#"~~<span style="opacity:0.6" class="error">{} {}</span>~~"#, boolean_indicator(false), label.as_str().unwrap())
+            }
+            else{
+                format!(r#"<span style="opacity:0.6" class="error">{} {}</span>"#, boolean_indicator(false), label.as_str().unwrap())
+            }
+
+    });
+
+    // Helper: create an image tag for icons
+    // currently not looking at dimensions and takes the first icon
+    handlebars_helper!(icon_image: |icons: Option<Vec<Icon>>, w: Option<i64>, h: Option<i64>| {
+        let icons = icons.unwrap_or_default();
+        if let Some(icon) = icons.first() {
+            let width = w.unwrap_or(32);
+            let height = h.unwrap_or(32);
+            format!(r#"<img src="{}" width="{width}" height="{height}"/>"#, icon.src)
         }
         else{
-        format!(r#"<span style="opacity:0.6">{} {}</span>"#, boolean_indicator(false), label.as_str().unwrap())
-        }
+            "<!--- no icon -->".to_string()
+          }
     });
 
     // Helper: Formats a capability with a boolean indicator and optional count.
@@ -162,6 +188,7 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
         ("underline", Box::new(underline)),
         ("format_text", Box::new(format_text)),
         ("capability_tag", Box::new(capability_tag)),
+        ("icon_image", Box::new(icon_image)),
         ("capability", Box::new(capability)),
         ("capability_title", Box::new(capability_title)),
         ("replace_regex", Box::new(replace_regex)),
@@ -515,11 +542,19 @@ mod tests {
                 logging: false,
                 experimental: false,
                 completions: false,
+                task: McpTaskSupport {
+                    tool_call_task: false,
+                    list_task: false,
+                    cancel_task: false,
+                },
             },
             tools: Default::default(),
             prompts: Default::default(),
             resources: Default::default(),
             resource_templates: Default::default(),
+            title: Default::default(),
+            description: Default::default(),
+            website_url: Default::default(),
         }
     }
 
@@ -536,21 +571,27 @@ mod tests {
 
         // Test capability_tag helper (supported)
         let result = handlebar
-            .render_template("{{capability_tag \"Feature\" true 42}}", &json!({}))
+            .render_template("{{capability_tag \"Feature\" true 42 null}}", &json!({}))
             .expect("Failed to render capability_tag");
-        assert_eq!(result, "🟢 Feature (42)");
+        assert_eq!(
+            result,
+            "&lt;span class&#x3D;&quot;success&quot;&gt;✔ Feature (42)&lt;/span&gt;"
+        );
 
         // Test capability_tag helper (not supported)
         let result = handlebar
-            .render_template("{{{capability_tag \"Feature\" false 0}}}", &json!({}))
+            .render_template("{{{capability_tag \"Feature\" false 0 null}}}", &json!({}))
             .expect("Failed to render capability_tag");
-        assert_eq!(result, r#"<span style="opacity:0.6">🔴 Feature</span>"#);
+        assert_eq!(
+            result,
+            r#"<span style="opacity:0.6" class="error">✘ Feature</span>"#
+        );
 
         // Test capability helper
         let result = handlebar
             .render_template("{{{capability \"Feature\" true 42}}}", &json!({}))
             .expect("Failed to render capability");
-        assert_eq!(result, "🟢 Feature (42)");
+        assert_eq!(result, "✔ Feature (42)");
 
         // Test underline helper
         let result = handlebar
@@ -656,12 +697,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("Duplicate template start marker")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("Duplicate template start marker"));
     }
 
     #[test]
@@ -684,12 +723,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("outside a render section")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("outside a render section"));
     }
 
     #[test]
@@ -712,12 +749,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("no matching start marker")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("no matching start marker"));
     }
 
     #[test]
@@ -741,12 +776,10 @@ mod tests {
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
         assert!(result.is_err());
-        assert!(
-            result
-                .unwrap_err()
-                .to_string()
-                .contains("both a 'template-file' and an inline template")
-        );
+        assert!(result
+            .unwrap_err()
+            .to_string()
+            .contains("both a 'template-file' and an inline template"));
     }
 
     #[test]

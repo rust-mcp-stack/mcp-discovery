@@ -29,12 +29,12 @@
             </thead>
             <tbody>
               <tr>
-                <td>🟢 Tools (10)</td>
-                <td>🟢 Prompts (3)</td>
-                <td>🟢 Resources (10)</td>
-                <td>🟢 Logging</td>
-                <td>🟢 Completions</td>
-                <td><span style="opacity:0.6">🔴 Experimental</span></td>
+                <td>✔ Tools (10)</td>
+              <td>✔ Prompts (3)</td>
+            <td>✔ Resources (10)</td>
+          <td>✔ Logging</td>
+        <td>✔ Completions</td>
+                <td><span style="opacity:0.6">✘ Experimental</span></td>
               </tr>
             </tbody>
           </table>
