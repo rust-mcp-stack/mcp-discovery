@@ -1,4 +1,4 @@
-use clap::{arg, command, Parser, Subcommand, ValueEnum};
+use clap::{Parser, Subcommand, ValueEnum};
 use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
 use std::path::PathBuf;
 
