@@ -27,8 +27,7 @@ use render_template::{detect_render_markers, render_template};
 use rust_mcp_sdk::schema::{
     ClientCapabilities, ClientElicitation, ClientRoots, ClientSampling, ClientTaskElicitation,
     ClientTaskSampling, ClientTasks, Implementation, InitializeRequestParams,
-    LATEST_PROTOCOL_VERSION, PaginatedRequestParams, ParseProtocolVersionError, Prompt,
-    ProtocolVersion, Resource, ResourceTemplate,
+    PaginatedRequestParams, Prompt, ProtocolVersion, Resource, ResourceTemplate,
 };
 use rust_mcp_sdk::{
     McpClient, StdioTransport, TransportOptions,
@@ -502,9 +501,9 @@ impl McpDiscovery {
                 Err(err) => return Err(err),
             }
         }
-        return Err(McpSdkError::Internal {
+        Err(McpSdkError::Internal {
             description: "Failed to launch the server.".into(),
-        });
+        })
     }
 
     /// Launches the MCP server as a subprocess and initializes the client.

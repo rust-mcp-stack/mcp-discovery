@@ -78,7 +78,7 @@ fn capability_output(title: &str, supported: bool) -> String {
         )
     };
 
-    format!("{} {}", indicator, title)
+    format!("{indicator} {title}")
 }
 
 /// Function to print a formatted summary of the server information.
@@ -99,16 +99,16 @@ pub fn print_summary<W: Write>(w: &mut W, server_info: &McpServerInfo) -> io::Re
     writeln!(w, "{}", table_bottom(table_size))?;
 
     if let Some(title) = &server_info.title {
-        writeln!(w, "{}:{}", "Title".cyan().to_string(), title)?;
+        writeln!(w, "{}:{title}", "Title".cyan())?;
     }
     if let Some(description) = &server_info.description {
-        writeln!(w, "{}:{}", "Description".cyan().to_string(), description)?;
+        writeln!(w, "{}:{description}", "Description".cyan(),)?;
     }
     if let Some(website_url) = &server_info.website_url {
-        writeln!(w, "{}: {}", "Website".cyan().to_string(), website_url)?;
+        writeln!(w, "{}: {website_url}", "Website".cyan(),)?;
     }
 
-    print_header(w, &"Capabilities".bold().to_string(), table_size)?;
+    print_header(w, &"Capabilities".bold(), table_size)?;
 
     let caps = &server_info.capabilities;
     let capabilities_text = [
@@ -125,24 +125,21 @@ pub fn print_summary<W: Write>(w: &mut W, server_info: &McpServerInfo) -> io::Re
         let task_str = format!(
             "{} {}: {} {} , {} {} , {} {}",
             boolean_indicator(caps.task.supports_tasks()),
-            "Tasks".green().to_string(),
+            "Tasks".green(),
             boolean_indicator(caps.task.tool_call_task),
-            "Tools Task".green().to_string(),
+            "Tools Task".green(),
             boolean_indicator(caps.task.list_task),
-            "List Tasks".green().to_string(),
+            "List Tasks".green(),
             boolean_indicator(caps.task.cancel_task),
-            "Cancel Task".green().to_string(),
+            "Cancel Task".green(),
         );
-        writeln!(w, "{}", task_str)?;
+        writeln!(w, "{task_str}")?;
     } else {
         writeln!(
             w,
             "{} {}",
-            String::from(boolean_indicator(false))
-                .bold()
-                .red()
-                .to_string(),
-            "Tasks".red().to_string(),
+            String::from(boolean_indicator(false)).bold().red(),
+            "Tasks".red()
         )?;
     }
 
@@ -151,7 +148,7 @@ pub fn print_summary<W: Write>(w: &mut W, server_info: &McpServerInfo) -> io::Re
 
 #[cfg(test)]
 mod tests {
-    use crate::McpCapabilities;
+    use crate::{McpCapabilities, types::McpTaskSupport};
 
     use super::*;
 
@@ -216,11 +213,19 @@ mod tests {
                 logging: true,
                 experimental: false,
                 completions: true,
+                task: McpTaskSupport {
+                    tool_call_task: false,
+                    list_task: false,
+                    cancel_task: false,
+                },
             },
             tools: None,
             prompts: None,
             resources: None,
             resource_templates: None,
+            title: None,
+            description: None,
+            website_url: None,
         };
 
         let mut buffer = Vec::new();
@@ -254,11 +259,19 @@ mod tests {
                 logging: false,
                 experimental: false,
                 completions: true,
+                task: McpTaskSupport {
+                    tool_call_task: false,
+                    list_task: false,
+                    cancel_task: false,
+                },
             },
             tools: None,
             prompts: None,
             resources: None,
             resource_templates: None,
+            title: None,
+            description: None,
+            website_url: None,
         };
 
         // Print directly to stdout

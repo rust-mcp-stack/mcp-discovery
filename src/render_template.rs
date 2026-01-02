@@ -121,14 +121,13 @@ pub fn register_helpers(handlebar: &mut Handlebars) {
             }
 
         }
-        else{
-            if is_md.unwrap_or(false) {
+        else if is_md.unwrap_or(false) {
                 format!(r#"~~<span style="opacity:0.6" class="error">{} {}</span>~~"#, boolean_indicator(false), label.as_str().unwrap())
             }
             else{
                 format!(r#"<span style="opacity:0.6" class="error">{} {}</span>"#, boolean_indicator(false), label.as_str().unwrap())
             }
-        }
+
     });
 
     // Helper: create an image tag for icons
@@ -543,11 +542,19 @@ mod tests {
                 logging: false,
                 experimental: false,
                 completions: false,
+                task: McpTaskSupport {
+                    tool_call_task: false,
+                    list_task: false,
+                    cancel_task: false,
+                },
             },
             tools: Default::default(),
             prompts: Default::default(),
             resources: Default::default(),
             resource_templates: Default::default(),
+            title: Default::default(),
+            description: Default::default(),
+            website_url: Default::default(),
         }
     }
 
@@ -564,21 +571,27 @@ mod tests {
 
         // Test capability_tag helper (supported)
         let result = handlebar
-            .render_template("{{capability_tag \"Feature\" true 42}}", &json!({}))
+            .render_template("{{capability_tag \"Feature\" true 42 null}}", &json!({}))
             .expect("Failed to render capability_tag");
-        assert_eq!(result, "🟢 Feature (42)");
+        assert_eq!(
+            result,
+            "&lt;span class&#x3D;&quot;success&quot;&gt;✔ Feature (42)&lt;/span&gt;"
+        );
 
         // Test capability_tag helper (not supported)
         let result = handlebar
-            .render_template("{{{capability_tag \"Feature\" false 0}}}", &json!({}))
+            .render_template("{{{capability_tag \"Feature\" false 0 null}}}", &json!({}))
             .expect("Failed to render capability_tag");
-        assert_eq!(result, r#"<span style="opacity:0.6">🔴 Feature</span>"#);
+        assert_eq!(
+            result,
+            r#"<span style="opacity:0.6" class="error">✘ Feature</span>"#
+        );
 
         // Test capability helper
         let result = handlebar
             .render_template("{{{capability \"Feature\" true 42}}}", &json!({}))
             .expect("Failed to render capability");
-        assert_eq!(result, "🟢 Feature (42)");
+        assert_eq!(result, "✔ Feature (42)");
 
         // Test underline helper
         let result = handlebar

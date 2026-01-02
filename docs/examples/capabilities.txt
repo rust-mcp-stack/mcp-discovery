@@ -1,8 +1,8 @@
 example-servers/everything 1.0.0
 
-🟢 Tools (10)   🟢 Prompts (3) 🟢 Resources (10)   🟢 Logging 🟢 Completions  🔴 Experimental
+✔ Tools (10)   ✔ Prompts (3) ✔ Resources (10)   ✔ Logging ✔ Completions  ✘ Experimental
 
-   
+
 
 🛠️ Tools (10)
 ─────────────
@@ -68,7 +68,7 @@ example-servers/everything 1.0.0
 🧩 Resource Templates (1)
 ─────────────────────────
 
-1. Static Resource : test://static/resource/{id}  
+1. Static Resource : test://static/resource/{id}
    A static resource with a numeric ID
 
 

@@ -90,8 +90,8 @@ Example:
 Output:
 
 ```md
-🟢 Feature A (5)
-🔴 Feature B
+✔ Feature A (5)
+✘ Feature B
 ```
 
 ### `capability_tag`
@@ -111,9 +111,9 @@ Example:
 Output:
 
 ```md
-🟢 Feature A (5)
-<span style="opacity:0.6">🔴 Feature B</span>
-🟢 Feature C
+✔ Feature A (5)
+<span style="opacity:0.6">✘ Feature B</span>
+✔ Feature C
 ```
 
 ### `capability_title`
