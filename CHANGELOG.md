@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.5](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.4...v0.2.5) (2026-01-03)
+
+
+### 🐛 Bug Fixes
+
+* Broken md template, update examples ([#32](https://github.com/rust-mcp-stack/mcp-discovery/issues/32)) ([a68fd76](https://github.com/rust-mcp-stack/mcp-discovery/commit/a68fd762c3d31b1fe173d57ebec59e3c028f9c05))
+
 ## [0.2.4](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.3...v0.2.4) (2026-01-03)
 
 
