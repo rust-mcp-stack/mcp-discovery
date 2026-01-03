@@ -6,3 +6,20 @@
 ./mcp-discovery update -f ../../tests/fixtures/md-plain-update-file-prop.md -- npx -y @modelcontextprotocol/server-everything
 ./mcp-discovery update -f ../../tests/fixtures/md-plain-update-template-prop.md -- npx -y @modelcontextprotocol/server-everything
 ./mcp-discovery update -f ../../tests/fixtures/md-plain-update-inline.md -- npx -y @modelcontextprotocol/server-everything
+
+
+
+./mcp-discovery create -f ../../docs/examples/capabilities.txt --template txt -- npx -y @modelcontextprotocol/server-everything
+./mcp-discovery create -f ../../docs/examples/create-md.md -- npx -y @modelcontextprotocol/server-everything
+./mcp-discovery create -f ../../docs/examples/create-md-plain.md --template md-plain -- npx -y @modelcontextprotocol/server-everything
+./mcp-discovery create -f ../../docs/examples/json.txt  --template-string "{{{json this 'pretty'}}}" -- npx -y @modelcontextprotocol/server-everything
+
+./mcp-discovery create -f ../../docs/examples/server-info.html --template html -- npx -y @modelcontextprotocol/server-everything
+
+
+./mcp-discovery update -f ../../docs/examples/update-md.md  -- npx -y @modelcontextprotocol/server-everything
+./mcp-discovery update -f ../../docs/examples/update-md-inline.md -t md-plain  -- npx -y @modelcontextprotocol/server-everything
+./mcp-discovery update -f ../../docs/examples/update-md-plain.md -- npx -y @modelcontextprotocol/server-everything
+
+
+mcp-discovery --template-file sample_txt_template.txt -- npx -y @modelcontextprotocol/server-everything

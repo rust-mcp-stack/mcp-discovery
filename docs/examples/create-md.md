@@ -1,13 +1,15 @@
 ## example-servers/everything 1.0.0
-| ✔ Tools (10) | ✔ Prompts (3) | ✔ Resources (10) | ✔ Logging | ✔ Completions | <span style="opacity:0.6">✘ Experimental</span> |
+
+| ✔ Tools (13) | ✔ Prompts (3) | ✔ Resources (10) | ✔ Logging | ✔ Completions | ~~<span style="opacity:0.6" class="error">✘ Tasks</span>~~ |
 | --- | --- | --- | --- | --- | --- |
 
-## 🛠️ Tools (10)
+## 🛠️ Tools (13)
 
 <table style="text-align: left;">
 <thead>
     <tr>
         <th style="width: auto;"></th>
+        <th style="width: auto;">Icon</th>
         <th style="width: auto;">Tool Name</th>
         <th style="width: auto;">Description</th>
         <th style="width: auto;">Inputs</th>
@@ -16,6 +18,9 @@
 <tbody style="vertical-align: top;">
         <tr>
             <td>1.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>add</b></code>
             </td>
@@ -30,6 +35,9 @@
         <tr>
             <td>2.</td>
             <td>
+                <!--- no icon -->
+            </td>
+            <td>
                 <code><b>annotatedMessage</b></code>
             </td>
             <td>Demonstrates how annotations can be used to provide metadata about content</td>
@@ -43,6 +51,9 @@
         <tr>
             <td>3.</td>
             <td>
+                <!--- no icon -->
+            </td>
+            <td>
                 <code><b>echo</b></code>
             </td>
             <td>Echoes back the input</td>
@@ -54,6 +65,9 @@
         </tr>
         <tr>
             <td>4.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>getResourceLinks</b></code>
             </td>
@@ -67,6 +81,9 @@
         <tr>
             <td>5.</td>
             <td>
+                <!--- no icon -->
+            </td>
+            <td>
                 <code><b>getResourceReference</b></code>
             </td>
             <td>Returns a resource reference that can be used by MCP clients</td>
@@ -79,6 +96,9 @@
         <tr>
             <td>6.</td>
             <td>
+                <!--- no icon -->
+            </td>
+            <td>
                 <code><b>getTinyImage</b></code>
             </td>
             <td>Returns the MCP_TINY_IMAGE</td>
@@ -89,6 +109,23 @@
         </tr>
         <tr>
             <td>7.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>listRoots</b></code>
+            </td>
+            <td>Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.</td>
+            <td>
+                <ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>8.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>longRunningOperation</b></code>
             </td>
@@ -101,7 +138,10 @@
             </td>
         </tr>
         <tr>
-            <td>8.</td>
+            <td>9.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>printEnv</b></code>
             </td>
@@ -112,7 +152,10 @@
             </td>
         </tr>
         <tr>
-            <td>9.</td>
+            <td>10.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>sampleLLM</b></code>
             </td>
@@ -125,7 +168,24 @@
             </td>
         </tr>
         <tr>
-            <td>10.</td>
+            <td>11.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>startElicitation</b></code>
+            </td>
+            <td>Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)</td>
+            <td>
+                <ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>12.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>structuredContent</b></code>
             </td>
@@ -133,6 +193,21 @@
             <td>
                 <ul>
                     <li> <code>location</code> : string<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>13.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>zip</b></code>
+            </td>
+            <td>Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.</td>
+            <td>
+                <ul>
+                    <li> <code>files</code> : unknown<br /></li>
                 </ul>
             </td>
         </tr>
@@ -180,6 +255,7 @@
 <thead>
     <tr>
         <th style="width: auto;"></th>
+        <th style="width: auto;">Icon</th>
         <th style="width: auto;">Resource Name</th>
         <th style="width: auto;">Uri</th>
         <th style="width: auto;">Description</th>
@@ -188,6 +264,9 @@
 <tbody style="vertical-align: top;">
         <tr>
             <td>1.</td>
+            <td>
+              <!--- no icon -->
+            </td>
             <td>
                 <code><b>Resource 1</b></code>
             </td>
@@ -199,6 +278,9 @@
         <tr>
             <td>2.</td>
             <td>
+              <!--- no icon -->
+            </td>
+            <td>
                 <code><b>Resource 2</b></code>
             </td>
             <td>
@@ -208,6 +290,9 @@
         </tr>
         <tr>
             <td>3.</td>
+            <td>
+              <!--- no icon -->
+            </td>
             <td>
                 <code><b>Resource 3</b></code>
             </td>
@@ -219,6 +304,9 @@
         <tr>
             <td>4.</td>
             <td>
+              <!--- no icon -->
+            </td>
+            <td>
                 <code><b>Resource 4</b></code>
             </td>
             <td>
@@ -228,6 +316,9 @@
         </tr>
         <tr>
             <td>5.</td>
+            <td>
+              <!--- no icon -->
+            </td>
             <td>
                 <code><b>Resource 5</b></code>
             </td>
@@ -239,6 +330,9 @@
         <tr>
             <td>6.</td>
             <td>
+              <!--- no icon -->
+            </td>
+            <td>
                 <code><b>Resource 6</b></code>
             </td>
             <td>
@@ -248,6 +342,9 @@
         </tr>
         <tr>
             <td>7.</td>
+            <td>
+              <!--- no icon -->
+            </td>
             <td>
                 <code><b>Resource 7</b></code>
             </td>
@@ -259,6 +356,9 @@
         <tr>
             <td>8.</td>
             <td>
+              <!--- no icon -->
+            </td>
+            <td>
                 <code><b>Resource 8</b></code>
             </td>
             <td>
@@ -269,6 +369,9 @@
         <tr>
             <td>9.</td>
             <td>
+              <!--- no icon -->
+            </td>
+            <td>
                 <code><b>Resource 9</b></code>
             </td>
             <td>
@@ -278,6 +381,9 @@
         </tr>
         <tr>
             <td>10.</td>
+            <td>
+              <!--- no icon -->
+            </td>
             <td>
                 <code><b>Resource 10</b></code>
             </td>
@@ -295,6 +401,7 @@
 <thead>
     <tr>
         <th style="width: auto;"></th>
+        <th style="width: auto;">Icon</th>
         <th style="width: auto;">Name</th>
         <th style="width: auto;">Uri Template</th>
         <th style="width: auto;">Description</th>
@@ -303,6 +410,9 @@
 <tbody style="vertical-align: top;">
         <tr>
             <td>1.</td>
+            <td>
+                <!--- no icon -->
+            </td>
             <td>
                 <code><b>Static Resource</b></code>
             </td>
