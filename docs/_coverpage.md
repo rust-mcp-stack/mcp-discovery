@@ -4,7 +4,7 @@
 
 <!-- x-release-please-start-version -->
 
-# MCP Discovery (v0.2.4)
+# MCP Discovery (v0.2.5)
 
 <!-- x-release-please-end -->
 

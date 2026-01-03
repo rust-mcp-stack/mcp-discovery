@@ -29,13 +29,13 @@ Check the [project documentation](https://rust-mcp-stack.github.io/mcp-discovery
 <!-- x-release-please-start-version -->
 
 ```sh
-curl --proto '=https' --tlsv1.2 -LsSf https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.2.4/mcp-discovery-installer.sh | sh
+curl --proto '=https' --tlsv1.2 -LsSf https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.2.5/mcp-discovery-installer.sh | sh
 ```
 
 ##### **PowerShell script**
 
 ```sh
-powershell -ExecutionPolicy Bypass -c "irm https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.2.4/mcp-discovery-installer.ps1 | iex"
+powershell -ExecutionPolicy Bypass -c "irm https://github.com/rust-mcp-stack/mcp-discovery/releases/download/v0.2.5/mcp-discovery-installer.ps1 | iex"
 ```
 
 <!-- x-release-please-end -->
