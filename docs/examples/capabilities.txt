@@ -1,10 +1,11 @@
 example-servers/everything 1.0.0
 
-✔ Tools (10)   ✔ Prompts (3) ✔ Resources (10)   ✔ Logging ✔ Completions  ✘ Experimental
 
+✔ Tools (13)   ✔ Prompts (3) ✔ Resources (10)   ✔ Logging ✔ Completions  ✘ Tasks
 
+   
 
-🛠️ Tools (10)
+🛠️ Tools (13)
 ─────────────
 
 1. add : Adds two numbers
@@ -19,13 +20,19 @@ example-servers/everything 1.0.0
 
 6. getTinyImage : Returns the MCP_TINY_IMAGE
 
-7. longRunningOperation : Demonstrates a long running operation with progress updates
+7. listRoots : Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.
 
-8. printEnv : Prints all environment variables, helpful for debugging MCP server configuration
+8. longRunningOperation : Demonstrates a long running operation with progress updates
 
-9. sampleLLM : Samples from an LLM using MCP's sampling feature
+9. printEnv : Prints all environment variables, helpful for debugging MCP server configuration
 
-10. structuredContent : Returns structured content along with an output schema for client data validation
+10. sampleLLM : Samples from an LLM using MCP's sampling feature
+
+11. startElicitation : Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)
+
+12. structuredContent : Returns structured content along with an output schema for client data validation
+
+13. zip : Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.
 
 
 
@@ -68,7 +75,7 @@ example-servers/everything 1.0.0
 🧩 Resource Templates (1)
 ─────────────────────────
 
-1. Static Resource : test://static/resource/{id}
+1. Static Resource : test://static/resource/{id}  
    A static resource with a numeric ID
 
 

@@ -1,232 +1,481 @@
 {
-    "capabilities": {
-      "experimental": false,
-      "logging": true,
-      "prompts": true,
-      "resources": true,
-      "tools": true
+  "capabilities": {
+    "completions": true,
+    "experimental": false,
+    "logging": true,
+    "prompts": true,
+    "resources": true,
+    "task": {
+      "cancel_task": false,
+      "list_task": false,
+      "tool_call_task": false
     },
-    "name": "example-servers/everything",
-    "prompts": [
-      {
-        "description": "A prompt without arguments",
-        "name": "simple_prompt"
-      },
-      {
-        "arguments": [
-          {
-            "description": "Temperature setting",
-            "name": "temperature",
-            "required": true
+    "tools": true
+  },
+  "name": "example-servers/everything",
+  "prompts": [
+    {
+      "description": "A prompt without arguments",
+      "name": "simple_prompt"
+    },
+    {
+      "arguments": [
+        {
+          "description": "Temperature setting",
+          "name": "temperature",
+          "required": true
+        },
+        {
+          "description": "Output style",
+          "name": "style",
+          "required": false
+        }
+      ],
+      "description": "A prompt with arguments",
+      "name": "complex_prompt"
+    },
+    {
+      "arguments": [
+        {
+          "description": "Resource ID to include (1-100)",
+          "name": "resourceId",
+          "required": true
+        }
+      ],
+      "description": "A prompt that includes an embedded resource reference",
+      "name": "resource_prompt"
+    }
+  ],
+  "resource_templates": [
+    {
+      "description": "A static resource with a numeric ID",
+      "name": "Static Resource",
+      "uriTemplate": "test://static/resource/{id}"
+    }
+  ],
+  "resources": [
+    {
+      "mimeType": "text/plain",
+      "name": "Resource 1",
+      "uri": "test://static/resource/1"
+    },
+    {
+      "mimeType": "application/octet-stream",
+      "name": "Resource 2",
+      "uri": "test://static/resource/2"
+    },
+    {
+      "mimeType": "text/plain",
+      "name": "Resource 3",
+      "uri": "test://static/resource/3"
+    },
+    {
+      "mimeType": "application/octet-stream",
+      "name": "Resource 4",
+      "uri": "test://static/resource/4"
+    },
+    {
+      "mimeType": "text/plain",
+      "name": "Resource 5",
+      "uri": "test://static/resource/5"
+    },
+    {
+      "mimeType": "application/octet-stream",
+      "name": "Resource 6",
+      "uri": "test://static/resource/6"
+    },
+    {
+      "mimeType": "text/plain",
+      "name": "Resource 7",
+      "uri": "test://static/resource/7"
+    },
+    {
+      "mimeType": "application/octet-stream",
+      "name": "Resource 8",
+      "uri": "test://static/resource/8"
+    },
+    {
+      "mimeType": "text/plain",
+      "name": "Resource 9",
+      "uri": "test://static/resource/9"
+    },
+    {
+      "mimeType": "application/octet-stream",
+      "name": "Resource 10",
+      "uri": "test://static/resource/10"
+    }
+  ],
+  "title": "Everything Example Server",
+  "tools": [
+    {
+      "description": "Adds two numbers",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "a": {
+            "description": "First number",
+            "type": "number"
           },
-          {
-            "description": "Output style",
-            "name": "style",
-            "required": false
+          "b": {
+            "description": "Second number",
+            "type": "number"
           }
+        },
+        "required": [
+          "a",
+          "b"
         ],
-        "description": "A prompt with arguments",
-        "name": "complex_prompt"
+        "type": "object"
       },
-      {
-        "arguments": [
-          {
-            "description": "Resource ID to include (1-100)",
-            "name": "resourceId",
-            "required": true
+      "name": "add",
+      "params": [
+        {
+          "param_description": "First number",
+          "param_name": "a",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Second number",
+          "param_name": "b",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Demonstrates how annotations can be used to provide metadata about content",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "includeImage": {
+            "default": false,
+            "description": "Whether to include an example image",
+            "type": "boolean"
+          },
+          "messageType": {
+            "description": "Type of message to demonstrate different annotation patterns",
+            "enum": [
+              "error",
+              "success",
+              "debug"
+            ],
+            "type": "string"
           }
+        },
+        "required": [
+          "messageType"
         ],
-        "description": "A prompt that includes an embedded resource reference",
-        "name": "resource_prompt"
-      }
-    ],
-    "resource_templates": [
-      {
-        "description": "A static resource with a numeric ID",
-        "name": "Static Resource",
-        "uriTemplate": "test://static/resource/{id}"
-      }
-    ],
-    "resources": [
-      {
-        "mimeType": "text/plain",
-        "name": "Resource 1",
-        "uri": "test://static/resource/1"
+        "type": "object"
       },
-      {
-        "mimeType": "application/octet-stream",
-        "name": "Resource 2",
-        "uri": "test://static/resource/2"
-      },
-      {
-        "mimeType": "text/plain",
-        "name": "Resource 3",
-        "uri": "test://static/resource/3"
-      },
-      {
-        "mimeType": "application/octet-stream",
-        "name": "Resource 4",
-        "uri": "test://static/resource/4"
-      },
-      {
-        "mimeType": "text/plain",
-        "name": "Resource 5",
-        "uri": "test://static/resource/5"
-      },
-      {
-        "mimeType": "application/octet-stream",
-        "name": "Resource 6",
-        "uri": "test://static/resource/6"
-      },
-      {
-        "mimeType": "text/plain",
-        "name": "Resource 7",
-        "uri": "test://static/resource/7"
-      },
-      {
-        "mimeType": "application/octet-stream",
-        "name": "Resource 8",
-        "uri": "test://static/resource/8"
-      },
-      {
-        "mimeType": "text/plain",
-        "name": "Resource 9",
-        "uri": "test://static/resource/9"
-      },
-      {
-        "mimeType": "application/octet-stream",
-        "name": "Resource 10",
-        "uri": "test://static/resource/10"
-      }
-    ],
-    "tools": [
-      {
-        "description": "Adds two numbers",
-        "name": "add",
-        "params": [
-          {
-            "param_description": "First number",
-            "param_name": "a",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
+      "name": "annotatedMessage",
+      "params": [
+        {
+          "param_description": "Whether to include an example image",
+          "param_name": "includeImage",
+          "param_type": {
+            "Primitive": "boolean"
           },
-          {
-            "param_description": "Second number",
-            "param_name": "b",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
-          }
-        ]
-      },
-      {
-        "description": "Demonstrates how annotations can be used to provide metadata about content",
-        "name": "annotatedMessage",
-        "params": [
-          {
-            "param_description": "Whether to include an example image",
-            "param_name": "includeImage",
-            "param_type": {
-              "Primitive": "boolean"
-            },
-            "required": true
+          "required": true
+        },
+        {
+          "param_description": "Type of message to demonstrate different annotation patterns",
+          "param_name": "messageType",
+          "param_type": {
+            "EnumValues": [
+              {
+                "Primitive": "error"
+              },
+              {
+                "Primitive": "success"
+              },
+              {
+                "Primitive": "debug"
+              }
+            ]
           },
-          {
-            "param_description": "Type of message to demonstrate different annotation patterns",
-            "param_name": "messageType",
-            "param_type": {
-              "Primitive": "string"
-            },
-            "required": true
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Echoes back the input",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "message": {
+            "description": "Message to echo",
+            "type": "string"
           }
-        ]
+        },
+        "required": [
+          "message"
+        ],
+        "type": "object"
       },
-      {
-        "description": "Echoes back the input",
-        "name": "echo",
-        "params": [
-          {
-            "param_description": "Message to echo",
-            "param_name": "message",
-            "param_type": {
-              "Primitive": "string"
-            },
-            "required": true
-          }
-        ]
-      },
-      {
-        "description": "Returns a resource reference that can be used by MCP clients",
-        "name": "getResourceReference",
-        "params": [
-          {
-            "param_description": "ID of the resource to reference (1-100)",
-            "param_name": "resourceId",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
-          }
-        ]
-      },
-      {
-        "description": "Returns the MCP_TINY_IMAGE",
-        "name": "getTinyImage",
-        "params": []
-      },
-      {
-        "description": "Demonstrates a long running operation with progress updates",
-        "name": "longRunningOperation",
-        "params": [
-          {
-            "param_description": "Duration of the operation in seconds",
-            "param_name": "duration",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
+      "name": "echo",
+      "params": [
+        {
+          "param_description": "Message to echo",
+          "param_name": "message",
+          "param_type": {
+            "Primitive": "string"
           },
-          {
-            "param_description": "Number of steps in the operation",
-            "param_name": "steps",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Returns multiple resource links that reference different types of resources",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "count": {
+            "default": 3,
+            "description": "Number of resource links to return (1-10)",
+            "maximum": 10,
+            "minimum": 1,
+            "type": "number"
           }
-        ]
+        },
+        "type": "object"
       },
-      {
-        "description": "Prints all environment variables, helpful for debugging MCP server configuration",
-        "name": "printEnv",
-        "params": []
-      },
-      {
-        "description": "Samples from an LLM using MCP's sampling feature",
-        "name": "sampleLLM",
-        "params": [
-          {
-            "param_description": "Maximum number of tokens to generate",
-            "param_name": "maxTokens",
-            "param_type": {
-              "Primitive": "number"
-            },
-            "required": true
+      "name": "getResourceLinks",
+      "params": [
+        {
+          "param_description": "Number of resource links to return (1-10)",
+          "param_name": "count",
+          "param_type": {
+            "Primitive": "number"
           },
-          {
-            "param_description": "The prompt to send to the LLM",
-            "param_name": "prompt",
-            "param_type": {
-              "Primitive": "string"
-            },
-            "required": true
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Returns a resource reference that can be used by MCP clients",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "resourceId": {
+            "description": "ID of the resource to reference (1-100)",
+            "maximum": 100,
+            "minimum": 1,
+            "type": "number"
           }
-        ]
-      }
-    ],
-    "version": "1.0.0"
+        },
+        "required": [
+          "resourceId"
+        ],
+        "type": "object"
+      },
+      "name": "getResourceReference",
+      "params": [
+        {
+          "param_description": "ID of the resource to reference (1-100)",
+          "param_name": "resourceId",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Returns the MCP_TINY_IMAGE",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "getTinyImage",
+      "params": []
+    },
+    {
+      "description": "Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "listRoots",
+      "params": []
+    },
+    {
+      "description": "Demonstrates a long running operation with progress updates",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "duration": {
+            "default": 10,
+            "description": "Duration of the operation in seconds",
+            "type": "number"
+          },
+          "steps": {
+            "default": 5,
+            "description": "Number of steps in the operation",
+            "type": "number"
+          }
+        },
+        "type": "object"
+      },
+      "name": "longRunningOperation",
+      "params": [
+        {
+          "param_description": "Duration of the operation in seconds",
+          "param_name": "duration",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Number of steps in the operation",
+          "param_name": "steps",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Prints all environment variables, helpful for debugging MCP server configuration",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "printEnv",
+      "params": []
+    },
+    {
+      "description": "Samples from an LLM using MCP's sampling feature",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "maxTokens": {
+            "default": 100,
+            "description": "Maximum number of tokens to generate",
+            "type": "number"
+          },
+          "prompt": {
+            "description": "The prompt to send to the LLM",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "type": "object"
+      },
+      "name": "sampleLLM",
+      "params": [
+        {
+          "param_description": "Maximum number of tokens to generate",
+          "param_name": "maxTokens",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        },
+        {
+          "param_description": "The prompt to send to the LLM",
+          "param_name": "prompt",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "startElicitation",
+      "params": []
+    },
+    {
+      "description": "Returns structured content along with an output schema for client data validation",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "location": {
+            "description": "City name or zip code",
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "type": "object"
+      },
+      "name": "structuredContent",
+      "params": [
+        {
+          "param_description": "City name or zip code",
+          "param_name": "location",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        }
+      ]
+    },
+    {
+      "description": "Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.",
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "files": {
+            "additionalProperties": {
+              "description": "URL of the file to include in the zip",
+              "format": "uri",
+              "type": "string"
+            },
+            "description": "Mapping of file names to URLs to include in the zip",
+            "type": "object"
+          }
+        },
+        "required": [
+          "files"
+        ],
+        "type": "object"
+      },
+      "name": "zip",
+      "params": [
+        {
+          "param_description": "Mapping of file names to URLs to include in the zip",
+          "param_name": "files",
+          "param_type": {
+            "Primitive": "unknown"
+          },
+          "required": true
+        }
+      ]
+    }
+  ],
+  "version": "1.0.0"
 }
-  
