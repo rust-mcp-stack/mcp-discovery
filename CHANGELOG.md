@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.4](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.3...v0.2.4) (2026-01-03)
+
+
+### ⚙️ Miscellaneous Chores
+
+* Release 0.2.4 ([0eb19ea](https://github.com/rust-mcp-stack/mcp-discovery/commit/0eb19ea3eee7e6334ee8d1edcfaf22f3fa06cdba))
+
 ## [0.2.3](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.2...v0.2.3) (2026-01-02)
 
 
