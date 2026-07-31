@@ -4,6 +4,8 @@
 
 # MCP Discovery
 
+[![MCP Toplist](https://mcptoplist.com/badge/mcp.so%2Fmcp-discovery%2Frust-mcp-stack.svg)](https://mcptoplist.com/server/mcp.so%2Fmcp-discovery%2Frust-mcp-stack)
+
 A command-line tool written in Rust for discovering and documenting MCP Server capabilities.
 
 It supports outputting the results in the terminal or saving them to files in [Markdown](https://github.com/rust-mcp-stack/mcp-discovery/blob/main/docs/examples/update-md.md#server-info-and-capabilities), [HTML](https://rust-mcp-stack.github.io/mcp-discovery/examples/server-info.html), [plain text](https://rust-mcp-stack.github.io/mcp-discovery/examples/capabilities.txt), JSON, or a custom template defined by you.
