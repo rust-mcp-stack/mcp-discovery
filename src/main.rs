@@ -36,7 +36,7 @@ async fn main() {
     let launch_message = format!(
         "{} {} ...",
         "Launching:".bold(),
-        &command.mcp_launch_command().join(" "),
+        command.mcp_launch_command().join(" "),
     );
 
     println!("{}", launch_message.bright_green());
