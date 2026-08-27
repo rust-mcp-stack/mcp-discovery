@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.5...v0.2.6) (2026-08-27)
+
+
+### 🐛 Bug Fixes
+
+* Dependency update ([7e116ad](https://github.com/rust-mcp-stack/mcp-discovery/commit/7e116ad4c3f337e4deabe9f5d4dc3a991a88719d))
+
 ## [0.2.5](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.4...v0.2.5) (2026-01-03)
 
 
