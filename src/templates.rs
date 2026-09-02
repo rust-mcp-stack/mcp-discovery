@@ -1,5 +1,5 @@
 use crate::{
-    error::DiscoveryResult,
+    error::{DiscoveryError, DiscoveryResult},
     render_template,
     types::Template,
     utils::{find_template_file, line_ending},
@@ -50,7 +50,7 @@ pub const TEXT_RESOURCES: &str = include_str!("../templates/text/text_resources.
 pub const TEXT_RESOURCE_TEMPLATES: &str =
     include_str!("../templates/text/text_resource_templates.hbs");
 
-pub static PARTIALS: [(&str, &str); 21] = [
+pub static PARTIALS: [(&str, &str); 20] = [
     ("title-version", TITLE_VERSION),
     ("summary", MD_SUMMARY),
     ("md-tools", MD_TOOLS),
@@ -71,21 +71,55 @@ pub static PARTIALS: [(&str, &str); 21] = [
     ("txt-prompts", TEXT_PROMPTS),
     ("txt-resources", TEXT_RESOURCES),
     ("txt-resource-templates", TEXT_RESOURCE_TEMPLATES),
-    ("txt-summary", TEXT_SUMMARY),
 ];
 
 /// Struct to hold information about inline templates
 /// Used for templates embedded within other content with specific markers
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct InlineTemplateInfo {
     pub template: String,
     pub marker_start: String,
     pub marker_end: String,
 }
 
+/// Resolves the entry template file inside a directory passed to `--template-file`.
+///
+/// Uses `template.hbs` when present; otherwise falls back to the single standalone `.hbs`
+/// file in the directory root. Errors when neither exists or more than one candidate exists.
+fn resolve_template_entry(dir: &Path) -> DiscoveryResult<PathBuf> {
+    let conventional = dir.join("template.hbs");
+    if conventional.is_file() {
+        return Ok(conventional);
+    }
+
+    let mut candidates: Vec<PathBuf> = std::fs::read_dir(dir)?
+        .filter_map(Result::ok)
+        .map(|entry| entry.path())
+        .filter(|path| path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("hbs"))
+        .collect();
+    candidates.sort();
+
+    match candidates.as_slice() {
+        [single] => Ok(single.clone()),
+        [] => Err(DiscoveryError::ParseTemplate(format!(
+            "Template directory '{}' has no 'template.hbs' and no standalone .hbs file.",
+            dir.display()
+        ))),
+        _ => Err(DiscoveryError::ParseTemplate(format!(
+            "Template directory '{}' has no 'template.hbs' and multiple .hbs files: {}. Point --template-file at a single .hbs file or add a 'template.hbs'.",
+            dir.display(),
+            candidates
+                .iter()
+                .map(|p| p.to_string_lossy())
+                .collect::<Vec<_>>()
+                .join(", ")
+        ))),
+    }
+}
+
 /// Enum representing different types of output templates
 /// Used to specify the type of template to render
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub enum OutputTemplate {
     /// Markdown template (generates tables)
     Md,
@@ -111,7 +145,12 @@ impl OutputTemplate {
     /// Returns a DiscoveryResult containing the CustomTemplate variant
     pub fn from_file(template_file: &Path, base_file: Option<&PathBuf>) -> DiscoveryResult<Self> {
         let actual_template_file = find_template_file(template_file, base_file)?;
-        Ok(OutputTemplate::CustomTemplate(actual_template_file))
+        let resolved_entry = if actual_template_file.is_dir() {
+            resolve_template_entry(&actual_template_file)?
+        } else {
+            actual_template_file
+        };
+        Ok(OutputTemplate::CustomTemplate(resolved_entry))
     }
 
     /// Returns the content of the template as a Cow string

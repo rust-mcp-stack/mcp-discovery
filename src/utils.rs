@@ -1,6 +1,6 @@
 use path_clean::PathClean;
 
-use crate::{error::DiscoveryResult, types::Template, OutputTemplate};
+use crate::{error::DiscoveryResult, fetcher, types::Template, OutputTemplate};
 use std::{
     io::{self, ErrorKind},
     path::{Path, PathBuf},
@@ -41,8 +41,13 @@ pub fn match_template(
     template: &Option<Template>,
     template_file: &Option<PathBuf>,
     template_string: &Option<String>,
+    template_url: &Option<String>,
+    cache_dir: &Option<PathBuf>,
 ) -> DiscoveryResult<OutputTemplate> {
-    if let Some(template_file) = template_file {
+    if let Some(template_url) = template_url {
+        let entry = fetcher::fetch_remote(template_url, cache_dir.as_deref())?;
+        return Ok(OutputTemplate::CustomTemplate(entry));
+    } else if let Some(template_file) = template_file {
         return OutputTemplate::from_file(template_file, filename);
     } else if let Some(template) = template {
         return Ok(template.into());

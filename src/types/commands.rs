@@ -118,6 +118,12 @@ pub struct PrintOptions {
     /// Template content provided as a string.
     pub template_string: Option<String>,
 
+    /// URL of a remote Handlebars template (`.hbs`, `.zip`, or `.tar.gz`) to fetch and render.
+    pub template_url: Option<String>,
+
+    /// Cache directory used for fetched remote templates (defaults to the OS cache dir).
+    pub cache_dir: Option<PathBuf>,
+
     /// Specifies the logging level for the application (default: info)
     pub log_level: Option<LogLevel>,
 
@@ -132,13 +138,15 @@ pub struct PrintOptions {
 }
 
 impl PrintOptions {
-    /// Resolves the output template (built-in, file, or string) based on user input.
+    /// Resolves the output template (built-in, file, string, or remote URL) based on user input.
     pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
         match_template(
             None,
             &self.template,
             &self.template_file,
             &self.template_string,
+            &self.template_url,
+            &self.cache_dir,
         )
     }
 }
@@ -157,6 +165,12 @@ pub struct WriteOptions {
     /// Template content provided as a string.
     pub template_string: Option<String>,
 
+    /// URL of a remote Handlebars template (`.hbs`, `.zip`, or `.tar.gz`) to fetch and render.
+    pub template_url: Option<String>,
+
+    /// Cache directory used for fetched remote templates (defaults to the OS cache dir).
+    pub cache_dir: Option<PathBuf>,
+
     /// Specifies the logging level for the application (default: info)
     pub log_level: Option<LogLevel>,
     /// Command and arguments to launch the MCP server.
@@ -170,13 +184,15 @@ pub struct WriteOptions {
 }
 
 impl WriteOptions {
-    /// Resolves the output template (built-in, file, or string) based on user input.
+    /// Resolves the output template (built-in, file, string, or remote URL) based on user input.
     pub fn match_template(&self) -> DiscoveryResult<OutputTemplate> {
         match_template(
             Some(&self.filename),
             &self.template,
             &self.template_file,
             &self.template_string,
+            &self.template_url,
+            &self.cache_dir,
         )
     }
 

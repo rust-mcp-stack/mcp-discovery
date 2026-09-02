@@ -2,10 +2,12 @@
 
 pub mod auth;
 pub mod error;
+mod fetcher;
 mod handler;
 mod render_template;
 mod schema;
 mod std_output;
+mod template_url;
 mod templates;
 mod types;
 mod utils;

@@ -13,6 +13,14 @@ pub enum DiscoveryError {
     InvalidSchema(String),
     #[error("{0}")]
     ParseTemplate(String),
+    #[error("Failed to fetch remote template '{url}': {err}")]
+    TemplateFetch { url: String, err: String },
+    #[error(
+        "Remote template checksum mismatch: expected {expected} but the downloaded content hashed to {actual}."
+    )]
+    TemplateIntegrity { expected: String, actual: String },
+    #[error("Invalid remote template source '{url}': {err}")]
+    InvalidRemote { url: String, err: String },
     #[error(
         "Server details are not available. please ensure the discover() method is called first."
     )]
