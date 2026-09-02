@@ -492,12 +492,7 @@ mod tests {
 
     #[test]
     fn test_url_command_parsing() {
-        let args = vec![
-            "mcp-tool",
-            "print",
-            "--url",
-            "http://localhost:8080/mcp",
-        ];
+        let args = vec!["mcp-tool", "print", "--url", "http://localhost:8080/mcp"];
         let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
 
         assert_eq!(

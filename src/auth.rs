@@ -127,12 +127,11 @@ async fn obtain_headers(
             Ok(auth_client.get_auth_headers().await?)
         }
         Grant::AuthorizationCode => {
-            let redirect_uri = options
-                .redirect_uri
-                .clone()
-                .ok_or_else(|| crate::error::DiscoveryError::InvalidSchema(
+            let redirect_uri = options.redirect_uri.clone().ok_or_else(|| {
+                crate::error::DiscoveryError::InvalidSchema(
                     "--redirect-uri is required for the authorization-code grant".to_string(),
-                ))?;
+                )
+            })?;
             tracing::debug!("using redirect_uri: {redirect_uri}");
 
             if options.client_id.is_none() {
@@ -185,7 +184,10 @@ mod tests {
             extract_code_from_redirect("http://127.0.0.1:8080/callback?code=abc&state=xyz"),
             "abc"
         );
-        assert_eq!(extract_code_from_redirect("http://127.0.0.1:8080/callback?state=xyz"), "http://127.0.0.1:8080/callback?state=xyz");
+        assert_eq!(
+            extract_code_from_redirect("http://127.0.0.1:8080/callback?state=xyz"),
+            "http://127.0.0.1:8080/callback?state=xyz"
+        );
         assert_eq!(extract_code_from_redirect("raw-code"), "raw-code");
     }
 }
