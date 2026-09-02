@@ -6,150 +6,179 @@
     "prompts": true,
     "resources": true,
     "task": {
-      "cancel_task": false,
-      "list_task": false,
-      "tool_call_task": false
+      "cancel_task": true,
+      "list_task": true,
+      "tool_call_task": true
     },
     "tools": true
   },
-  "name": "example-servers/everything",
+  "name": "mcp-servers/everything",
   "prompts": [
     {
-      "description": "A prompt without arguments",
-      "name": "simple_prompt"
+      "description": "A prompt with no arguments",
+      "name": "simple-prompt",
+      "title": "Simple Prompt"
     },
     {
       "arguments": [
         {
-          "description": "Temperature setting",
-          "name": "temperature",
+          "description": "Name of the city",
+          "name": "city",
           "required": true
         },
         {
-          "description": "Output style",
-          "name": "style",
+          "name": "state",
           "required": false
         }
       ],
-      "description": "A prompt with arguments",
-      "name": "complex_prompt"
+      "description": "A prompt with two arguments, one required and one optional",
+      "name": "args-prompt",
+      "title": "Arguments Prompt"
     },
     {
       "arguments": [
         {
-          "description": "Resource ID to include (1-100)",
+          "description": "Choose the department.",
+          "name": "department",
+          "required": true
+        },
+        {
+          "description": "Choose a team member to lead the selected department.",
+          "name": "name",
+          "required": true
+        }
+      ],
+      "description": "First argument choice narrows values for second argument.",
+      "name": "completable-prompt",
+      "title": "Team Management"
+    },
+    {
+      "arguments": [
+        {
+          "description": "Type of resource to fetch",
+          "name": "resourceType",
+          "required": true
+        },
+        {
+          "description": "ID of the text resource to fetch",
           "name": "resourceId",
           "required": true
         }
       ],
       "description": "A prompt that includes an embedded resource reference",
-      "name": "resource_prompt"
+      "name": "resource-prompt",
+      "title": "Resource Prompt"
     }
   ],
   "resource_templates": [
     {
-      "description": "A static resource with a numeric ID",
-      "name": "Static Resource",
-      "uriTemplate": "test://static/resource/{id}"
+      "description": "Plaintext dynamic resource fabricated from the {resourceId} variable, which must be an integer.",
+      "mimeType": "text/plain",
+      "name": "Dynamic Text Resource",
+      "uriTemplate": "demo://resource/dynamic/text/{resourceId}"
+    },
+    {
+      "description": "Binary (base64) dynamic resource fabricated from the {resourceId} variable, which must be an integer.",
+      "mimeType": "application/octet-stream",
+      "name": "Dynamic Blob Resource",
+      "uriTemplate": "demo://resource/dynamic/blob/{resourceId}"
     }
   ],
   "resources": [
     {
-      "mimeType": "text/plain",
-      "name": "Resource 1",
-      "uri": "test://static/resource/1"
+      "description": "Static document file exposed from /docs: architecture.md",
+      "mimeType": "text/markdown",
+      "name": "architecture.md",
+      "uri": "demo://resource/static/document/architecture.md"
     },
     {
-      "mimeType": "application/octet-stream",
-      "name": "Resource 2",
-      "uri": "test://static/resource/2"
+      "description": "Static document file exposed from /docs: extension.md",
+      "mimeType": "text/markdown",
+      "name": "extension.md",
+      "uri": "demo://resource/static/document/extension.md"
     },
     {
-      "mimeType": "text/plain",
-      "name": "Resource 3",
-      "uri": "test://static/resource/3"
+      "description": "Static document file exposed from /docs: features.md",
+      "mimeType": "text/markdown",
+      "name": "features.md",
+      "uri": "demo://resource/static/document/features.md"
     },
     {
-      "mimeType": "application/octet-stream",
-      "name": "Resource 4",
-      "uri": "test://static/resource/4"
+      "description": "Static document file exposed from /docs: how-it-works.md",
+      "mimeType": "text/markdown",
+      "name": "how-it-works.md",
+      "uri": "demo://resource/static/document/how-it-works.md"
     },
     {
-      "mimeType": "text/plain",
-      "name": "Resource 5",
-      "uri": "test://static/resource/5"
+      "description": "Static document file exposed from /docs: instructions.md",
+      "mimeType": "text/markdown",
+      "name": "instructions.md",
+      "uri": "demo://resource/static/document/instructions.md"
     },
     {
-      "mimeType": "application/octet-stream",
-      "name": "Resource 6",
-      "uri": "test://static/resource/6"
+      "description": "Static document file exposed from /docs: startup.md",
+      "mimeType": "text/markdown",
+      "name": "startup.md",
+      "uri": "demo://resource/static/document/startup.md"
     },
     {
-      "mimeType": "text/plain",
-      "name": "Resource 7",
-      "uri": "test://static/resource/7"
-    },
-    {
-      "mimeType": "application/octet-stream",
-      "name": "Resource 8",
-      "uri": "test://static/resource/8"
-    },
-    {
-      "mimeType": "text/plain",
-      "name": "Resource 9",
-      "uri": "test://static/resource/9"
-    },
-    {
-      "mimeType": "application/octet-stream",
-      "name": "Resource 10",
-      "uri": "test://static/resource/10"
+      "description": "Static document file exposed from /docs: structure.md",
+      "mimeType": "text/markdown",
+      "name": "structure.md",
+      "uri": "demo://resource/static/document/structure.md"
     }
   ],
-  "title": "Everything Example Server",
+  "title": "Everything Reference Server",
   "tools": [
     {
-      "description": "Adds two numbers",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Echoes back the input string",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
-          "a": {
-            "description": "First number",
-            "type": "number"
-          },
-          "b": {
-            "description": "Second number",
-            "type": "number"
+          "message": {
+            "description": "Message to echo",
+            "type": "string"
           }
         },
         "required": [
-          "a",
-          "b"
+          "message"
         ],
         "type": "object"
       },
-      "name": "add",
+      "name": "echo",
       "params": [
         {
-          "param_description": "First number",
-          "param_name": "a",
+          "param_description": "Message to echo",
+          "param_name": "message",
           "param_type": {
-            "Primitive": "number"
-          },
-          "required": true
-        },
-        {
-          "param_description": "Second number",
-          "param_name": "b",
-          "param_type": {
-            "Primitive": "number"
+            "Primitive": "string"
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Echo Tool"
     },
     {
-      "description": "Demonstrates how annotations can be used to provide metadata about content",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Demonstrates how annotations can be used to provide metadata about content.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -174,7 +203,7 @@
         ],
         "type": "object"
       },
-      "name": "annotatedMessage",
+      "name": "get-annotated-message",
       "params": [
         {
           "param_description": "Whether to include an example image",
@@ -202,38 +231,41 @@
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Get Annotated Message Tool"
     },
     {
-      "description": "Echoes back the input",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Returns all environment variables, helpful for debugging MCP server configuration",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
-        "properties": {
-          "message": {
-            "description": "Message to echo",
-            "type": "string"
-          }
-        },
-        "required": [
-          "message"
-        ],
+        "properties": {},
         "type": "object"
       },
-      "name": "echo",
-      "params": [
-        {
-          "param_description": "Message to echo",
-          "param_name": "message",
-          "param_type": {
-            "Primitive": "string"
-          },
-          "required": true
-        }
-      ]
+      "name": "get-env",
+      "params": [],
+      "title": "Print Environment Tool"
     },
     {
-      "description": "Returns multiple resource links that reference different types of resources",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Returns up to ten resource links that reference different types of resources",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -248,7 +280,7 @@
         },
         "type": "object"
       },
-      "name": "getResourceLinks",
+      "name": "get-resource-links",
       "params": [
         {
           "param_description": "Number of resource links to return (1-10)",
@@ -258,62 +290,433 @@
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Get Resource Links Tool"
     },
     {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
       "description": "Returns a resource reference that can be used by MCP clients",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
           "resourceId": {
-            "description": "ID of the resource to reference (1-100)",
-            "maximum": 100,
-            "minimum": 1,
+            "default": 1,
+            "description": "ID of the text resource to fetch",
             "type": "number"
+          },
+          "resourceType": {
+            "default": "Text",
+            "enum": [
+              "Text",
+              "Blob"
+            ],
+            "type": "string"
           }
         },
-        "required": [
-          "resourceId"
-        ],
         "type": "object"
       },
-      "name": "getResourceReference",
+      "name": "get-resource-reference",
       "params": [
         {
-          "param_description": "ID of the resource to reference (1-100)",
+          "param_description": "ID of the text resource to fetch",
           "param_name": "resourceId",
           "param_type": {
             "Primitive": "number"
           },
           "required": true
+        },
+        {
+          "param_name": "resourceType",
+          "param_type": {
+            "EnumValues": [
+              {
+                "Primitive": "Text"
+              },
+              {
+                "Primitive": "Blob"
+              }
+            ]
+          },
+          "required": true
         }
-      ]
+      ],
+      "title": "Get Resource Reference Tool"
     },
     {
-      "description": "Returns the MCP_TINY_IMAGE",
-      "icons": [],
-      "input_schema": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "properties": {},
-        "type": "object"
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
       },
-      "name": "getTinyImage",
-      "params": []
-    },
-    {
       "description": "Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {},
         "type": "object"
       },
-      "name": "listRoots",
-      "params": []
+      "name": "get-roots-list",
+      "params": [],
+      "title": "Get Roots List Tool"
     },
     {
-      "description": "Demonstrates a long running operation with progress updates",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Returns structured content along with an output schema for client data validation",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "location": {
+            "description": "Choose city",
+            "enum": [
+              "New York",
+              "Chicago",
+              "Los Angeles"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "location"
+        ],
+        "type": "object"
+      },
+      "name": "get-structured-content",
+      "params": [
+        {
+          "param_description": "Choose city",
+          "param_name": "location",
+          "param_type": {
+            "EnumValues": [
+              {
+                "Primitive": "New York"
+              },
+              {
+                "Primitive": "Chicago"
+              },
+              {
+                "Primitive": "Los Angeles"
+              }
+            ]
+          },
+          "required": true
+        }
+      ],
+      "title": "Get Structured Content Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Returns the sum of two numbers",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "a": {
+            "description": "First number",
+            "type": "number"
+          },
+          "b": {
+            "description": "Second number",
+            "type": "number"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "type": "object"
+      },
+      "name": "get-sum",
+      "params": [
+        {
+          "param_description": "First number",
+          "param_name": "a",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Second number",
+          "param_name": "b",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        }
+      ],
+      "title": "Get Sum Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Returns a tiny MCP logo image.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "get-tiny-image",
+      "params": [],
+      "title": "Get Tiny Image Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Compresses a single file using gzip compression. Depending upon the selected output type, returns either the compressed data as a gzipped resource or a resource link, allowing it to be downloaded in a subsequent request during the current session.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "data": {
+            "default": "https://raw.githubusercontent.com/modelcontextprotocol/servers/refs/heads/main/README.md",
+            "description": "URL or data URI of the file content to compress",
+            "format": "uri",
+            "type": "string"
+          },
+          "name": {
+            "default": "README.md.gz",
+            "description": "Name of the output file",
+            "type": "string"
+          },
+          "outputType": {
+            "default": "resourceLink",
+            "description": "How the resulting gzipped file should be returned. 'resourceLink' returns a link to a resource that can be read later, 'resource' returns a full resource object.",
+            "enum": [
+              "resourceLink",
+              "resource"
+            ],
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "name": "gzip-file-as-resource",
+      "params": [
+        {
+          "param_description": "URL or data URI of the file content to compress",
+          "param_name": "data",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Name of the output file",
+          "param_name": "name",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        },
+        {
+          "param_description": "How the resulting gzipped file should be returned. 'resourceLink' returns a link to a resource that can be read later, 'resource' returns a full resource object.",
+          "param_name": "outputType",
+          "param_type": {
+            "EnumValues": [
+              {
+                "Primitive": "resourceLink"
+              },
+              {
+                "Primitive": "resource"
+              }
+            ]
+          },
+          "required": true
+        }
+      ],
+      "title": "GZip File as Resource Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Simulates a deep research operation that gathers, analyzes, and synthesizes information. Demonstrates MCP task-based operations with progress through multiple stages. If 'ambiguous' is true and client supports elicitation, sends an elicitation request for clarification.",
+      "execution": {
+        "taskSupport": "required"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {
+          "ambiguous": {
+            "default": false,
+            "description": "Simulate an ambiguous query that requires clarification (triggers input_required status)",
+            "type": "boolean"
+          },
+          "topic": {
+            "description": "The research topic to investigate",
+            "type": "string"
+          }
+        },
+        "required": [
+          "topic"
+        ],
+        "type": "object"
+      },
+      "name": "simulate-research-query",
+      "params": [
+        {
+          "param_description": "Simulate an ambiguous query that requires clarification (triggers input_required status)",
+          "param_name": "ambiguous",
+          "param_type": {
+            "Primitive": "boolean"
+          },
+          "required": true
+        },
+        {
+          "param_description": "The research topic to investigate",
+          "param_name": "topic",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        }
+      ],
+      "title": "Simulate Research Query"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Toggles simulated, random-leveled logging on or off.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "toggle-simulated-logging",
+      "params": [],
+      "title": "Toggle Simulated Logging"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Toggles simulated resource subscription updates on or off.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "toggle-subscriber-updates",
+      "params": [],
+      "title": "Toggle Subscriber Updates"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Trigger a Request from the Server for User Elicitation",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "trigger-elicitation-request",
+      "params": [],
+      "title": "Trigger Elicitation Request Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Trigger an async elicitation request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends an elicitation request and the client handles user input asynchronously, allowing the server to poll for completion.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "icons": [],
+      "input_schema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "properties": {},
+        "type": "object"
+      },
+      "name": "trigger-elicitation-request-async",
+      "params": [],
+      "title": "Trigger Async Elicitation Request Tool"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": true,
+        "openWorldHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Demonstrates a long running operation with progress updates.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -331,7 +734,7 @@
         },
         "type": "object"
       },
-      "name": "longRunningOperation",
+      "name": "trigger-long-running-operation",
       "params": [
         {
           "param_description": "Duration of the operation in seconds",
@@ -349,21 +752,20 @@
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Trigger Long Running Operation Tool"
     },
     {
-      "description": "Prints all environment variables, helpful for debugging MCP server configuration",
-      "icons": [],
-      "input_schema": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "properties": {},
-        "type": "object"
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
       },
-      "name": "printEnv",
-      "params": []
-    },
-    {
-      "description": "Samples from an LLM using MCP's sampling feature",
+      "description": "Trigger a Request from the Server for LLM Sampling",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
@@ -383,7 +785,7 @@
         ],
         "type": "object"
       },
-      "name": "sampleLLM",
+      "name": "trigger-sampling-request",
       "params": [
         {
           "param_description": "Maximum number of tokens to generate",
@@ -401,81 +803,137 @@
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Trigger Sampling Request Tool"
     },
     {
-      "description": "Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)",
-      "icons": [],
-      "input_schema": {
-        "$schema": "http://json-schema.org/draft-07/schema#",
-        "properties": {},
-        "type": "object"
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
       },
-      "name": "startElicitation",
-      "params": []
-    },
-    {
-      "description": "Returns structured content along with an output schema for client data validation",
+      "description": "Trigger an async sampling request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends a request and the client executes it asynchronously, allowing the server to poll for progress and results.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
-          "location": {
-            "description": "City name or zip code",
-            "minLength": 1,
+          "maxTokens": {
+            "default": 100,
+            "description": "Maximum number of tokens to generate",
+            "type": "number"
+          },
+          "prompt": {
+            "description": "The prompt to send to the LLM",
             "type": "string"
           }
         },
         "required": [
-          "location"
+          "prompt"
         ],
         "type": "object"
       },
-      "name": "structuredContent",
+      "name": "trigger-sampling-request-async",
       "params": [
         {
-          "param_description": "City name or zip code",
-          "param_name": "location",
+          "param_description": "Maximum number of tokens to generate",
+          "param_name": "maxTokens",
+          "param_type": {
+            "Primitive": "number"
+          },
+          "required": true
+        },
+        {
+          "param_description": "The prompt to send to the LLM",
+          "param_name": "prompt",
           "param_type": {
             "Primitive": "string"
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Trigger Async Sampling Request Tool"
     },
     {
-      "description": "Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.",
+      "annotations": {
+        "destructiveHint": false,
+        "idempotentHint": false,
+        "openWorldHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Trigger a URL elicitation so the client can direct the user to a browser flow. Supports two mechanisms: the request path (elicitation/create, default) which awaits the user's response, and the error path (UrlElicitationRequiredError, -32042) which signals the client to handle URL elicitation via the error response. Set errorPath=true to use the error path.",
+      "execution": {
+        "taskSupport": "forbidden"
+      },
       "icons": [],
       "input_schema": {
         "$schema": "http://json-schema.org/draft-07/schema#",
         "properties": {
-          "files": {
-            "additionalProperties": {
-              "description": "URL of the file to include in the zip",
-              "format": "uri",
-              "type": "string"
-            },
-            "description": "Mapping of file names to URLs to include in the zip",
-            "type": "object"
+          "elicitationId": {
+            "description": "Optional explicit elicitation ID. Defaults to a random UUID.",
+            "type": "string"
+          },
+          "errorPath": {
+            "default": false,
+            "description": "Controls which elicitation mechanism is used. When false (default), sends an elicitation/create request (request path). When true, throws a UrlElicitationRequiredError (MCP error code -32042) so the client handles the URL elicitation via the error path rather than waiting for a response. To clear the error, satisfy the prerequisite and retry this call with the same arguments; the retry ignores errorPath and proceeds, so the client does not loop on the same error.",
+            "type": "boolean"
+          },
+          "message": {
+            "default": "Please open the link to complete this action.",
+            "description": "Message shown to the user before opening the URL",
+            "type": "string"
+          },
+          "url": {
+            "description": "The URL the user should open",
+            "format": "uri",
+            "type": "string"
           }
         },
         "required": [
-          "files"
+          "url"
         ],
         "type": "object"
       },
-      "name": "zip",
+      "name": "trigger-url-elicitation",
       "params": [
         {
-          "param_description": "Mapping of file names to URLs to include in the zip",
-          "param_name": "files",
+          "param_description": "Optional explicit elicitation ID. Defaults to a random UUID.",
+          "param_name": "elicitationId",
           "param_type": {
-            "Primitive": "unknown"
+            "Primitive": "string"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Controls which elicitation mechanism is used. When false (default), sends an elicitation/create request (request path). When true, throws a UrlElicitationRequiredError (MCP error code -32042) so the client handles the URL elicitation via the error path rather than waiting for a response. To clear the error, satisfy the prerequisite and retry this call with the same arguments; the retry ignores errorPath and proceeds, so the client does not loop on the same error.",
+          "param_name": "errorPath",
+          "param_type": {
+            "Primitive": "boolean"
+          },
+          "required": true
+        },
+        {
+          "param_description": "Message shown to the user before opening the URL",
+          "param_name": "message",
+          "param_type": {
+            "Primitive": "string"
+          },
+          "required": true
+        },
+        {
+          "param_description": "The URL the user should open",
+          "param_name": "url",
+          "param_type": {
+            "Primitive": "string"
           },
           "required": true
         }
-      ]
+      ],
+      "title": "Trigger URL Elicitation Tool"
     }
   ],
-  "version": "1.0.0"
+  "version": "2.0.0"
 }

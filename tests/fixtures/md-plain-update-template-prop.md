@@ -1,10 +1,10 @@
 <!-- mcp-discovery-render template=txt-->
-## example-servers/everything 1.0.0
+## mcp-servers/everything 2.0.0
 
-| ✔ Tools (13) | ✔ Prompts (3) | ✔ Resources (10) | ✔ Logging | ✔ Completions | ~~<span style="opacity:0.6" class="error">✘ Tasks</span>~~ |
+| ✔ Tools (19) | ✔ Prompts (4) | ✔ Resources (7) | ✔ Logging | ✔ Completions | ~~<span style="opacity:0.6" class="error">✘ Tasks</span>~~ |
 | --- | --- | --- | --- | --- | --- |
 
-## 🛠️ Tools (13)
+## 🛠️ Tools (19)
 
 <table style="text-align: left;">
 <thead>
@@ -23,13 +23,12 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>add</b></code>
+                <code><b>echo</b></code>
             </td>
-            <td>Adds two numbers</td>
+            <td>Echoes back the input string</td>
             <td>
                 <ul>
-                    <li> <code>a</code> : number<br /></li>
-                    <li> <code>b</code> : number<br /></li>
+                    <li> <code>message</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
@@ -39,9 +38,9 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>annotatedMessage</b></code>
+                <code><b>get-annotated-message</b></code>
             </td>
-            <td>Demonstrates how annotations can be used to provide metadata about content</td>
+            <td>Demonstrates how annotations can be used to provide metadata about content.</td>
             <td>
                 <ul>
                     <li> <code>includeImage</code> : boolean<br /></li>
@@ -55,12 +54,11 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>echo</b></code>
+                <code><b>get-env</b></code>
             </td>
-            <td>Echoes back the input</td>
+            <td>Returns all environment variables, helpful for debugging MCP server configuration</td>
             <td>
                 <ul>
-                    <li> <code>message</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
@@ -70,9 +68,9 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>getResourceLinks</b></code>
+                <code><b>get-resource-links</b></code>
             </td>
-            <td>Returns multiple resource links that reference different types of resources</td>
+            <td>Returns up to ten resource links that reference different types of resources</td>
             <td>
                 <ul>
                     <li> <code>count</code> : number<br /></li>
@@ -85,12 +83,13 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>getResourceReference</b></code>
+                <code><b>get-resource-reference</b></code>
             </td>
             <td>Returns a resource reference that can be used by MCP clients</td>
             <td>
                 <ul>
                     <li> <code>resourceId</code> : number<br /></li>
+                    <li> <code>resourceType</code> : Text|Blob<br /></li>
                 </ul>
             </td>
         </tr>
@@ -100,9 +99,9 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>getTinyImage</b></code>
+                <code><b>get-roots-list</b></code>
             </td>
-            <td>Returns the MCP_TINY_IMAGE</td>
+            <td>Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.</td>
             <td>
                 <ul>
                 </ul>
@@ -114,11 +113,12 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>listRoots</b></code>
+                <code><b>get-structured-content</b></code>
             </td>
-            <td>Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.</td>
+            <td>Returns structured content along with an output schema for client data validation</td>
             <td>
                 <ul>
+                    <li> <code>location</code> : New York|Chicago|Los Angeles<br /></li>
                 </ul>
             </td>
         </tr>
@@ -128,13 +128,13 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>longRunningOperation</b></code>
+                <code><b>get-sum</b></code>
             </td>
-            <td>Demonstrates a long running operation with progress updates</td>
+            <td>Returns the sum of two numbers</td>
             <td>
                 <ul>
-                    <li> <code>duration</code> : number<br /></li>
-                    <li> <code>steps</code> : number<br /></li>
+                    <li> <code>a</code> : number<br /></li>
+                    <li> <code>b</code> : number<br /></li>
                 </ul>
             </td>
         </tr>
@@ -144,9 +144,9 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>printEnv</b></code>
+                <code><b>get-tiny-image</b></code>
             </td>
-            <td>Prints all environment variables, helpful for debugging MCP server configuration</td>
+            <td>Returns a tiny MCP logo image.</td>
             <td>
                 <ul>
                 </ul>
@@ -158,13 +158,14 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>sampleLLM</b></code>
+                <code><b>gzip-file-as-resource</b></code>
             </td>
-            <td>Samples from an LLM using MCP's sampling feature</td>
+            <td>Compresses a single file using gzip compression. Depending upon the selected output type, returns either the compressed data as a gzipped resource or a resource link, allowing it to be downloaded in a subsequent request during the current session.</td>
             <td>
                 <ul>
-                    <li> <code>maxTokens</code> : number<br /></li>
-                    <li> <code>prompt</code> : string<br /></li>
+                    <li> <code>data</code> : string<br /></li>
+                    <li> <code>name</code> : string<br /></li>
+                    <li> <code>outputType</code> : resourceLink|resource<br /></li>
                 </ul>
             </td>
         </tr>
@@ -174,11 +175,13 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>startElicitation</b></code>
+                <code><b>simulate-research-query</b></code>
             </td>
-            <td>Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)</td>
+            <td>Simulates a deep research operation that gathers, analyzes, and synthesizes information. Demonstrates MCP task-based operations with progress through multiple stages. If <code>ambiguous</code> is true and client supports elicitation, sends an elicitation request for clarification.</td>
             <td>
                 <ul>
+                    <li> <code>ambiguous</code> : boolean<br /></li>
+                    <li> <code>topic</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
@@ -188,12 +191,11 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>structuredContent</b></code>
+                <code><b>toggle-simulated-logging</b></code>
             </td>
-            <td>Returns structured content along with an output schema for client data validation</td>
+            <td>Toggles simulated, random-leveled logging on or off.</td>
             <td>
                 <ul>
-                    <li> <code>location</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
@@ -203,19 +205,112 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>zip</b></code>
+                <code><b>toggle-subscriber-updates</b></code>
             </td>
-            <td>Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.</td>
+            <td>Toggles simulated resource subscription updates on or off.</td>
             <td>
                 <ul>
-                    <li> <code>files</code> : unknown<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>14.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-elicitation-request</b></code>
+            </td>
+            <td>Trigger a Request from the Server for User Elicitation</td>
+            <td>
+                <ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>15.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-elicitation-request-async</b></code>
+            </td>
+            <td>Trigger an async elicitation request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends an elicitation request and the client handles user input asynchronously, allowing the server to poll for completion.</td>
+            <td>
+                <ul>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>16.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-long-running-operation</b></code>
+            </td>
+            <td>Demonstrates a long running operation with progress updates.</td>
+            <td>
+                <ul>
+                    <li> <code>duration</code> : number<br /></li>
+                    <li> <code>steps</code> : number<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>17.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-sampling-request</b></code>
+            </td>
+            <td>Trigger a Request from the Server for LLM Sampling</td>
+            <td>
+                <ul>
+                    <li> <code>maxTokens</code> : number<br /></li>
+                    <li> <code>prompt</code> : string<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>18.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-sampling-request-async</b></code>
+            </td>
+            <td>Trigger an async sampling request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends a request and the client executes it asynchronously, allowing the server to poll for progress and results.</td>
+            <td>
+                <ul>
+                    <li> <code>maxTokens</code> : number<br /></li>
+                    <li> <code>prompt</code> : string<br /></li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>19.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>trigger-url-elicitation</b></code>
+            </td>
+            <td>Trigger a URL elicitation so the client can direct the user to a browser flow. Supports two mechanisms: the request path (elicitation/create, default) which awaits the user's response, and the error path (UrlElicitationRequiredError, -32042) which signals the client to handle URL elicitation via the error response. Set errorPath=true to use the error path.</td>
+            <td>
+                <ul>
+                    <li> <code>elicitationId</code> : string<br /></li>
+                    <li> <code>errorPath</code> : boolean<br /></li>
+                    <li> <code>message</code> : string<br /></li>
+                    <li> <code>url</code> : string<br /></li>
                 </ul>
             </td>
         </tr>
 </tbody>
 </table>
 
-## 📝 Prompts (3)
+## 📝 Prompts (4)
 
 <table style="text-align: left;">
 <thead>
@@ -229,28 +324,35 @@
         <tr>
             <td>1.</td>
             <td>
-                <code><b>simple_prompt</b></code>
+                <code><b>simple-prompt</b></code>
             </td>
-            <td>A prompt without arguments</td>
+            <td>A prompt with no arguments</td>
         </tr>
         <tr>
             <td>2.</td>
             <td>
-                <code><b>complex_prompt</b></code>
+                <code><b>args-prompt</b></code>
             </td>
-            <td>A prompt with arguments</td>
+            <td>A prompt with two arguments, one required and one optional</td>
         </tr>
         <tr>
             <td>3.</td>
             <td>
-                <code><b>resource_prompt</b></code>
+                <code><b>completable-prompt</b></code>
+            </td>
+            <td>First argument choice narrows values for second argument.</td>
+        </tr>
+        <tr>
+            <td>4.</td>
+            <td>
+                <code><b>resource-prompt</b></code>
             </td>
             <td>A prompt that includes an embedded resource reference</td>
         </tr>
 </tbody>
 </table>
 
-## 📄 Resources (10)
+## 📄 Resources (7)
 
 <table style="text-align: left;">
 <thead>
@@ -269,12 +371,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 1</b></code>
+                <code><b>architecture.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/1</a> <i>(text/plain)</i>
+                <a>demo://resource/static/document/architecture.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: architecture.md</td>
         </tr>
         <tr>
             <td>2.</td>
@@ -282,12 +384,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 2</b></code>
+                <code><b>extension.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/2</a> <i>(application/octet-stream)</i>
+                <a>demo://resource/static/document/extension.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: extension.md</td>
         </tr>
         <tr>
             <td>3.</td>
@@ -295,12 +397,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 3</b></code>
+                <code><b>features.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/3</a> <i>(text/plain)</i>
+                <a>demo://resource/static/document/features.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: features.md</td>
         </tr>
         <tr>
             <td>4.</td>
@@ -308,12 +410,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 4</b></code>
+                <code><b>how-it-works.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/4</a> <i>(application/octet-stream)</i>
+                <a>demo://resource/static/document/how-it-works.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: how-it-works.md</td>
         </tr>
         <tr>
             <td>5.</td>
@@ -321,12 +423,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 5</b></code>
+                <code><b>instructions.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/5</a> <i>(text/plain)</i>
+                <a>demo://resource/static/document/instructions.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: instructions.md</td>
         </tr>
         <tr>
             <td>6.</td>
@@ -334,12 +436,12 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 6</b></code>
+                <code><b>startup.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/6</a> <i>(application/octet-stream)</i>
+                <a>demo://resource/static/document/startup.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
+            <td>Static document file exposed from /docs: startup.md</td>
         </tr>
         <tr>
             <td>7.</td>
@@ -347,56 +449,17 @@
               <!--- no icon -->
             </td>
             <td>
-                <code><b>Resource 7</b></code>
+                <code><b>structure.md</b></code>
             </td>
             <td>
-                <a>test://static/resource/7</a> <i>(text/plain)</i>
+                <a>demo://resource/static/document/structure.md</a> <i>(text/markdown)</i>
             </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>8.</td>
-            <td>
-              <!--- no icon -->
-            </td>
-            <td>
-                <code><b>Resource 8</b></code>
-            </td>
-            <td>
-                <a>test://static/resource/8</a> <i>(application/octet-stream)</i>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>9.</td>
-            <td>
-              <!--- no icon -->
-            </td>
-            <td>
-                <code><b>Resource 9</b></code>
-            </td>
-            <td>
-                <a>test://static/resource/9</a> <i>(text/plain)</i>
-            </td>
-            <td></td>
-        </tr>
-        <tr>
-            <td>10.</td>
-            <td>
-              <!--- no icon -->
-            </td>
-            <td>
-                <code><b>Resource 10</b></code>
-            </td>
-            <td>
-                <a>test://static/resource/10</a> <i>(application/octet-stream)</i>
-            </td>
-            <td></td>
+            <td>Static document file exposed from /docs: structure.md</td>
         </tr>
 </tbody>
 </table>
 
-## 🧩 Resource Templates (1)
+## 🧩 Resource Templates (2)
 
 <table style="text-align: left;">
 <thead>
@@ -415,12 +478,25 @@
                 <!--- no icon -->
             </td>
             <td>
-                <code><b>Static Resource</b></code>
+                <code><b>Dynamic Text Resource</b></code>
             </td>
             <td>
-                <a>test://static/resource/{id}</a> 
+                <a>demo://resource/dynamic/text/{resourceId}</a> <i>(text/plain)</i>
             </td>
-            <td>A static resource with a numeric ID</td>
+            <td>Plaintext dynamic resource fabricated from the {resourceId} variable, which must be an integer.</td>
+        </tr>
+        <tr>
+            <td>2.</td>
+            <td>
+                <!--- no icon -->
+            </td>
+            <td>
+                <code><b>Dynamic Blob Resource</b></code>
+            </td>
+            <td>
+                <a>demo://resource/dynamic/blob/{resourceId}</a> <i>(application/octet-stream)</i>
+            </td>
+            <td>Binary (base64) dynamic resource fabricated from the {resourceId} variable, which must be an integer.</td>
         </tr>
 </tbody>
 </table>

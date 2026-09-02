@@ -1,82 +1,92 @@
-example-servers/everything 1.0.0
+mcp-servers/everything 2.0.0
 
 
-✔ Tools (13)   ✔ Prompts (3) ✔ Resources (10)   ✔ Logging ✔ Completions  ✘ Tasks
+✔ Tools (19)   ✔ Prompts (4) ✔ Resources (7)   ✔ Logging ✔ Completions  ✘ Tasks
 
    
 
-🛠️ Tools (13)
+🛠️ Tools (19)
 ─────────────
 
-1. add : Adds two numbers
+1. echo : Echoes back the input string
 
-2. annotatedMessage : Demonstrates how annotations can be used to provide metadata about content
+2. get-annotated-message : Demonstrates how annotations can be used to provide metadata about content.
 
-3. echo : Echoes back the input
+3. get-env : Returns all environment variables, helpful for debugging MCP server configuration
 
-4. getResourceLinks : Returns multiple resource links that reference different types of resources
+4. get-resource-links : Returns up to ten resource links that reference different types of resources
 
-5. getResourceReference : Returns a resource reference that can be used by MCP clients
+5. get-resource-reference : Returns a resource reference that can be used by MCP clients
 
-6. getTinyImage : Returns the MCP_TINY_IMAGE
+6. get-roots-list : Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.
 
-7. listRoots : Lists the current MCP roots provided by the client. Demonstrates the roots protocol capability even though this server doesn't access files.
+7. get-structured-content : Returns structured content along with an output schema for client data validation
 
-8. longRunningOperation : Demonstrates a long running operation with progress updates
+8. get-sum : Returns the sum of two numbers
 
-9. printEnv : Prints all environment variables, helpful for debugging MCP server configuration
+9. get-tiny-image : Returns a tiny MCP logo image.
 
-10. sampleLLM : Samples from an LLM using MCP's sampling feature
+10. gzip-file-as-resource : Compresses a single file using gzip compression. Depending upon the selected output type, returns either the compressed data as a gzipped resource or a resource link, allowing it to be downloaded in a subsequent request during the current session.
 
-11. startElicitation : Elicitation test tool that demonstrates how to request user input with various field types (string, boolean, email, uri, date, integer, number, enum)
+11. simulate-research-query : Simulates a deep research operation that gathers, analyzes, and synthesizes information. Demonstrates MCP task-based operations with progress through multiple stages. If 'ambiguous' is true and client supports elicitation, sends an elicitation request for clarification.
 
-12. structuredContent : Returns structured content along with an output schema for client data validation
+12. toggle-simulated-logging : Toggles simulated, random-leveled logging on or off.
 
-13. zip : Compresses the provided resource files (mapping of name to URI, which can be a data URI) to a zip file, which it returns as a data URI resource link.
+13. toggle-subscriber-updates : Toggles simulated resource subscription updates on or off.
+
+14. trigger-elicitation-request : Trigger a Request from the Server for User Elicitation
+
+15. trigger-elicitation-request-async : Trigger an async elicitation request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends an elicitation request and the client handles user input asynchronously, allowing the server to poll for completion.
+
+16. trigger-long-running-operation : Demonstrates a long running operation with progress updates.
+
+17. trigger-sampling-request : Trigger a Request from the Server for LLM Sampling
+
+18. trigger-sampling-request-async : Trigger an async sampling request that the CLIENT executes as a background task. Demonstrates bidirectional MCP tasks where the server sends a request and the client executes it asynchronously, allowing the server to poll for progress and results.
+
+19. trigger-url-elicitation : Trigger a URL elicitation so the client can direct the user to a browser flow. Supports two mechanisms: the request path (elicitation/create, default) which awaits the user's response, and the error path (UrlElicitationRequiredError, -32042) which signals the client to handle URL elicitation via the error response. Set errorPath=true to use the error path.
 
 
 
-📝 Prompts (3)
+📝 Prompts (4)
 ──────────────
 
-1. simple_prompt : A prompt without arguments
+1. simple-prompt : A prompt with no arguments
 
-2. complex_prompt : A prompt with arguments
+2. args-prompt : A prompt with two arguments, one required and one optional
 
-3. resource_prompt : A prompt that includes an embedded resource reference
+3. completable-prompt : First argument choice narrows values for second argument.
 
-
-
-📄 Resources (10)
-─────────────────
-
-1. Resource 1 : test://static/resource/1 (text/plain)
-
-2. Resource 2 : test://static/resource/2 (application/octet-stream)
-
-3. Resource 3 : test://static/resource/3 (text/plain)
-
-4. Resource 4 : test://static/resource/4 (application/octet-stream)
-
-5. Resource 5 : test://static/resource/5 (text/plain)
-
-6. Resource 6 : test://static/resource/6 (application/octet-stream)
-
-7. Resource 7 : test://static/resource/7 (text/plain)
-
-8. Resource 8 : test://static/resource/8 (application/octet-stream)
-
-9. Resource 9 : test://static/resource/9 (text/plain)
-
-10. Resource 10 : test://static/resource/10 (application/octet-stream)
+4. resource-prompt : A prompt that includes an embedded resource reference
 
 
 
-🧩 Resource Templates (1)
+📄 Resources (7)
+────────────────
+
+1. architecture.md : demo://resource/static/document/architecture.md (text/markdown)
+
+2. extension.md : demo://resource/static/document/extension.md (text/markdown)
+
+3. features.md : demo://resource/static/document/features.md (text/markdown)
+
+4. how-it-works.md : demo://resource/static/document/how-it-works.md (text/markdown)
+
+5. instructions.md : demo://resource/static/document/instructions.md (text/markdown)
+
+6. startup.md : demo://resource/static/document/startup.md (text/markdown)
+
+7. structure.md : demo://resource/static/document/structure.md (text/markdown)
+
+
+
+🧩 Resource Templates (2)
 ─────────────────────────
 
-1. Static Resource : test://static/resource/{id}  
-   A static resource with a numeric ID
+1. Dynamic Text Resource : demo://resource/dynamic/text/{resourceId}  (text/plain)
+   Plaintext dynamic resource fabricated from the {resourceId} variable, which must be an integer.
+2. Dynamic Blob Resource : demo://resource/dynamic/blob/{resourceId}  (application/octet-stream)
+   Binary (base64) dynamic resource fabricated from the {resourceId} variable, which must be an integer.
 
 
 ◾ generated by mcp-discovery
