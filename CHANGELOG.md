@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.3.0](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.6...v0.3.0) (2026-09-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* add streamable HTTP transport and OAuth authentication support ([#37](https://github.com/rust-mcp-stack/mcp-discovery/issues/37))
+
+### 🚀 Features
+
+* Add remote template fetching, template folders, and user-defined partials ([#39](https://github.com/rust-mcp-stack/mcp-discovery/issues/39)) ([62ff360](https://github.com/rust-mcp-stack/mcp-discovery/commit/62ff3606535f147dbfa2132b537426db2bed35e7))
+* Add streamable HTTP transport and OAuth authentication support ([#37](https://github.com/rust-mcp-stack/mcp-discovery/issues/37)) ([ab27cbb](https://github.com/rust-mcp-stack/mcp-discovery/commit/ab27cbb9a8122db39568af4b96c0a1b4239862e5))
+
+
+### 📚 Documentation
+
+* Update command line documentations ([0060b1b](https://github.com/rust-mcp-stack/mcp-discovery/commit/0060b1b62857506a81d7948038d44312a9d3159a))
+* Update fixtures ([1f7b131](https://github.com/rust-mcp-stack/mcp-discovery/commit/1f7b1312eb694eecbba09bc79f71fd974c6fefd0))
+
 ## [0.2.6](https://github.com/rust-mcp-stack/mcp-discovery/compare/v0.2.5...v0.2.6) (2026-08-27)
 
 
