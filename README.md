@@ -50,10 +50,19 @@ Please see [rust-mcp-stack/mcp-discovery-action](https://github.com/rust-mcp-sta
 - `-t, --template <TEMPLATE>`: Choose a built-in output template. Options: `md`, `md-plain`, `html`, `txt`.
 - `-p, --template-file <TEMPLATE_FILE>`: Path to a custom Handlebars template file.
 - `-s, --template-string <TEMPLATE_STRING>`: Inline Handlebars template provided as a string.
+- `--url <URL>`: Connect to a remote MCP server over the Streamable HTTP transport.
+- `--header "Name: Value"`: Static HTTP header for the Streamable HTTP transport (repeatable).
+- `--grant <GRANT>`: OAuth grant for protected servers: `client-credentials` (default) or `authorization-code`.
+- `--client-id <ID>`: Pre-registered OAuth client id (omit to use Dynamic Client Registration).
+- `--client-secret <SECRET>`: Pre-registered OAuth client secret.
+- `--scope <SCOPE>`: OAuth scope(s) to request.
+- `--redirect-uri <URI>`: Redirect URI for the `authorization-code` grant.
 - `-h, --help`: Display help information.
 - `-V, --version`: Display the version of `mcp-discovery`.
 
 👉 Note: If no template is provided, `mcp-discovery` will automatically select the most suitable built-in template based on the file extension.
+
+👉 Note: Authentication flags require `--url`. See the [Authentication guide](https://rust-mcp-stack.github.io/mcp-discovery/#/guide/authentication) for examples of connecting to open, token-protected, and OAuth-protected MCP servers.
 
 ## Built-in Templates 🧬
 

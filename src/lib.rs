@@ -1,5 +1,6 @@
 //! A lightweight CLI tool for discovering and documenting MCP Server capabilities.
 
+pub mod auth;
 pub mod error;
 mod handler;
 mod render_template;
@@ -15,8 +16,8 @@ use rust_mcp_sdk::{mcp_icon, ToMcpClientHandler};
 use serde_json::{to_value, Map, Value};
 pub use templates::OutputTemplate;
 pub use types::{
-    DiscoveryCommand, LogLevel, McpCapabilities, McpServerInfo, McpToolMeta, ParamTypes,
-    PrintOptions, Template, WriteOptions,
+    DiscoveryCommand, Grant, LogLevel, McpAuthOptions, McpCapabilities, McpServerInfo, McpToolMeta,
+    ParamTypes, PrintOptions, Template, WriteOptions,
 };
 
 use crate::types::McpTaskSupport;
@@ -27,12 +28,13 @@ use render_template::{detect_render_markers, render_template};
 use rust_mcp_sdk::schema::{
     ClientCapabilities, ClientElicitation, ClientRoots, ClientSampling, ClientTaskElicitation,
     ClientTaskSampling, ClientTasks, Implementation, InitializeRequestParams,
-    PaginatedRequestParams, Prompt, ProtocolVersion, Resource, ResourceTemplate,
+    PaginatedRequestParams, Prompt, ProtocolVersion, Resource, ResourceTemplate, ServerMessage,
 };
 use rust_mcp_sdk::{
     error::SdkResult,
     mcp_client::{client_runtime, ClientRuntime},
-    McpClient, StdioTransport, TransportOptions,
+    ClientStreamableTransport, McpClient, RequestOptions, StdioTransport,
+    StreamableTransportOptions, TransportOptions,
 };
 use schema::tool_params;
 use std::io::stdout;
@@ -57,6 +59,12 @@ impl McpDiscovery {
 
     /// Entry point to execute the discovery workflow based on the command.
     pub async fn start(&mut self) -> DiscoveryResult<()> {
+        if self.options.mcp_auth().is_configured() && self.options.mcp_url().is_none() {
+            return Err(DiscoveryError::InvalidSchema(
+                "Authentication options require --url (streamable HTTP transport).".to_string(),
+            ));
+        }
+
         // launch mcp server and discover capabilities
 
         self.discover().await?;
@@ -543,30 +551,66 @@ impl McpDiscovery {
             client_details.client_info.version
         );
 
-        let (mcp_command, mcp_args) = self.options.mcp_launch_command().split_at(1);
-
-        tracing::trace!(
-            "launching command : {} {}",
-            mcp_command.first().map(String::as_ref).unwrap_or(""),
-            mcp_args.join(" ")
-        );
-
-        let transport = StdioTransport::create_with_server_launch(
-            mcp_command.first().unwrap(),
-            mcp_args.into(),
-            None,
-            TransportOptions::default(),
-        )?;
-
         let handler = MyClientHandler {};
 
-        let client = client_runtime::create_client(McpClientOptions {
-            client_details,
-            transport,
-            handler: handler.to_mcp_client_handler(),
-            task_store: None,
-            server_task_store: None,
-        });
+        let client = match self.options.mcp_url() {
+            Some(url) => {
+                tracing::trace!("connecting to streamable HTTP server at {url}");
+
+                let custom_headers = auth::resolve_headers(self.options.mcp_auth(), url)
+                    .await
+                    .map_err(|err| McpSdkError::Internal {
+                        description: err.to_string(),
+                    })?;
+                let request_options = RequestOptions {
+                    custom_headers,
+                    ..Default::default()
+                };
+
+                let transport = ClientStreamableTransport::<ServerMessage>::new(
+                    &StreamableTransportOptions {
+                        mcp_url: url.clone(),
+                        request_options,
+                    },
+                    None,
+                    false,
+                )?;
+
+                client_runtime::create_client(McpClientOptions {
+                    client_details,
+                    transport,
+                    handler: handler.to_mcp_client_handler(),
+                    task_store: None,
+                    server_task_store: None,
+                    message_observer: None,
+                })
+            }
+            None => {
+                let (mcp_command, mcp_args) = self.options.mcp_launch_command().split_at(1);
+
+                tracing::trace!(
+                    "launching command : {} {}",
+                    mcp_command.first().map(String::as_ref).unwrap_or(""),
+                    mcp_args.join(" ")
+                );
+
+                let transport = StdioTransport::create_with_server_launch(
+                    mcp_command.first().unwrap(),
+                    mcp_args.into(),
+                    None,
+                    TransportOptions::default(),
+                )?;
+
+                client_runtime::create_client(McpClientOptions {
+                    client_details,
+                    transport,
+                    handler: handler.to_mcp_client_handler(),
+                    task_store: None,
+                    server_task_store: None,
+                    message_observer: None,
+                })
+            }
+        };
 
         tracing::trace!("Launching MCP server ...");
 

@@ -666,6 +666,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
@@ -693,6 +695,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
@@ -719,6 +723,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
@@ -745,6 +751,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);
@@ -772,6 +780,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
         let server_info = default_mcp_server_info();
         let result = detect_render_markers(&options, &server_info);

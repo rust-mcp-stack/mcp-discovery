@@ -1,5 +1,7 @@
 use clap::{Parser, Subcommand, ValueEnum};
-use mcp_discovery::{DiscoveryCommand, LogLevel, PrintOptions, Template, WriteOptions};
+use mcp_discovery::{
+    DiscoveryCommand, Grant, LogLevel, McpAuthOptions, PrintOptions, Template, WriteOptions,
+};
 use std::path::PathBuf;
 
 #[derive(Debug, Clone, ValueEnum, PartialEq)]
@@ -43,6 +45,21 @@ impl From<CliLogLevel> for LogLevel {
     }
 }
 
+#[derive(Debug, Clone, ValueEnum, PartialEq)]
+pub enum CliGrant {
+    ClientCredentials,
+    AuthorizationCode,
+}
+
+impl From<CliGrant> for Grant {
+    fn from(value: CliGrant) -> Self {
+        match value {
+            CliGrant::ClientCredentials => Self::ClientCredentials,
+            CliGrant::AuthorizationCode => Self::AuthorizationCode,
+        }
+    }
+}
+
 #[derive(Subcommand, Debug)]
 pub enum CliDiscoveryCommand {
     /// Displays MCP server capability details in the terminal.
@@ -78,12 +95,41 @@ pub struct CliWriteOptions {
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
     pub log_level: Option<CliLogLevel>,
+
+    /// URL of a streamable HTTP MCP server. Mutually exclusive with the launch command.
+    #[arg(long, conflicts_with = "mcp_server_cmd")]
+    pub url: Option<String>,
+
+    /// Static header to send with streamable HTTP requests (repeatable, "Name: Value").
+    #[arg(long, value_name = "NAME:VALUE", requires = "url")]
+    pub header: Vec<String>,
+
+    /// Pre-registered OAuth client id (omit to use dynamic client registration).
+    #[arg(long, requires = "url")]
+    pub client_id: Option<String>,
+
+    /// Pre-registered OAuth client secret.
+    #[arg(long, requires = "url")]
+    pub client_secret: Option<String>,
+
+    /// OAuth scope(s) to request.
+    #[arg(long, requires = "url")]
+    pub scope: Option<String>,
+
+    /// Redirect URI used by the authorization-code flow.
+    #[arg(long, requires = "url")]
+    pub redirect_uri: Option<String>,
+
+    /// OAuth grant type (default: client-credentials).
+    #[arg(long, value_enum, requires = "url")]
+    pub grant: Option<CliGrant>,
+
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
         allow_hyphen_values = true,
         last = true,
-        required = true
+        required_unless_present = "url"
     )]
     pub mcp_server_cmd: Vec<String>,
 }
@@ -97,6 +143,15 @@ impl From<CliWriteOptions> for WriteOptions {
             template_string: value.template_string,
             log_level: value.log_level.map(|l| l.into()),
             mcp_server_cmd: value.mcp_server_cmd,
+            url: value.url,
+            auth: McpAuthOptions {
+                headers: value.header,
+                client_id: value.client_id,
+                client_secret: value.client_secret,
+                scope: value.scope,
+                redirect_uri: value.redirect_uri,
+                grant: value.grant.map(Into::into).unwrap_or_default(),
+            },
         }
     }
 }
@@ -124,12 +179,40 @@ conflicts_with_all = ["template", "template_string"])]
     #[arg(long, short)]
     pub log_level: Option<CliLogLevel>,
 
+    /// URL of a streamable HTTP MCP server. Mutually exclusive with the launch command.
+    #[arg(long, conflicts_with = "mcp_server_cmd")]
+    pub url: Option<String>,
+
+    /// Static header to send with streamable HTTP requests (repeatable, "Name: Value").
+    #[arg(long, value_name = "NAME:VALUE", requires = "url")]
+    pub header: Vec<String>,
+
+    /// Pre-registered OAuth client id (omit to use dynamic client registration).
+    #[arg(long, requires = "url")]
+    pub client_id: Option<String>,
+
+    /// Pre-registered OAuth client secret.
+    #[arg(long, requires = "url")]
+    pub client_secret: Option<String>,
+
+    /// OAuth scope(s) to request.
+    #[arg(long, requires = "url")]
+    pub scope: Option<String>,
+
+    /// Redirect URI used by the authorization-code flow.
+    #[arg(long, requires = "url")]
+    pub redirect_uri: Option<String>,
+
+    /// OAuth grant type (default: client-credentials).
+    #[arg(long, value_enum, requires = "url")]
+    pub grant: Option<CliGrant>,
+
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
         allow_hyphen_values = true,
         last = true,
-        required = true
+        required_unless_present = "url"
     )]
     pub mcp_server_cmd: Vec<String>,
 }
@@ -142,6 +225,15 @@ impl From<CliPrintOptions> for PrintOptions {
             template_string: value.template_string,
             log_level: value.log_level.map(|l| l.into()),
             mcp_server_cmd: value.mcp_server_cmd,
+            url: value.url,
+            auth: McpAuthOptions {
+                headers: value.header,
+                client_id: value.client_id,
+                client_secret: value.client_secret,
+                scope: value.scope,
+                redirect_uri: value.redirect_uri,
+                grant: value.grant.map(Into::into).unwrap_or_default(),
+            },
         }
     }
 }
@@ -191,12 +283,40 @@ pub struct CommandArguments {
     #[arg(long, short)]
     pub log_level: Option<CliLogLevel>,
 
+    /// URL of a streamable HTTP MCP server. Mutually exclusive with the launch command.
+    #[arg(long, conflicts_with = "mcp_server_cmd")]
+    pub url: Option<String>,
+
+    /// Static header to send with streamable HTTP requests (repeatable, "Name: Value").
+    #[arg(long, value_name = "NAME:VALUE", requires = "url")]
+    pub header: Vec<String>,
+
+    /// Pre-registered OAuth client id (omit to use dynamic client registration).
+    #[arg(long, requires = "url")]
+    pub client_id: Option<String>,
+
+    /// Pre-registered OAuth client secret.
+    #[arg(long, requires = "url")]
+    pub client_secret: Option<String>,
+
+    /// OAuth scope(s) to request.
+    #[arg(long, requires = "url")]
+    pub scope: Option<String>,
+
+    /// Redirect URI used by the authorization-code flow.
+    #[arg(long, requires = "url")]
+    pub redirect_uri: Option<String>,
+
+    /// OAuth grant type (default: client-credentials).
+    #[arg(long, value_enum, requires = "url")]
+    pub grant: Option<CliGrant>,
+
     /// Command and arguments to launch the MCP server.
     #[arg(
         value_name = "MCP Launch Command",
         allow_hyphen_values = true,
         last = true,
-        required = true
+        required_unless_present = "url"
     )]
     pub mcp_server_cmd: Vec<String>,
 }
@@ -258,6 +378,8 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
 
         let result = file_options.match_template();
@@ -365,6 +487,36 @@ mod tests {
 
         let launch_cmd = command.mcp_launch_command();
         assert_eq!(launch_cmd, &vec!["mcp-server", "--port", "9090"]);
+        assert_eq!(command.mcp_url(), None);
+    }
+
+    #[test]
+    fn test_url_command_parsing() {
+        let args = vec!["mcp-tool", "print", "--url", "http://localhost:8080/mcp"];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+
+        assert_eq!(
+            command.mcp_url(),
+            Some(&"http://localhost:8080/mcp".to_string())
+        );
+        assert!(command.mcp_launch_command().is_empty());
+    }
+
+    #[test]
+    fn test_url_conflicts_with_launch_command() {
+        let args = vec![
+            "mcp-tool",
+            "print",
+            "--url",
+            "http://localhost:8080/mcp",
+            "--",
+            "mcp-server",
+        ];
+        let result = CommandArguments::try_parse_from(args);
+        assert!(
+            result.is_err(),
+            "Expected error due to conflicting --url and launch command"
+        );
     }
 
     #[test]
@@ -376,10 +528,80 @@ mod tests {
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
             log_level: None,
+            url: None,
+            auth: Default::default(),
         };
 
         let result = file_options.match_template();
         assert!(result.is_ok(), "Expected successful template matching");
         // Note: Cannot assert specific OutputTemplate without knowing its structure
+    }
+
+    #[test]
+    fn test_oauth_flags_parsing() {
+        let args = vec![
+            "mcp-tool",
+            "print",
+            "--url",
+            "https://mcp.example.com/mcp",
+            "--header",
+            "Authorization: Bearer abc",
+            "--header",
+            "X-Api-Key: 123",
+            "--client-id",
+            "my-client",
+            "--client-secret",
+            "my-secret",
+            "--scope",
+            "mcp tools",
+            "--grant",
+            "client-credentials",
+        ];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+
+        let auth = command.mcp_auth();
+        assert_eq!(
+            auth.headers,
+            vec![
+                "Authorization: Bearer abc".to_string(),
+                "X-Api-Key: 123".to_string()
+            ]
+        );
+        assert_eq!(auth.client_id.as_deref(), Some("my-client"));
+        assert_eq!(auth.client_secret.as_deref(), Some("my-secret"));
+        assert_eq!(auth.scope.as_deref(), Some("mcp tools"));
+        assert_eq!(auth.grant, Grant::ClientCredentials);
+    }
+
+    #[test]
+    fn test_authorization_code_grant() {
+        let args = vec![
+            "mcp-tool",
+            "print",
+            "--url",
+            "https://mcp.example.com/mcp",
+            "--grant",
+            "authorization-code",
+            "--redirect-uri",
+            "http://127.0.0.1:8080/callback",
+        ];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+
+        let auth = command.mcp_auth();
+        assert_eq!(auth.grant, Grant::AuthorizationCode);
+        assert_eq!(
+            auth.redirect_uri.as_deref(),
+            Some("http://127.0.0.1:8080/callback")
+        );
+    }
+
+    #[test]
+    fn test_oauth_flags_require_url() {
+        let args = vec!["mcp-tool", "print", "--client-id", "my-client"];
+        let result = CommandArguments::try_parse_from(args);
+        assert!(
+            result.is_err(),
+            "Expected error: --client-id requires --url"
+        );
     }
 }

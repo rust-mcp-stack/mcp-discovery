@@ -44,6 +44,45 @@ impl FromStr for Template {
     }
 }
 
+/// OAuth grant type used to authenticate against a protected MCP server.
+#[derive(Debug, Clone, PartialEq, Default)]
+pub enum Grant {
+    /// Machine-to-machine authentication (RFC 6749 §4.4).
+    #[default]
+    ClientCredentials,
+    /// Interactive user authorization code flow with PKCE (RFC 7636).
+    AuthorizationCode,
+}
+
+/// Authentication options for connecting to a protected streamable HTTP MCP server.
+#[derive(Debug, Clone, Default)]
+pub struct McpAuthOptions {
+    /// Static headers (e.g. `Authorization: Bearer <token>`), applied to every request.
+    pub headers: Vec<String>,
+    /// Pre-registered OAuth client id. When omitted, dynamic client registration is used.
+    pub client_id: Option<String>,
+    /// Pre-registered OAuth client secret.
+    pub client_secret: Option<String>,
+    /// OAuth scope(s) to request.
+    pub scope: Option<String>,
+    /// Redirect URI used by the authorization-code flow.
+    pub redirect_uri: Option<String>,
+    /// Which OAuth grant to use.
+    pub grant: Grant,
+}
+
+impl McpAuthOptions {
+    /// Returns `true` if any authentication option was configured.
+    pub fn is_configured(&self) -> bool {
+        !self.headers.is_empty()
+            || self.client_id.is_some()
+            || self.client_secret.is_some()
+            || self.scope.is_some()
+            || self.redirect_uri.is_some()
+            || self.grant != Grant::ClientCredentials
+    }
+}
+
 /// Enum representing supported log levels for controlling output verbosity.
 #[derive(Debug, Clone, PartialEq)]
 #[allow(non_camel_case_types)]
@@ -84,6 +123,12 @@ pub struct PrintOptions {
 
     /// Command and arguments to launch the MCP server.
     pub mcp_server_cmd: Vec<String>,
+
+    /// URL of a streamable HTTP MCP server (mutually exclusive with the launch command).
+    pub url: Option<String>,
+
+    /// Authentication options for protected streamable HTTP servers.
+    pub auth: McpAuthOptions,
 }
 
 impl PrintOptions {
@@ -116,6 +161,12 @@ pub struct WriteOptions {
     pub log_level: Option<LogLevel>,
     /// Command and arguments to launch the MCP server.
     pub mcp_server_cmd: Vec<String>,
+
+    /// URL of a streamable HTTP MCP server (mutually exclusive with the launch command).
+    pub url: Option<String>,
+
+    /// Authentication options for protected streamable HTTP servers.
+    pub auth: McpAuthOptions,
 }
 
 impl WriteOptions {
@@ -148,6 +199,24 @@ impl DiscoveryCommand {
             DiscoveryCommand::Create(create_options) => &create_options.mcp_server_cmd,
             DiscoveryCommand::Update(update_options) => &update_options.mcp_server_cmd,
             DiscoveryCommand::Print(print_args) => &print_args.mcp_server_cmd,
+        }
+    }
+
+    /// Retrieves the streamable HTTP MCP server URL for the current variant, if set.
+    pub fn mcp_url(&self) -> Option<&String> {
+        match self {
+            DiscoveryCommand::Create(create_options) => create_options.url.as_ref(),
+            DiscoveryCommand::Update(update_options) => update_options.url.as_ref(),
+            DiscoveryCommand::Print(print_args) => print_args.url.as_ref(),
+        }
+    }
+
+    /// Retrieves the authentication options for the current variant.
+    pub fn mcp_auth(&self) -> &McpAuthOptions {
+        match self {
+            DiscoveryCommand::Create(create_options) => &create_options.auth,
+            DiscoveryCommand::Update(update_options) => &update_options.auth,
+            DiscoveryCommand::Print(print_args) => &print_args.auth,
         }
     }
 
