@@ -154,6 +154,26 @@ Options:
           Path to a custom template file written in the Handlebars format
   -s, --template-string <TEMPLATE_STRING>
           Template content provided as a string
+      --template-url <TEMPLATE_URL>
+          Fetch a remote Handlebars template ('.hbs', '.zip', or '.tar.gz') from an https:// URL. Supports fragment directives: '#sha256=<hex>' and '#entry=<subpath>'
+      --cache-dir <PATH>
+          Cache directory for templates fetched with --template-url (defaults to the OS cache dir)
+  -l, --log-level <LOG_LEVEL>
+          Specifies the logging level for the application (default: info) [possible values: error, warn, info, debug, trace]
+      --url <URL>
+          URL of a streamable HTTP MCP server. Mutually exclusive with the launch command
+      --header <NAME:VALUE>
+          Static header to send with streamable HTTP requests (repeatable, "Name: Value")
+      --client-id <CLIENT_ID>
+          Pre-registered OAuth client id (omit to use dynamic client registration)
+      --client-secret <CLIENT_SECRET>
+          Pre-registered OAuth client secret
+      --scope <SCOPE>
+          OAuth scope(s) to request
+      --redirect-uri <REDIRECT_URI>
+          Redirect URI used by the authorization-code flow
+      --grant <GRANT>
+          OAuth grant type (default: client-credentials) [possible values: client-credentials, authorization-code]
   -h, --help
           Print help
   -V, --version
@@ -181,12 +201,25 @@ mcp-discovery -- npx -y @modelcontextprotocol/server-everything
 
 - `-f, --filename <FILENAME>`: Used with `create` and `update` commands to specify the output file to generate or modify.
 - `-t, --template <TEMPLATE>`: Choose a built-in output template. Options: `md`, `md-plain`, `html`, `txt`.
-- `-p, --template-file <TEMPLATE_FILE>`: Path to a custom Handlebars template file.
+- `-p, --template-file <TEMPLATE_FILE>`: Path to a custom Handlebars template file, or a folder containing `template.hbs` with an optional sibling `partials/` directory.
 - `-s, --template-string <TEMPLATE_STRING>`: Inline Handlebars template provided as a string.
+- `--template-url <TEMPLATE_URL>`: Fetch a remote Handlebars template (`.hbs`, `.zip`, or `.tar.gz`) from an `https://` URL. Supports fragment directives: `#sha256=<hex>` (integrity pin) and `#entry=<subpath>` (select a file inside an archive).
+- `--cache-dir <PATH>`: Cache directory for templates fetched with `--template-url` (created if missing; defaults to the OS cache dir).
+- `-l, --log-level <LOG_LEVEL>`: Specifies the logging level (default: `info`). Options: `error`, `warn`, `info`, `debug`, `trace`.
+- `--template-file`/archive templates can use their own partials from a `partials/` folder — see the [Custom Templates guide](guide/custom-templates.md).
+- `--url <URL>`: URL of a streamable HTTP MCP server. Mutually exclusive with the launch command.
+- `--header <NAME:VALUE>`: Static header to send with streamable HTTP requests (repeatable, `"Name: Value"`).
+- `--client-id <CLIENT_ID>`: Pre-registered OAuth client id (omit to use dynamic client registration).
+- `--client-secret <CLIENT_SECRET>`: Pre-registered OAuth client secret.
+- `--scope <SCOPE>`: OAuth scope(s) to request.
+- `--redirect-uri <REDIRECT_URI>`: Redirect URI used by the authorization-code flow.
+- `--grant <GRANT>`: OAuth grant type (default: `client-credentials`). Options: `client-credentials`, `authorization-code`.
 - `-h, --help`: Display help information.
 - `-V, --version`: Display the version of `mcp-discovery`.
 
 👉 Note: If no template is provided, `mcp-discovery` will automatically select the most suitable built-in template based on the file extension.
+
+👉 Note: The authentication flags (`--header`, `--client-id`, `--client-secret`, `--scope`, `--redirect-uri`, `--grant`) require `--url`. See the [Authentication guide](guide/authentication.md) for examples of connecting to open, token-protected, and OAuth-protected MCP servers.
 
 ## Built-in Templates 🧬
 
@@ -201,9 +234,10 @@ The CLI supports the following built-in output templates:
 
 You can provide custom Handlebars templates in different ways:
 
-1.  Use the `--template-file` flag to provide a custom template file.
+1.  Use the `--template-file` flag to provide a custom template file, or a folder containing `template.hbs` with an optional sibling `partials/` directory.
 2.  Use the `--template-string` flag to provide a raw Handlebars template directly as a string.
-3.  To use an inline template, define it in a file for the `update` command only — <i>this will not function with print or create.</i>
+3.  Use the `--template-url` flag to fetch a Handlebars template (`.hbs`, `.zip`, or `.tar.gz`) from an `https://` URL. Supports fragment directives: `#sha256=<hex>` (integrity pin) and `#entry=<subpath>` (select a file inside an archive). See the [Remote templates guide](guide/custom-templates.md) for details.
+4.  To use an inline template, define it in a file for the `update` command only — <i>this will not function with print or create.</i>
 
 > Inline templates must be enclosed within designated marker annotations.
 

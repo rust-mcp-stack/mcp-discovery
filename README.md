@@ -52,6 +52,7 @@ Please see [rust-mcp-stack/mcp-discovery-action](https://github.com/rust-mcp-sta
 - `-s, --template-string <TEMPLATE_STRING>`: Inline Handlebars template provided as a string.
 - `--template-url <URL>`: Fetch and render a Handlebars template from an `https://` URL (`.hbs`, `.zip`, or `.tar.gz`). Supports fragment directives: `#sha256=<hex>` (integrity pin) and `#entry=<subpath>` (select a file inside an archive).
 - `--cache-dir <PATH>`: Cache directory for templates fetched with `--template-url` (created if missing; defaults to the OS cache dir).
+- `-l, --log-level <LOG_LEVEL>`: Specifies the logging level (default: `info`). Options: `error`, `warn`, `info`, `debug`, `trace`.
 - `--template-file`/archive templates can use their own partials from a `partials/` folder — see the [Custom Templates guide](https://rust-mcp-stack.github.io/mcp-discovery/#/guide/custom-templates).
 - `--url <URL>`: Connect to a remote MCP server over the Streamable HTTP transport.
 - `--header "Name: Value"`: Static HTTP header for the Streamable HTTP transport (repeatable).
@@ -80,9 +81,10 @@ The CLI supports the following built-in output templates:
 
 You can provide custom Handlebars templates in different ways:
 
-1.  Use the `--template-file` flag to provide a custom template file.
+1.  Use the `--template-file` flag to provide a custom template file, or a folder containing `template.hbs` with an optional sibling `partials/` directory.
 2.  Use the `--template-string` flag to provide a raw Handlebars template directly as a string.
-3.  To use an inline template, define it in a file for the `update` command only — <i>this will not function with print or create.</i>
+3.  Use the `--template-url` flag to fetch a Handlebars template (`.hbs`, `.zip`, or `.tar.gz`) from an `https://` URL. Supports fragment directives: `#sha256=<hex>` (integrity pin) and `#entry=<subpath>` (select a file inside an archive). See the [Remote templates guide](https://rust-mcp-stack.github.io/mcp-discovery/#/guide/custom-templates) for details.
+4.  To use an inline template, define it in a file for the `update` command only — <i>this will not function with print or create.</i>
 
 > Inline templates must be enclosed within designated marker annotations.
 
