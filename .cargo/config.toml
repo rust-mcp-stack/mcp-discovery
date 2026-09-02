@@ -1,0 +1,5 @@
+# aws-lc-sys (pulled in via rust-mcp-sdk -> jsonwebtoken -> aws-lc-rs) needs NASM
+# to assemble its x86_64 assembly on Windows. Use the crate-provided prebuilt
+# NASM objects instead so Windows release builds don't depend on NASM being on PATH.
+[env]
+AWS_LC_SYS_PREBUILT_NASM = "1"
