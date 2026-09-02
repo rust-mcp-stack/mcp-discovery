@@ -1,6 +1,9 @@
 //! Module for rendering templates using Handlebars and handling MCP server template markers.
 
-use std::{path::PathBuf, str::FromStr};
+use std::{
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 
 use handlebars::{
     handlebars_helper, Context, Handlebars, Helper, HelperDef, HelperResult, Output, RenderContext,
@@ -238,6 +241,52 @@ pub fn register_partials(handlebar: &mut Handlebars) {
     }
 }
 
+/// Recursively collects all `*.hbs` files under `dir` into `out`.
+fn collect_hbs_files(dir: &Path, out: &mut Vec<PathBuf>) {
+    let entries = match std::fs::read_dir(dir) {
+        Ok(entries) => entries,
+        Err(_) => return,
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            collect_hbs_files(&path, out);
+        } else if path.is_file() && path.extension().and_then(|e| e.to_str()) == Some("hbs") {
+            out.push(path);
+        }
+    }
+}
+
+/// Registers user-defined partials found under `<base>/partials/`.
+///
+/// Each `*.hbs` file is registered under its path relative to `base` (minus the
+/// extension), so `partials/header.hbs` is usable as `{{> partials/header }}` and nested
+/// files keep their full relative path (`partials/x/y.hbs` → `{{> partials/x/y }}`).
+/// A missing `partials/` directory is a silent no-op; files that fail to read are skipped.
+pub fn register_partials_from_dir(handlebar: &mut Handlebars, base: &Path) {
+    let partials_dir = base.join("partials");
+    if !partials_dir.is_dir() {
+        return;
+    }
+
+    let mut files: Vec<PathBuf> = Vec::new();
+    collect_hbs_files(&partials_dir, &mut files);
+    files.sort();
+
+    for file in files {
+        let relative = match file.strip_prefix(base) {
+            Ok(relative) => relative,
+            Err(_) => continue,
+        };
+        let name = relative.with_extension("").to_string_lossy().into_owned();
+        let content = match std::fs::read_to_string(&file) {
+            Ok(content) => content,
+            Err(_) => continue,
+        };
+        let _ = handlebar.register_partial(&name, content);
+    }
+}
+
 /// Renders a template with the provided data using Handlebars.
 pub fn render_template<T>(template: &OutputTemplate, data: &T) -> Result<String, RenderError>
 where
@@ -248,17 +297,29 @@ where
     register_helpers(&mut handlebar);
     register_partials(&mut handlebar);
 
+    // Register user-defined partials living in a `partials/` directory next to a custom
+    // template file (the file's parent directory is the partials base).
+    if let OutputTemplate::CustomTemplate(entry) = template {
+        if let Some(base) = entry.parent() {
+            register_partials_from_dir(&mut handlebar, base);
+        }
+    }
+
     let template_content = template.content();
 
     handlebar.render_template(&template_content, &data)
 }
 
 /// Select the template to be used, considering template and template-file and inline templates
-/// that are passed via CLI or set as properties of the markers
+/// that are passed via CLI or set as properties of the markers.
+///
+/// `remote_template` carries a template already fetched from `--template-url` (resolved once
+/// by the caller); when present it takes precedence as a CLI-specified source.
 fn select_template(
     update_options: &WriteOptions,
     rendering_props: &RenderTemplateProps,
     inline_template: Option<OutputTemplate>,
+    remote_template: Option<OutputTemplate>,
 ) -> DiscoveryResult<OutputTemplate> {
     // template argument or template property of the render block
     let template_name = update_options
@@ -278,8 +339,11 @@ fn select_template(
     let no_template: Option<Template> = None;
     let no_template_file: Option<PathBuf> = None;
     let no_template_string: Option<String> = None;
+    let no_template_url: Option<String> = None;
+    let no_cache_dir: Option<PathBuf> = None;
 
-    Ok(template_file
+    Ok(remote_template
+        .or(template_file)
         .or(template_name)
         .or(inline_template)
         .unwrap_or(match_template(
@@ -287,6 +351,8 @@ fn select_template(
             &no_template,
             &no_template_file,
             &no_template_string,
+            &no_template_url,
+            &no_cache_dir,
         )?))
 }
 
@@ -313,6 +379,15 @@ pub fn detect_render_markers(
     let mut rendering_props = RenderTemplateProps {
         template_file: None,
         template: None,
+    };
+
+    // Resolve a CLI --template-url once (fetch/cache) so render blocks reuse it.
+    let remote_template: Option<OutputTemplate> = match &update_options.template_url {
+        Some(url) => {
+            let entry = crate::fetcher::fetch_remote(url, update_options.cache_dir.as_deref())?;
+            Some(OutputTemplate::CustomTemplate(entry))
+        }
+        None => None,
     };
 
     for mat in re.captures_iter(&content) {
@@ -473,8 +548,12 @@ pub fn detect_render_markers(
 
                 inside_render = false;
 
-                let template =
-                    select_template(update_options, &rendering_props, last_template.take())?;
+                let template = select_template(
+                    update_options,
+                    &rendering_props,
+                    last_template.take(),
+                    remote_template.clone(),
+                )?;
 
                 // prepend the inline template before the rendered template, to preserve the inline template
                 let rendered_template = template.render_template(server_info)?;
@@ -526,7 +605,7 @@ pub fn extract_render_props(line: &str) -> RenderTemplateProps {
 mod tests {
     use serde_json::json;
     use std::fs::write;
-    use tempfile::NamedTempFile;
+    use tempfile::{NamedTempFile, TempDir};
 
     use super::*;
     use crate::*;
@@ -651,6 +730,121 @@ mod tests {
     }
 
     #[test]
+    fn test_custom_template_file_resolves_sibling_partials() {
+        let dir = TempDir::new().unwrap();
+        std::fs::create_dir_all(dir.path().join("partials")).unwrap();
+        write(
+            dir.path().join("template.hbs"),
+            "A {{> partials/header }} B",
+        )
+        .unwrap();
+        write(dir.path().join("partials/header.hbs"), "HEADER {{name}}").unwrap();
+        let template = OutputTemplate::from_file(&dir.path().join("template.hbs"), None).unwrap();
+        let result = render_template::render_template(&template, &json!({"name": "X"}))
+            .expect("Failed to render template");
+        assert_eq!(result, "A HEADER X B");
+    }
+
+    #[test]
+    fn test_custom_template_folder_resolves_template_hbs_and_partials() {
+        let dir = TempDir::new().unwrap();
+        std::fs::create_dir_all(dir.path().join("partials")).unwrap();
+        write(dir.path().join("template.hbs"), "{{> partials/header }}").unwrap();
+        write(dir.path().join("partials/header.hbs"), "HEADER").unwrap();
+        let template = OutputTemplate::from_file(dir.path(), None).unwrap();
+        let result = render_template::render_template(&template, &json!({}))
+            .expect("Failed to render template");
+        assert_eq!(result, "HEADER");
+    }
+
+    #[test]
+    fn test_custom_template_folder_falls_back_to_sole_root_hbs() {
+        let dir = TempDir::new().unwrap();
+        std::fs::create_dir_all(dir.path().join("partials")).unwrap();
+        write(dir.path().join("sole.hbs"), "SOLE {{> partials/header }}").unwrap();
+        write(dir.path().join("partials/header.hbs"), "HEADER").unwrap();
+        let template = OutputTemplate::from_file(dir.path(), None).unwrap();
+        let result = render_template::render_template(&template, &json!({}))
+            .expect("Failed to render template");
+        assert_eq!(result, "SOLE HEADER");
+    }
+
+    #[test]
+    fn test_custom_template_folder_without_hbs_errors() {
+        let dir = TempDir::new().unwrap();
+        write(dir.path().join("readme.txt"), "not a template").unwrap();
+        let result = OutputTemplate::from_file(dir.path(), None);
+        assert!(result.is_err(), "Expected error for folder without .hbs");
+    }
+
+    #[test]
+    fn test_custom_template_folder_with_multiple_root_hbs_errors() {
+        let dir = TempDir::new().unwrap();
+        write(dir.path().join("a.hbs"), "A").unwrap();
+        write(dir.path().join("b.hbs"), "B").unwrap();
+        let result = OutputTemplate::from_file(dir.path(), None);
+        assert!(
+            result.is_err(),
+            "Expected error for folder with multiple .hbs files"
+        );
+    }
+
+    #[test]
+    fn test_custom_template_file_without_partials_is_unchanged() {
+        let dir = TempDir::new().unwrap();
+        let file = dir.path().join("plain.hbs");
+        write(&file, "PLAIN {{name}}").unwrap();
+        let template = OutputTemplate::from_file(&file, None).unwrap();
+        let result = render_template::render_template(&template, &json!({"name": "X"}))
+            .expect("Failed to render template");
+        assert_eq!(result, "PLAIN X");
+    }
+
+    #[test]
+    fn test_custom_template_file_uses_builtin_partials() {
+        let dir = TempDir::new().unwrap();
+        write(
+            dir.path().join("template.hbs"),
+            "{{> title-version prefix=\"## \" }}",
+        )
+        .unwrap();
+        let template = OutputTemplate::from_file(&dir.path().join("template.hbs"), None).unwrap();
+        let data = json!({"name": "Demo", "version": "1.0"});
+        let result =
+            render_template::render_template(&template, &data).expect("Failed to render template");
+        assert_eq!(result.trim(), "## Demo 1.0");
+    }
+
+    #[test]
+    fn test_custom_template_nested_partials_and_non_hbs_ignored() {
+        let dir = TempDir::new().unwrap();
+        std::fs::create_dir_all(dir.path().join("partials/x")).unwrap();
+        write(
+            dir.path().join("template.hbs"),
+            "{{> partials/x/deep }} {{> partials/top }}",
+        )
+        .unwrap();
+        write(dir.path().join("partials/x/deep.hbs"), "DEEP").unwrap();
+        write(dir.path().join("partials/top.hbs"), "TOP").unwrap();
+        write(dir.path().join("partials/ignored.txt"), "not registered").unwrap();
+        let template = OutputTemplate::from_file(&dir.path().join("template.hbs"), None).unwrap();
+        let result = render_template::render_template(&template, &json!({}))
+            .expect("Failed to render template");
+        assert_eq!(result, "DEEP TOP");
+    }
+
+    #[test]
+    fn test_template_string_with_inline_partials() {
+        let template = OutputTemplate::TemplateString(
+            "{{#*inline \"title\"}}## {{name}} {{version}}{{/inline}}{{> title}}".to_string(),
+        );
+        let data = json!({"name": "Demo", "version": "1.0"});
+        let result =
+            render_template::render_template(&template, &data).expect("Failed to render template");
+        assert_eq!(result, "## Demo 1.0");
+    }
+
+    #[test]
     fn test_detect_render_markers_valid() {
         let file = NamedTempFile::new().unwrap();
         let content = r#"mcp-discovery-render
@@ -665,6 +859,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
@@ -694,6 +890,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
@@ -722,6 +920,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
@@ -750,6 +950,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
@@ -779,6 +981,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),

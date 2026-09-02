@@ -3,15 +3,15 @@ name = "mcp-discovery"
 version = "0.2.6"
 authors = ["Ali Hashemi"]
 categories = ["command-line-interface", "command-line-utilities"]
-description = "A command-line tool written in Rust for discovering and documenting MCP Server capabilities."
+description = "MCP Discovery: a command-line tool written in Rust for discovering and documenting MCP Server capabilities."
 repository = "https://github.com/rust-mcp-stack/mcp-discovery"
 documentation = "https://docs.rs/mcp-discovery"
 keywords = [
-    "rust-mcp-stack",
+    "mcp",
+    "discovery",
     "mcp-discovery",
-    "mcp-cli",
-    "rust-mcp-cli",
-    "rust-mcp-discovery",
+    "tools",
+    "ai",
 ]
 homepage = "https://rust-mcp-stack.github.io/mcp-discovery"
 license = "MIT"
@@ -48,6 +48,14 @@ strip-ansi-escapes = "0.2"
 unicode-width = "0.2"
 async-trait = "0.1"
 thiserror = { version = "2.0" }
+dirs = "5"
+ureq = { version = "2", features = ["tls"] }
+sha2 = "0.10"
+hex = "0.4"
+zip = "2"
+flate2 = "1"
+tar = "0.4"
+url = "2"
 handlebars = "6.3"
 html-escape = "0.2"
 regex = "1.1"

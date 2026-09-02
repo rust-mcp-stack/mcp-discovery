@@ -48,8 +48,11 @@ Please see [rust-mcp-stack/mcp-discovery-action](https://github.com/rust-mcp-sta
 
 - `-f, --filename <FILENAME>`: Used with `create` and `update` commands to specify the output file to generate or modify.
 - `-t, --template <TEMPLATE>`: Choose a built-in output template. Options: `md`, `md-plain`, `html`, `txt`.
-- `-p, --template-file <TEMPLATE_FILE>`: Path to a custom Handlebars template file.
+- `-p, --template-file <TEMPLATE_FILE>`: Path to a custom Handlebars template file, or a folder containing `template.hbs` with an optional sibling `partials/` directory.
 - `-s, --template-string <TEMPLATE_STRING>`: Inline Handlebars template provided as a string.
+- `--template-url <URL>`: Fetch and render a Handlebars template from an `https://` URL (`.hbs`, `.zip`, or `.tar.gz`). Supports fragment directives: `#sha256=<hex>` (integrity pin) and `#entry=<subpath>` (select a file inside an archive).
+- `--cache-dir <PATH>`: Cache directory for templates fetched with `--template-url` (created if missing; defaults to the OS cache dir).
+- `--template-file`/archive templates can use their own partials from a `partials/` folder — see the [Custom Templates guide](https://rust-mcp-stack.github.io/mcp-discovery/#/guide/custom-templates).
 - `--url <URL>`: Connect to a remote MCP server over the Streamable HTTP transport.
 - `--header "Name: Value"`: Static HTTP header for the Streamable HTTP transport (repeatable).
 - `--grant <GRANT>`: OAuth grant for protected servers: `client-credentials` (default) or `authorization-code`.
