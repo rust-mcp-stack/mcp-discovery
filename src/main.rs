@@ -13,10 +13,17 @@ async fn main() {
         .command
         .unwrap_or(CliDiscoveryCommand::Print(CliPrintOptions {
             mcp_server_cmd: args.mcp_server_cmd,
+            url: args.url,
             template: args.template,
             template_file: args.template_file,
             template_string: args.template_string,
             log_level: args.log_level,
+            header: args.header,
+            client_id: args.client_id,
+            client_secret: args.client_secret,
+            scope: args.scope,
+            redirect_uri: args.redirect_uri,
+            grant: args.grant,
         }))
         .into();
 
@@ -33,11 +40,14 @@ async fn main() {
         .compact()
         .init();
 
-    let launch_message = format!(
-        "{} {} ...",
-        "Launching:".bold(),
-        command.mcp_launch_command().join(" "),
-    );
+    let launch_message = match command.mcp_url() {
+        Some(url) => format!("{} {url} ...", "Launching:".bold()),
+        None => format!(
+            "{} {} ...",
+            "Launching:".bold(),
+            command.mcp_launch_command().join(" "),
+        ),
+    };
 
     println!("{}", launch_message.bright_green());
 

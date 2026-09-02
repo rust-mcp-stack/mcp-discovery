@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashSet};
 
 use serde_json::{Map, Value};
 
@@ -258,7 +258,7 @@ pub fn param_type(
 
 /// Processes tool parameters with a given properties map and root schema.
 pub fn tool_params(
-    properties: &Option<HashMap<String, Map<String, Value>>>,
+    properties: &Option<BTreeMap<String, Map<String, Value>>>,
     root_schema: &Value,
 ) -> Vec<McpToolSParams> {
     let mut visited = HashSet::new();

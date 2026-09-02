@@ -22,6 +22,8 @@ pub enum DiscoveryError {
     #[error("{0}")]
     McpSdkError(#[from] McpSdkError),
     #[error("{0}")]
+    OAuth(#[from] rust_mcp_sdk::auth::ClientError),
+    #[error("{0}")]
     SerdeError(#[from] serde_json::Error),
     #[error("{0}")]
     RenderError(#[from] handlebars::RenderError),
