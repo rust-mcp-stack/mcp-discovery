@@ -69,7 +69,7 @@
 
         <Package Id='*'
             Keywords='Installer'
-            Description='A command-line tool written in Rust for discovering and documenting MCP Server capabilities.'
+            Description='MCP Discovery: a command-line tool written in Rust for discovering and documenting MCP Server capabilities.'
             Manufacturer='Ali Hashemi'
             InstallerVersion='450'
             Languages='1033'
