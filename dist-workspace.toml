@@ -24,6 +24,12 @@ create-release = false
 # A namespace to use when publishing this package to the npm registry
 npm-scope = "@rustmcp"
 
+# System packages to install before building.
+# aws-lc-sys (pulled in via rust-mcp-sdk -> jsonwebtoken -> aws-lc-rs) needs NASM
+# to assemble its x86_64 assembly on Windows.
+[dist.dependencies.chocolatey]
+nasm = "*"
+
 [dist.github-custom-runners]
 global = "ubuntu-22.04"
 
