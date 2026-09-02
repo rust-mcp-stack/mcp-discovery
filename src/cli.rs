@@ -76,21 +76,33 @@ pub struct CliWriteOptions {
     pub filename: PathBuf,
 
     /// Select an output template from the built-in options.
-    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
+    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string", "template_url"])]
     pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
-    conflicts_with_all = ["template", "template_string"])]
+    conflicts_with_all = ["template", "template_string", "template_url"])]
     pub template_file: Option<PathBuf>,
 
     /// Template content provided as a string.
     #[arg(
         long,
         short = 's',
-        conflicts_with_all = ["template", "template_file"]
+        conflicts_with_all = ["template", "template_file", "template_url"]
     )]
     pub template_string: Option<String>,
+
+    /// Fetch a remote Handlebars template ('.hbs', '.zip', or '.tar.gz') from an https:// URL.
+    /// Supports fragment directives: '#sha256=<hex>' and '#entry=<subpath>'.
+    #[arg(
+        long,
+        conflicts_with_all = ["template", "template_file", "template_string"]
+    )]
+    pub template_url: Option<String>,
+
+    /// Cache directory for templates fetched with --template-url (defaults to the OS cache dir).
+    #[arg(long, value_name = "PATH")]
+    pub cache_dir: Option<PathBuf>,
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
@@ -141,6 +153,8 @@ impl From<CliWriteOptions> for WriteOptions {
             template: value.template.map(|t| t.into()),
             template_file: value.template_file,
             template_string: value.template_string,
+            template_url: value.template_url,
+            cache_dir: value.cache_dir,
             log_level: value.log_level.map(|l| l.into()),
             mcp_server_cmd: value.mcp_server_cmd,
             url: value.url,
@@ -159,21 +173,33 @@ impl From<CliWriteOptions> for WriteOptions {
 #[derive(Parser, Debug)]
 pub struct CliPrintOptions {
     /// Select an output template from the built-in options.
-    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
+    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string", "template_url"])]
     pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
-conflicts_with_all = ["template", "template_string"])]
+conflicts_with_all = ["template", "template_string", "template_url"])]
     pub template_file: Option<PathBuf>,
 
     /// Template content provided as a string.
     #[arg(
     long,
     short = 's',
-    conflicts_with_all = ["template", "template_file"]
+    conflicts_with_all = ["template", "template_file", "template_url"]
 )]
     pub template_string: Option<String>,
+
+    /// Fetch a remote Handlebars template ('.hbs', '.zip', or '.tar.gz') from an https:// URL.
+    /// Supports fragment directives: '#sha256=<hex>' and '#entry=<subpath>'.
+    #[arg(
+     long,
+     conflicts_with_all = ["template", "template_file", "template_string"]
+ )]
+    pub template_url: Option<String>,
+
+    /// Cache directory for templates fetched with --template-url (defaults to the OS cache dir).
+    #[arg(long, value_name = "PATH")]
+    pub cache_dir: Option<PathBuf>,
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
@@ -223,6 +249,8 @@ impl From<CliPrintOptions> for PrintOptions {
             template: value.template.map(|t| t.into()),
             template_file: value.template_file,
             template_string: value.template_string,
+            template_url: value.template_url,
+            cache_dir: value.cache_dir,
             log_level: value.log_level.map(|l| l.into()),
             mcp_server_cmd: value.mcp_server_cmd,
             url: value.url,
@@ -263,21 +291,33 @@ pub struct CommandArguments {
     pub command: Option<CliDiscoveryCommand>,
 
     /// Select an output template from the built-in options.
-    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string"])]
+    #[arg(short, long, value_enum, conflicts_with_all = ["template_file", "template_string", "template_url"])]
     pub template: Option<CliTemplate>,
 
     /// Path to a custom template file written in the Handlebars format.
     #[arg(long, short = 'p',
- conflicts_with_all = ["template", "template_string"])]
+ conflicts_with_all = ["template", "template_string", "template_url"])]
     pub template_file: Option<PathBuf>,
 
     /// Template content provided as a string.
     #[arg(
      long,
      short = 's',
-     conflicts_with_all = ["template", "template_file"]
+     conflicts_with_all = ["template", "template_file", "template_url"]
  )]
     pub template_string: Option<String>,
+
+    /// Fetch a remote Handlebars template ('.hbs', '.zip', or '.tar.gz') from an https:// URL.
+    /// Supports fragment directives: '#sha256=<hex>' and '#entry=<subpath>'.
+    #[arg(
+     long,
+     conflicts_with_all = ["template", "template_file", "template_string"]
+ )]
+    pub template_url: Option<String>,
+
+    /// Cache directory for templates fetched with --template-url (defaults to the OS cache dir).
+    #[arg(long, value_name = "PATH")]
+    pub cache_dir: Option<PathBuf>,
 
     /// Specifies the logging level for the application (default: info)
     #[arg(long, short)]
@@ -377,6 +417,8 @@ mod tests {
             template_file: Some(PathBuf::from("templates/markdown/markdown_template.md")),
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
@@ -520,6 +562,98 @@ mod tests {
     }
 
     #[test]
+    fn test_template_url_and_cache_dir_parsing() {
+        let args = vec![
+            "mcp-tool",
+            "print",
+            "--template-url",
+            "https://example.com/t.hbs#sha256=abab",
+            "--cache-dir",
+            "/tmp/mcp-cache",
+            "--",
+            "mcp-server",
+        ];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+        match command {
+            DiscoveryCommand::Print(opts) => {
+                assert_eq!(
+                    opts.template_url.as_deref(),
+                    Some("https://example.com/t.hbs#sha256=abab")
+                );
+                assert_eq!(
+                    opts.cache_dir.as_deref(),
+                    Some(PathBuf::from("/tmp/mcp-cache").as_path())
+                );
+            }
+            _ => panic!("expected Print command"),
+        }
+    }
+
+    #[test]
+    fn test_template_url_coexists_with_transport_url() {
+        let args = vec![
+            "mcp-tool",
+            "print",
+            "--url",
+            "https://mcp.example.com/mcp",
+            "--template-url",
+            "https://example.com/t.hbs",
+            "--cache-dir",
+            "/tmp/mcp-cache",
+        ];
+        let command: DiscoveryCommand = parse_args(args).command.unwrap().into();
+        match command {
+            DiscoveryCommand::Print(opts) => {
+                assert!(
+                    opts.template_url.is_some(),
+                    "expected --template-url parsed"
+                );
+                assert!(opts.url.is_some(), "expected transport --url parsed");
+            }
+            _ => panic!("expected Print command"),
+        }
+    }
+
+    #[test]
+    fn test_template_url_conflicts_with_other_template_flags() {
+        for args in [
+            vec![
+                "mcp-tool",
+                "print",
+                "--template",
+                "md",
+                "--template-url",
+                "https://example.com/t.hbs",
+                "--",
+                "srv",
+            ],
+            vec![
+                "mcp-tool",
+                "print",
+                "--template-file",
+                "a.hbs",
+                "--template-url",
+                "https://example.com/t.hbs",
+                "--",
+                "srv",
+            ],
+            vec![
+                "mcp-tool",
+                "print",
+                "--template-string",
+                "hi",
+                "--template-url",
+                "https://example.com/t.hbs",
+                "--",
+                "srv",
+            ],
+        ] {
+            let result = CommandArguments::try_parse_from(args);
+            assert!(result.is_err(), "Expected conflict between template flags");
+        }
+    }
+
+    #[test]
     fn test_file_options_match_template_builtin() {
         let file_options = WriteOptions {
             filename: PathBuf::from("output.md"),
@@ -527,6 +661,8 @@ mod tests {
             template_file: None,
             mcp_server_cmd: vec!["mcp-server".to_string()],
             template_string: None,
+            template_url: None,
+            cache_dir: None,
             log_level: None,
             url: None,
             auth: Default::default(),
