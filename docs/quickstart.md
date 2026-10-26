@@ -26,6 +26,13 @@ powershell -ExecutionPolicy Bypass -c "irm https://github.com/rust-mcp-stack/mcp
 brew install rust-mcp-stack/tap/mcp-discovery
 ```
 
+#### AUR
+```sh
+yay -S mcp-discovery
+# or
+paru -S mcp-discovery
+```
+
 #### **Cargo**
 
 ```sh
