@@ -28,7 +28,9 @@ brew install rust-mcp-stack/tap/mcp-discovery
 
 #### AUR
 ```sh
-pacman -S mcp-discovery
+yay -S mcp-discovery
+# or
+paru -S mcp-discovery
 ```
 
 #### **Cargo**
